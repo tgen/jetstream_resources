@@ -11,8 +11,8 @@
 ### ---- To this they added a series of HPV and other viral genomes
 ### ---- They use the same reference for BWA and STAR alignments
 
-# BROAD_BUNDLE=
-# BWAKIT=
+# BROAD_BUNDLE: https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0/?pli=1
+# BWAKIT: https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
 # GDC: https://gdc.cancer.gov/about-data/data-harmonization-and-generation/gdc-reference-files
 
 # Confirm BWAKIT and Broad Bundle are identical in sequence
@@ -23,7 +23,7 @@ tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs3
 tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta > Homo_sapiens_assembly38.fasta
 diff Homo_sapiens_assembly38.fasta hs38DH.fa | wc-l
 # 0
-# No differences detected
+# No differences detected SO THE BWAKIT AND BROAD BUNDLE FASTA FILES ARE IDENTICAL!!
 
 # Check contigs
 grep "^>" /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa > hs38DH_contigs.txt
