@@ -69,12 +69,20 @@ cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta >
 grep "^>" GRCh38_hs38d1_Alts_HLA.fa > GRCh38_hs38d1_Alts_HLA_contigs.txt
 diff GRCh38_hs38d1_Alts_HLA_contigs.txt hs38DH_contigs.txt
 diff GRCh38_hs38d1_Alts_HLA_contigs.txt Homo_sapiens_assembly38_contigs.txt
-# Lots of differences in contigs, not sure why
+# Lots of differences in contigs, seem to be related to the rl: annotation element
+diff GRCh38_hs38d1_Alts_HLA_contigs.txt hs38DH_contigs.txt | grep "725020268"
+#< >chrUn_JTFH01001998v1_decoy  AC:JTFH01001998.1  gi:725020268  LN:2001  rl:decoy  M5:35916d4135a2a9db7bc0749955d7161a  AS:hs38d1
+#> >chrUn_JTFH01001998v1_decoy  AC:JTFH01001998.1  gi:725020268  LN:2001  rl:unplaced  M5:35916d4135a2a9db7bc0749955d7161a  AS:hs38d1
+diff GRCh38_hs38d1_Alts_HLA_contigs.txt Homo_sapiens_assembly38_contigs.txt | grep "725020268"
+#< >chrUn_JTFH01001998v1_decoy  AC:JTFH01001998.1  gi:725020268  LN:2001  rl:decoy  M5:35916d4135a2a9db7bc0749955d7161a  AS:hs38d1
+#> >chrUn_JTFH01001998v1_decoy  AC:JTFH01001998.1  gi:725020268  LN:2001  rl:unplaced  M5:35916d4135a2a9db7bc0749955d7161a  AS:hs38d1
 
 ### Check versus HS38DH from BWAKIT
 diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa
 # Differences with repeat masked lowecase and uppercase AGCT on the decoy contigs
 diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
+
+# Add symbolic link to indicate which FASTA is used by BWA
 
 ####################################
 ## BUILD STAR REFERENCE GENOME
@@ -86,3 +94,5 @@ gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
 
 # Rename fastq file
 mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38_hs38d1.fa
+
+# Add symbolic link to indicate which FASTA is used by STAR
