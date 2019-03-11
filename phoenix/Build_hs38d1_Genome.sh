@@ -44,7 +44,7 @@ CREATOR="Jonathan Keats"
 cd ${PARENT_DIR}
 
 # Make top level directory if not available
-if[ -e ${TOPLEVEL_DIR}]
+if [ -e ${TOPLEVEL_DIR}]
 then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
@@ -64,7 +64,7 @@ echo "Reference Genome and related files required for JetStream Phoenix Workflow
 ####################################
 
 # Make reference_genome directory if not available
-if[ -e genome_reference]
+if [ -e genome_reference]
 then
     echo "Genome Reference directory exists, moving into it"
     cd genome_reference
@@ -129,7 +129,7 @@ fc -ln -1 >> README_TGen
 ln -s GRCh38_hs38d1_Alts_HLA.fa BWA_FASTA
 
 # Clean up the directory to store the downloads
-if[ -e downloads]
+if [ -e downloads]
 then
     echo "Downloads directory exists, doing nothing"
 else
