@@ -77,6 +77,11 @@ fc -ln -1 >> README_TGen
 ## BUILD BWA REFERENCE GENOME
 ####################################
 
+echo "####################################" >> README_TGen
+echo "## Download reference genome fasta for BWA " >> README_TGen
+echo "####################################" >> README_TGen
+echo >> README_TGen
+
 # Download the primary assembly with decoy sequences:
 echo "Download primary assembly with decoy sequences:" >> README_TGen
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
@@ -176,10 +181,11 @@ fi
 # Initialize a bwa README
 touch README
 echo >> README
-echo "BWA creation details" >> README
+echo "BWA Index creation details" >> README
 echo >> README
 echo "There are no details on how the alt-aware required .alt file is created" >> README
 echo "Because of this we are copying and renaming the file from BWAKIT" >> README
+echo >> README
 
 # Copy in the .alt file from bwa.kit
 echo "Copy in the .alt file from bwa.kit" >> README
@@ -189,7 +195,7 @@ echo >> README
 
 # Create bwa index files using bwa utility script
 echo "Create bwa index as follows:" >> README
-sbatch --export=FASTA='../../genome_reference/GRCh38_hs38d1_Alts_HLA.fa' ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
+sbatch --export ALL,FASTA='../../genome_reference/GRCh38_hs38d1_Alts_HLA.fa' ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
 fc -ln -1 >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm >> README
@@ -198,15 +204,33 @@ cat ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm >> README
 ## BUILD STAR REFERENCE GENOME
 ####################################
 
-# Since start does not support alternative contigs, download version wtih out
+# move back to the genome_reference directory
+cd ../../genome_reference
+
+echo "####################################" >> README_TGen
+echo "## Download reference genome fasta for STAR " >> README_TGen
+echo "####################################" >> README_TGen
+echo >> README_TGen
+
+# Since STAR does not support alternative contigs, download version wtih out
+echo "Download fasta file for STAR, version without alternate contigs and no HLA alleles added" >> README_TGen
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+fc -ln -1 >> README_TGen
 gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+fc -ln -1 >> README_TGen
+echo >> README_TGen
 
 # Rename fastq file
+echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README_TGen
 mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38_hs38d1.fa
+fc -ln -1 >> README_TGen
+echo >> README_TGen
 
 # Add symbolic link to indicate which FASTA is used by STAR
 ln -s GRCh38_hs38d1.fa STAR_FASTA
+
+
+exit 0
 
 ####################################
 ## Genome Build Validations
