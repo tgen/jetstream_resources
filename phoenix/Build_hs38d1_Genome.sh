@@ -91,7 +91,6 @@ echo "Download README from NCBI" >> README_TGen
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/README_analysis_sets.txt
 fc -ln -1 >> README_TGen
 
-exit 1
 ####################################
 ## BUILD BWA REFERENCE GENOME
 ####################################
