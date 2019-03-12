@@ -1,9 +1,8 @@
 #!/bin/bash -i
 
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
-
-### Setting as an interactive BASH session to capture history to a log/README file
 
 ## The GRCh38 reference genome is represented in different public locations and not all have defined source information
 ## This file tracks the source and generation of the reference and annotation files used in the Jetstream phoenix workflow
@@ -16,33 +15,13 @@ set -o history
 ### ---- To this they added a series of HPV and other viral genomes
 ### ---- They use the same reference for BWA and STAR alignments
 
-# BROAD_BUNDLE: https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0/?pli=1
-# BWAKIT: https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
-# GDC: https://gdc.cancer.gov/about-data/data-harmonization-and-generation/gdc-reference-files
-
-# Confirm BWAKIT and Broad Bundle are identical in sequence
-#diff /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
-# A massive number of events are seen BUT this seems to relate to the differences in the FASTA line lengths as the broad bundle lengths are longer 101 letters versus 71 (which we get with NCBI download as well)
-
-#tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa > hs38DH.fa
-#tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta > Homo_sapiens_assembly38.fasta
-#diff Homo_sapiens_assembly38.fasta hs38DH.fa | wc-l
-# 0
-# No differences detected SO THE BWAKIT AND BROAD BUNDLE FASTA FILES ARE IDENTICAL!!
-
-# Check contigs
-#grep "^>" /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa > hs38DH_contigs.txt
-#grep "^>" /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta > Homo_sapiens_assembly38_contigs.txt
-
-#diff hs38DH_contigs.txt Homo_sapiens_assembly38_contigs.txt
-# No contig differences
-
 ####################################
 ## Configure and make Directory Structure
 ####################################
 
+PATH_TO_REPO="/home/jkeats/git_repositories/jetstream_resources/"
 PARENT_DIR="/scratch/jkeats"
-TOPLEVEL_DIR="hs38d1"
+TOPLEVEL_DIR="b38_tgen"
 CREATOR="Jonathan Keats"
 
 # Change to parent directory
@@ -61,8 +40,11 @@ fi
 
 # Initialize a top level README
 touch README
+echo >> README
 echo "Reference Genome and related files required for JetStream Phoenix Workflow" >> README
-
+echo >> README
+echo "For details on file creation see the associated github repository:"
+echo "https://github.com/tgen/jetstream_resources"
 
 ####################################
 ## Create reference genomes from known sources
@@ -117,10 +99,13 @@ echo >> README_TGen
 
 # Find the line with the first HLA region
 echo "The bwakit hs38DH-extra.fa file contains decoy and HLA contigs, need to extract just the HLA ones" >> README_TGen
+echo "Hand curated the name of the first HLA contig, found line number with awk as follows:" >> README_TGen
 awk '/HLA-A\*01:01:01:01/{print FNR}' bwa.kit/resource-GRCh38/hs38DH-extra.fa >> README_TGen
+fc -ln -1 >> README_TGen
 # Identified line
 # 75967
 # Print all lines including this line and afterwards
+echo "Print all lines after and including first HLA line" >> README_TGen
 awk 'NR>=75967' bwa.kit/resource-GRCh38/hs38DH-extra.fa > bwakit_HLA.fasta
 fc -ln -1 >> README_TGen
 echo >> README_TGen
@@ -129,6 +114,7 @@ echo >> README_TGen
 echo "Concatenate the fasta files to make final reference genome fasta to be used by BWA" >> README_TGen
 cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38_hs38d1_Alts_HLA.fa
 fc -ln -1 >> README_TGen
+echo >> README_TGen
 
 # Add symbolic link to indicate which FASTA is used by BWA
 ln -s GRCh38_hs38d1_Alts_HLA.fa BWA_FASTA
@@ -142,11 +128,116 @@ else
     mkdir downloads
 fi
 
+mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
 mv bwa.kit downloads
 mv GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna downloads
 mv bwakit_HLA.fasta downloads
 
-exit 1
+# Create faidx and dict files
+echo "Create faidx index using samtools" >> README_TGen
+module load samtools/1.9
+fc -ln -1 >> README_TGen
+samtools faidx GRCh38_hs38d1_Alts_HLA.fa
+fc -ln -1 >> README_TGen
+echo >> README_TGen
+
+echo "Create dictionary file using samtools" >> README_TGen
+samtools dict --assembly GRCh38 \
+    --species "Homo sapiens" \
+    --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna" \
+    --output GRCh38_hs38d1_Alts_HLA.dict \
+    GRCh38_hs38d1_Alts_HLA.fa
+fc -ln -1 >> README_TGen
+echo >> README_TGen
+
+# Build BWA index files and place in expected location
+cd ..
+
+if [ -e tool_specific_resources ]
+then
+    echo "tool_specific_resources directory exists, moving into it"
+    cd tool_specific_resources
+else
+    echo "tool_specific_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_specific_resources
+    cd tool_specific_resources
+fi
+
+if [ -e bwa ]
+then
+    echo "The BWA directory exists, moving into it"
+    cd bwa
+else
+    echo "The BWA directory NOT fount, creating and moving into it now"
+    mkdir bwa
+    cd bwa
+fi
+
+# Initialize a bwa README
+touch README
+echo >> README
+echo "BWA creation details" >> README
+echo >> README
+echo "There are no details on how the alt-aware required .alt file is created" >> README
+echo "Because of this we are copying and renaming the file from BWAKIT" >> README
+
+# Copy in the .alt file from bwa.kit
+echo "Copy in the .alt file from bwa.kit" >> README
+cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt GRCh38_hs38d1_Alts_HLA.fa.alt
+fc -ln -1 >> README
+echo >> README
+
+# Create bwa index files using bwa utility script
+echo "Create bwa index as follows:" >> README
+sbatch --export=FASTA='../../genome_reference/GRCh38_hs38d1_Alts_HLA.fa' ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
+fc -ln -1 >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm >> README
+
+####################################
+## BUILD STAR REFERENCE GENOME
+####################################
+
+# Since start does not support alternative contigs, download version wtih out
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
+
+# Rename fastq file
+mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38_hs38d1.fa
+
+# Add symbolic link to indicate which FASTA is used by STAR
+ln -s GRCh38_hs38d1.fa STAR_FASTA
+
+####################################
+## Genome Build Validations
+####################################
+
+### Compare BWAKIT and Broad Bundle versions
+
+# BROAD_BUNDLE: https://console.cloud.google.com/storage/browser/genomics-public-data/resources/broad/hg38/v0/?pli=1
+# BWAKIT: https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
+# GDC: https://gdc.cancer.gov/about-data/data-harmonization-and-generation/gdc-reference-files
+
+# Confirm BWAKIT and Broad Bundle are identical in sequence
+diff /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
+# A massive number of events are seen BUT this seems to relate to the differences in the FASTA line lengths as the broad bundle lengths are longer 101 letters versus 71 (which we get with NCBI download as well)
+
+tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa > hs38DH.fa
+tr -d '\n' < /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta > Homo_sapiens_assembly38.fasta
+diff Homo_sapiens_assembly38.fasta hs38DH.fa | wc-l
+# 0
+# No differences detected SO THE BWAKIT AND BROAD BUNDLE FASTA FILES ARE IDENTICAL!!
+
+# Check contigs
+grep "^>" /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa > hs38DH_contigs.txt
+grep "^>" /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta > Homo_sapiens_assembly38_contigs.txt
+
+diff hs38DH_contigs.txt Homo_sapiens_assembly38_contigs.txt
+# No contig differences
+
+
+### Test TGen created fasta file versus other source fasta files
+
 # Get a contig list for comparisons
 grep "^>" GRCh38_hs38d1_Alts_HLA.fa > GRCh38_hs38d1_Alts_HLA_contigs.txt
 diff GRCh38_hs38d1_Alts_HLA_contigs.txt hs38DH_contigs.txt
@@ -163,18 +254,3 @@ diff GRCh38_hs38d1_Alts_HLA_contigs.txt Homo_sapiens_assembly38_contigs.txt | gr
 diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa
 # Differences with repeat masked lowecase and uppercase AGCT on the decoy contigs
 diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
-
-# Add symbolic link to indicate which FASTA is used by BWA
-
-####################################
-## BUILD STAR REFERENCE GENOME
-####################################
-
-# Since start does not support alternative contigs, download version wtih out
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
-gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
-
-# Rename fastq file
-mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38_hs38d1.fa
-
-# Add symbolic link to indicate which FASTA is used by STAR
