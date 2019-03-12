@@ -290,6 +290,102 @@ wget ftp://ftp.ensembl.org/pub/release-95/gtf/homo_sapiens/Homo_sapiens.GRCh38.9
 fc -ln -1 >> README
 gunzip Homo_sapiens.GRCh38.95.gtf.gz
 fc -ln -1 >> README
+echo >> README
+
+####################################
+## Create updated gene model with ucsc style contig names - JK Method, generates results identical to RR and AC
+####################################
+
+## FILE ACCOUNTING
+echo "Record the number of lines in original file" >> README
+wc -l Homo_sapiens.GRCh38.95.gtf >> README
+fc -ln -1 >> README
+echo >> README
+# 2737564 Homo_sapiens.GRCh38.95.gtf
+# Set variable for testing
+INPUT_GTF_LINES=`cat Homo_sapiens.GRCh38.95.gtf | wc -l`
+
+echo "For processing the file needs to be split into 3 parts" >> README
+echo "--- 1) header section" >> README
+echo "--- 2) after header column 1, this will be used to update contig names" >> README
+echo "--- 2) after header columns 2-end" >> README
+echo >> README
+
+# Create a header file
+echo "Extract header line to temp file" >> README
+grep "^#" Homo_sapiens.GRCh38.95.gtf > temp_header
+fc -ln -1 >> README
+echo >> README
+
+# Create first column file
+echo "Extract column 1 without the header lines to temp file" >> README
+grep -v "^#" Homo_sapiens.GRCh38.95.gtf | cut -f1 > temp_c1.txt
+fc -ln -1 >> README
+echo >> README
+
+
+# Create 2-final column file
+echo "Extract column 2 and subsequent without the header lines to temp file" >> README
+grep -v "^#" Homo_sapiens.GRCh38.95.gtf | cut -f2- > temp_c2plus.txt
+fc -ln -1 >> README
+echo >> README
+
+
+# Update column 1 file with new contig names
+echo "Update column 1 file with new contig names" >> README
+for line in `cat ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv`
+do
+    OLD=`echo ${line} | cut -d, -f1`
+    NEW=`echo ${line} | cut -d, -f2`
+    echo "Changing:  $OLD  to  $NEW" >> README
+
+    # update in place
+    sed -i "s/\b${OLD}/${NEW}/g" temp_c1.txt
+    fc -ln -1 >> README
+done
+echo >> README
+
+
+#Create final file
+echo "Create final updated GTF file with UCSC contig names" >> README
+paste temp_c1.txt temp_c2plus.txt > temp_new.gtf
+fc -ln -1 >> README
+cat temp_header temp_new.gtf > Homo_sapiens.GRCh38.95.ucsc.gtf
+fc -ln -1 >> README
+echo >> README
+
+# Check final GTF line count
+echo "Check Final GTF file length" >> README
+wc -l Homo_sapiens.GRCh38.95.ucsc.gtf >> README
+fc -ln -1 >> README
+echo >> README
+# 2737564 Homo_sapiens.GRCh38.95.ucsc.gtf  ## Matches starting line count!!
+
+# Confirm the starting and final GTF have the same line count
+echo "Confirm the starting and final GTF have the same line count" >> README
+FINAL_GTF_LINES=`cat Homo_sapiens.GRCh38.95.ucsc.gtf | wc -l`
+fc -ln -1 >> README
+
+if [ ${INPUT_GTF_LINES} -eq ${FINAL_GTF_LINES} ]
+then
+    echo "Input and Final GTF files match"
+    echo "Input and Final GTF files match"  >> README
+else
+    echo
+    echo
+    echo "####### ERROR #########"
+    echo "Input and Final file lengths DO NOT match"
+    echo "Input = ${INPUT_GTF_LINES}"
+    echo "Final = ${FINAL_GTF_LINES}"
+    echo
+    echo
+    exit 1
+fi
+
+# Clean-up directory
+rm temp_*
+mkdir downloads
+mv Homo_sapiens.GRCh38.95.gtf downloads
 
 ####################################
 ## Generate Gene Model Specific - tool_specific_resources
@@ -310,6 +406,17 @@ fi
 ####################################
 ## Generate Salmon Index
 ####################################
+
+# Make salmon index directory if not available
+if [ -e salmon ]
+then
+    echo "Salmon directory exists, moving into it"
+    cd salmon
+else
+    echo "Salmon directory NOT fount, creating and moving into it now"
+    mkdir salmon
+    cd salmon
+fi
 
 
 exit 0
