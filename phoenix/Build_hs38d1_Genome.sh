@@ -62,72 +62,30 @@ else
 fi
 
 # Initialize a reference_genome README
-touch README_TGen
-echo >> README_TGen
+touch README
 echo >> README
-echo "For details on file creation see the associated github repository:" >> README_TGen
-echo "https://github.com/tgen/jetstream_resources" >> README_TGen
-echo "Created and downloaded by ${CREATOR}" >> README_TGen
-date >> README_TGen
-echo >> README_TGen
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
 # Download GRC/NCBI README
-echo "Download README from NCBI" >> README_TGen
+echo "Download README from NCBI" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/README_analysis_sets.txt
-fc -ln -1 >> README_TGen
+fc -ln -1 >> README
 
 ####################################
 ## Download BWA REFERENCE GENOME
 ####################################
 
-echo "####################################" >> README_TGen
-echo "## Download reference genome fasta for BWA " >> README_TGen
-echo "####################################" >> README_TGen
-echo >> README_TGen
+echo "####################################" >> README
+echo "## Download reference genome fasta for BWA " >> README
+echo "####################################" >> README
+echo >> README
 
-# Download the primary assembly with decoy sequences:
-echo "Download primary assembly with decoy sequences:" >> README_TGen
-wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
-fc -ln -1 >> README_TGen
-# Decompress the reference
-gunzip GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
-fc -ln -1 >> README_TGen
-echo >> README_TGen
-
-# Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad
-echo "Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad:" >> README_TGen
-wget https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
-fc -ln -1 >> README_TGen
-# Decompress the bwakit download
-tar xvjf bwakit-0.7.15_x64-linux.tar.bz2
-fc -ln -1 >> README_TGen
-echo >> README_TGen
-
-### Create a fasta file with just the HLA from BWAKIT
-
-# Find the line with the first HLA region
-echo "The bwakit hs38DH-extra.fa file contains decoy and HLA contigs, need to extract just the HLA ones" >> README_TGen
-echo "Hand curated the name of the first HLA contig, found line number with awk as follows:" >> README_TGen
-awk '/HLA-A\*01:01:01:01/{print FNR}' bwa.kit/resource-GRCh38/hs38DH-extra.fa >> README_TGen
-fc -ln -1 >> README_TGen
-# Identified line
-# 75967
-# Print all lines including this line and afterwards
-echo "Print all lines after and including first HLA line" >> README_TGen
-awk 'NR>=75967' bwa.kit/resource-GRCh38/hs38DH-extra.fa > bwakit_HLA.fasta
-fc -ln -1 >> README_TGen
-echo >> README_TGen
-
-### Concatenate the fasta files to make final reference genome fasta
-echo "Concatenate the fasta files to make final reference genome fasta to be used by BWA" >> README_TGen
-cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38tgen_decoy_alts_hla.fa
-fc -ln -1 >> README_TGen
-echo >> README_TGen
-
-# Add symbolic link to indicate which FASTA is used by BWA
-ln -s GRCh38tgen_decoy_alts_hla.fa BWA_FASTA
-
-# Clean up the directory to store the downloads
+# Create a downloads directory to store downloads after processing
 if [ -e downloads ]
 then
     echo "Downloads directory exists, doing nothing"
@@ -136,27 +94,73 @@ else
     mkdir downloads
 fi
 
+# Download the primary assembly with decoy sequences:
+echo "Download primary assembly with decoy sequences:" >> README
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
+fc -ln -1 >> README
+# Archive a copy of the download file
+echo "Archive a copy of the download file" >> README
+cp GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz downloads/
+fc -ln -1 >> README
+# Decompress the reference
+gunzip GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
+fc -ln -1 >> README
+echo >> README
+
+# Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad
+echo "Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad:" >> README
+wget https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
+fc -ln -1 >> README
+# Decompress the bwakit download
+tar xvjf bwakit-0.7.15_x64-linux.tar.bz2
+fc -ln -1 >> README
+echo >> README
+
+### Create a fasta file with just the HLA from BWAKIT
+# Find the line with the first HLA region
+echo "The bwakit hs38DH-extra.fa file contains decoy and HLA contigs, need to extract just the HLA ones" >> README
+echo "Hand curated the name of the first HLA contig, found line number with awk as follows:" >> README
+awk '/HLA-A\*01:01:01:01/{print FNR}' bwa.kit/resource-GRCh38/hs38DH-extra.fa >> README
+fc -ln -1 >> README
+# Identified line
+# 75967
+# Print all lines including this line and afterwards
+echo "Print all lines after and including first HLA line" >> README
+awk 'NR>=75967' bwa.kit/resource-GRCh38/hs38DH-extra.fa > bwakit_HLA.fasta
+fc -ln -1 >> README
+echo >> README
+
+### Concatenate the fasta files to make final reference genome fasta
+echo "Concatenate the fasta files to make final reference genome fasta to be used by BWA" >> README
+cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38tgen_decoy_alts_hla.fa
+fc -ln -1 >> README
+echo >> README
+
+# Add symbolic link to indicate which FASTA is used by BWA
+ln -s GRCh38tgen_decoy_alts_hla.fa BWA_FASTA
+
+# Clean up the directory to store the downloads
 mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
 mv bwa.kit downloads
-mv GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna downloads
+mv README_analysis_sets.txt downloads
 mv bwakit_HLA.fasta downloads
 
 # Create faidx and dict files
-echo "Create faidx index using samtools" >> README_TGen
+echo "Create faidx index using samtools" >> README
 module load samtools/1.9
-fc -ln -1 >> README_TGen
+fc -ln -1 >> README
 samtools faidx GRCh38tgen_decoy_alts_hla.fa
-fc -ln -1 >> README_TGen
-echo >> README_TGen
+fc -ln -1 >> README
+echo >> README
 
-echo "Create dictionary file using samtools" >> README_TGen
+echo "Create dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
-    --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna" \
-    --output GRCh38_hs38d1_Alts_HLA.dict \
+    --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
+    --output GRCh38tgen_decoy_alts_hla.dict \
     GRCh38tgen_decoy_alts_hla.fa
-fc -ln -1 >> README_TGen
-echo >> README_TGen
+fc -ln -1 >> README
+echo >> README
 
 ####################################
 ## INDEX BWA REFERENCE GENOME
@@ -222,27 +226,48 @@ echo >> README
 # move back to the genome_reference directory
 cd ../../genome_reference
 
-echo "####################################" >> README_TGen
-echo "## Download reference genome fasta for STAR " >> README_TGen
-echo "####################################" >> README_TGen
-echo >> README_TGen
+echo "####################################" >> README
+echo "## Download reference genome fasta for STAR " >> README
+echo "####################################" >> README
+echo >> README
 
 # Since STAR does not support alternative contigs, download version wtih out
-echo "Download fasta file for STAR, version without alternate contigs and no HLA alleles added" >> README_TGen
+echo "Download fasta file for STAR, version without alternate contigs and no HLA alleles added" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
-fc -ln -1 >> README_TGen
+fc -ln -1 >> README
+# Archive a copy in the downloads section
+echo "Archive compressed STAR fasta file download" >> README
+cp GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz downloads/
+fc -ln -1 >> README
 gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
-fc -ln -1 >> README_TGen
-echo >> README_TGen
+fc -ln -1 >> README
+echo >> README
 
 # Rename fastq file
-echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README_TGen
+echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README
+cp GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna downloads/
+fc -ln -1 >> README
 mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38tgen_decoy.fa
-fc -ln -1 >> README_TGen
-echo >> README_TGen
+fc -ln -1 >> README
+echo >> README
 
 # Add symbolic link to indicate which FASTA is used by STAR
 ln -s GRCh38tgen_decoy.fa STAR_FASTA
+
+# Create faidx and dict files
+echo "Create STAR faidx index using samtools" >> README
+samtools faidx GRCh38tgen_decoy.fa
+fc -ln -1 >> README
+echo >> README
+
+echo "Create STAR dictionary file using samtools" >> README
+samtools dict --assembly GRCh38 \
+    --species "Homo sapiens" \
+    --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
+    --output GRCh38tgen_decoy.dict \
+    GRCh38tgen_decoy.fa
+fc -ln -1 >> README
+echo >> README
 
 ####################################
 ## Download Gene Model File
@@ -341,8 +366,8 @@ do
 
     # update in place
     sed -i "s/\b${OLD}/${NEW}/g" temp_c1.txt
-    fc -ln -1 >> README
 done
+fc -ln -1 >> README
 echo >> README
 
 
