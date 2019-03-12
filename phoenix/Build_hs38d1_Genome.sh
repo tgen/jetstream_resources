@@ -1,5 +1,8 @@
 #!/bin/bash -i
 
+HISTFILE=~/.bash_history
+set -o history
+
 ### Setting as an interactive BASH session to capture history to a log/README file
 
 ## The GRCh38 reference genome is represented in different public locations and not all have defined source information
