@@ -44,7 +44,7 @@ CREATOR="Jonathan Keats"
 cd ${PARENT_DIR}
 
 # Make top level directory if not available
-if [ -e ${TOPLEVEL_DIR}]
+if [ -e ${TOPLEVEL_DIR} ]
 then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
@@ -64,7 +64,7 @@ echo "Reference Genome and related files required for JetStream Phoenix Workflow
 ####################################
 
 # Make reference_genome directory if not available
-if [ -e genome_reference]
+if [ -e genome_reference ]
 then
     echo "Genome Reference directory exists, moving into it"
     cd genome_reference
@@ -77,15 +77,16 @@ fi
 # Initialize a reference_genome README
 touch README_TGen
 echo >> README_TGen
-echo "Created and downloaded by ${CREATOR}"
+echo "Created and downloaded by ${CREATOR}" >> README_TGen
 date >> README_TGen
+echo >> README_TGen
 
 # Download GRC/NCBI README
 echo "Download README from NCBI" >> README_TGen
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/README_analysis_sets.txt
 fc -ln -1 >> README_TGen
 
-
+exit 1
 ####################################
 ## BUILD BWA REFERENCE GENOME
 ####################################
@@ -129,7 +130,7 @@ fc -ln -1 >> README_TGen
 ln -s GRCh38_hs38d1_Alts_HLA.fa BWA_FASTA
 
 # Clean up the directory to store the downloads
-if [ -e downloads]
+if [ -e downloads ]
 then
     echo "Downloads directory exists, doing nothing"
 else
