@@ -21,7 +21,7 @@ set -o history
 
 PATH_TO_REPO="/home/jkeats/git_repositories/jetstream_resources/"
 PARENT_DIR="/scratch/jkeats"
-TOPLEVEL_DIR="b38_tgen"
+TOPLEVEL_DIR="hg38tgen"
 CREATOR="Jonathan Keats"
 
 # Change to parent directory
@@ -64,6 +64,9 @@ fi
 # Initialize a reference_genome README
 touch README_TGen
 echo >> README_TGen
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README_TGen
+echo "https://github.com/tgen/jetstream_resources" >> README_TGen
 echo "Created and downloaded by ${CREATOR}" >> README_TGen
 date >> README_TGen
 echo >> README_TGen
@@ -74,7 +77,7 @@ wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRC
 fc -ln -1 >> README_TGen
 
 ####################################
-## BUILD BWA REFERENCE GENOME
+## Download BWA REFERENCE GENOME
 ####################################
 
 echo "####################################" >> README_TGen
@@ -117,12 +120,12 @@ echo >> README_TGen
 
 ### Concatenate the fasta files to make final reference genome fasta
 echo "Concatenate the fasta files to make final reference genome fasta to be used by BWA" >> README_TGen
-cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38_hs38d1_Alts_HLA.fa
+cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README_TGen
 echo >> README_TGen
 
 # Add symbolic link to indicate which FASTA is used by BWA
-ln -s GRCh38_hs38d1_Alts_HLA.fa BWA_FASTA
+ln -s GRCh38tgen_decoy_alts_hla.fa BWA_FASTA
 
 # Clean up the directory to store the downloads
 if [ -e downloads ]
@@ -142,7 +145,7 @@ mv bwakit_HLA.fasta downloads
 echo "Create faidx index using samtools" >> README_TGen
 module load samtools/1.9
 fc -ln -1 >> README_TGen
-samtools faidx GRCh38_hs38d1_Alts_HLA.fa
+samtools faidx GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README_TGen
 echo >> README_TGen
 
@@ -151,11 +154,13 @@ samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
     --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna" \
     --output GRCh38_hs38d1_Alts_HLA.dict \
-    GRCh38_hs38d1_Alts_HLA.fa
+    GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README_TGen
 echo >> README_TGen
 
-# Build BWA index files and place in expected location
+####################################
+## INDEX BWA REFERENCE GENOME
+####################################
 cd ..
 
 if [ -e tool_specific_resources ]
@@ -178,10 +183,15 @@ else
     cd bwa
 fi
 
-# Initialize a bwa README
+# Initialize a bwa index README
 touch README
 echo >> README
-echo "BWA Index creation details" >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+echo "BWA Index creation details:" >> README
 echo >> README
 echo "There are no details on how the alt-aware required .alt file is created" >> README
 echo "Because of this we are copying and renaming the file from BWAKIT" >> README
@@ -189,19 +199,24 @@ echo >> README
 
 # Copy in the .alt file from bwa.kit
 echo "Copy in the .alt file from bwa.kit" >> README
-cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt GRCh38_hs38d1_Alts_HLA.fa.alt
+cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt GRCh38tgen_decoy_alts_hla.fa.alt
 fc -ln -1 >> README
 echo >> README
+
+# Create a symbolic link to the reference genome
+ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.fa
 
 # Create bwa index files using bwa utility script
 echo "Create bwa index as follows:" >> README
-sbatch --export ALL,FASTA='../../genome_reference/GRCh38_hs38d1_Alts_HLA.fa' ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
+sbatch --export ALL,FASTA='GRCh38tgen_decoy_alts_hla.fa' ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
 fc -ln -1 >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm >> README
+echo >> README
+echo >> README
 
 ####################################
-## BUILD STAR REFERENCE GENOME
+## Download STAR REFERENCE GENOME
 ####################################
 
 # move back to the genome_reference directory
@@ -222,12 +237,79 @@ echo >> README_TGen
 
 # Rename fastq file
 echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README_TGen
-mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38_hs38d1.fa
+mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38tgen_decoy.fa
 fc -ln -1 >> README_TGen
 echo >> README_TGen
 
 # Add symbolic link to indicate which FASTA is used by STAR
-ln -s GRCh38_hs38d1.fa STAR_FASTA
+ln -s GRCh38tgen_decoy.fa STAR_FASTA
+
+####################################
+## Download Gene Model File
+####################################
+
+# move back to top level directory
+cd ${PARENT_DIR}/${TOPLEVEL_DIR}
+
+# Make gene_model directory if not available
+if [ -e gene_model ]
+then
+    echo "Gene Model directory exists, moving into it"
+    cd gene_model
+else
+    echo "Gene Model directory NOT fount, creating and moving into it now"
+    mkdir gene_model
+    cd gene_model
+fi
+
+# Make ensembl_v95 directory if not available
+if [ -e ensembl_v95 ]
+then
+    echo "Gene Model directory exists, moving into it"
+    cd ensembl_v95
+else
+    echo "Gene Model directory NOT fount, creating and moving into it now"
+    mkdir ensembl_v95
+    cd ensembl_v95
+fi
+
+# Initialize a gene_model specific README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+echo "Ensembl version 95 download and manipulations to align with reference genomes" >> README
+echo >> README
+
+# Download the gene model gtf from ensembl
+echo "Download the gene model gtf from ensembl" >> README
+wget ftp://ftp.ensembl.org/pub/release-95/gtf/homo_sapiens/Homo_sapiens.GRCh38.95.gtf.gz
+fc -ln -1 >> README
+gunzip Homo_sapiens.GRCh38.95.gtf.gz
+fc -ln -1 >> README
+
+####################################
+## Generate Gene Model Specific - tool_specific_resources
+####################################
+
+# Make gene_model specific tool_specific_resources directory if not available
+if [ -e tool_specific_resources ]
+then
+    echo "Gene Model tool_specific_resources directory exists, moving into it"
+    cd tool_specific_resources
+else
+    echo "Gene Model tool_specific_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_specific_resources
+    cd tool_specific_resources
+fi
+
+
+####################################
+## Generate Salmon Index
+####################################
 
 
 exit 0
@@ -263,7 +345,7 @@ diff hs38DH_contigs.txt Homo_sapiens_assembly38_contigs.txt
 ### Test TGen created fasta file versus other source fasta files
 
 # Get a contig list for comparisons
-grep "^>" GRCh38_hs38d1_Alts_HLA.fa > GRCh38_hs38d1_Alts_HLA_contigs.txt
+grep "^>" GRCh38tgen_decoy_alts_hla.fa > GRCh38_hs38d1_Alts_HLA_contigs.txt
 diff GRCh38_hs38d1_Alts_HLA_contigs.txt hs38DH_contigs.txt
 diff GRCh38_hs38d1_Alts_HLA_contigs.txt Homo_sapiens_assembly38_contigs.txt
 # Lots of differences in contigs, seem to be related to the rl: annotation element
@@ -275,6 +357,6 @@ diff GRCh38_hs38d1_Alts_HLA_contigs.txt Homo_sapiens_assembly38_contigs.txt | gr
 #> >chrUn_JTFH01001998v1_decoy  AC:JTFH01001998.1  gi:725020268  LN:2001  rl:unplaced  M5:35916d4135a2a9db7bc0749955d7161a  AS:hs38d1
 
 ### Check versus HS38DH from BWAKIT
-diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa
+diff GRCh38tgen_decoy_alts_hla.fa /home/tgenref/homo_sapiens/grch38_hg38/hs38dh/genome_references/hs38DH.fa
 # Differences with repeat masked lowecase and uppercase AGCT on the decoy contigs
-diff GRCh38_hs38d1_Alts_HLA.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
+diff GRCh38tgen_decoy_alts_hla.fa /home/tgenref/homo_sapiens/grch38_hg38/broad_resource_bundle/Homo_sapiens_assembly38.fasta
