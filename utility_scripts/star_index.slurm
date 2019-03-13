@@ -13,6 +13,13 @@
 set -ux
 module load STAR/2.6.1d
 
+# TODO:
+# GTF=${1}
+# FASTA=${2}
+# sbatch star_index.slurm transcriptome.gtf genome.fa
+# bash star_index.slurm transcriptome.gtf genome.fa
+# READ_LENGTH=${1}
+# SJDB_OVERHANG=READ_LENGTH-1
 #GTF=../../Homo_sapiens.GRCh38.95.ucsc.gtf
 #FASTA=../../../../Homo_sapiens.GRCh38.noalt.fasta
 #SJDB_OVERHANG="${1}"
