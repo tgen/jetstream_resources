@@ -4,23 +4,12 @@
 HISTFILE=~/.bash_history
 set -o history
 
-## The GRCh38 reference genome is represented in different public locations and not all have defined source information
-## This file tracks the source and generation of the reference and annotation files used in the Jetstream phoenix workflow
-
-## NOTE:
-### - Because BWA is alt aware and STAR does not support alternative contigs we are creating two versions
-### - Because BWAKIT and the Broad bundle lack sufficient source information we are creating references independently
-### ---- However, the BWAKIT version is identical to the broad bundle version, albeit with different base file names
-### - Also, review of what is used by GDC showed they use an identical base genome (1-22, X, Y, M, supercontigs, decoys, EBV) but with out alternative contigs
-### ---- To this they added a series of HPV and other viral genomes
-### ---- They use the same reference for BWA and STAR alignments
-
 ####################################
 ## Configure and make Directory Structure
 ####################################
 
 PATH_TO_REPO="/home/jkeats/git_repositories/jetstream_resources/"
-PARENT_DIR="/scratch/jkeats"
+PARENT_DIR="/home/tgenref/homo_sapiens/grch38_hg38"
 TOPLEVEL_DIR="hg38tgen"
 CREATOR="Jonathan Keats"
 
@@ -45,6 +34,19 @@ echo "Reference Genome and related files required for JetStream Phoenix Workflow
 echo >> README
 echo "For details on file creation see the associated github repository:"
 echo "https://github.com/tgen/jetstream_resources"
+echo >> README
+echo "
+## The GRCh38 reference genome is represented in different public locations and not all have defined source information
+## This file tracks the source and generation of the reference and annotation files used in the Jetstream phoenix workflow
+
+## NOTE:
+### - Because BWA is alt aware and STAR does not support alternative contigs we are creating two versions
+### - Because BWAKIT and the Broad bundle lack sufficient source information we are creating references independently
+### ---- However, the BWAKIT version is identical to the broad bundle version, albeit with different base file names
+### - Also, review of what is used by GDC showed they use an identical base genome (1-22, X, Y, M, supercontigs, decoys, EBV) but with out alternative contigs
+### ---- To this they added a series of HPV and other viral genomes
+### ---- They use the same reference for BWA and STAR alignments
+"  >> README
 
 ####################################
 ## Create reference genomes from known sources
