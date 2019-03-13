@@ -294,25 +294,52 @@ From wikipedia FASTA_format:,
     table2asn. The following list describes the NCBI FASTA defined format for 
     sequence identifiers.
 
-Type	Format(s)	Example(s)
-local (i.e. no database reference)	lcl|integer lcl|string lcl|123 lcl|hmm271
-GenInfo backbone seqid	bbs|integer	bbs|123
-GenInfo backbone moltype	bbm|integer	bbm|123
-GenInfo import ID	gim|integer	gim|123
-GenBank	gb|accession|locus	gb|M73307|AGMA13GT
-EMBL	emb|accession|locus	emb|CAM43271.1|
-PIR	pir|accession|name	pir||G36364
-SWISS-PROT	sp|accession|name	sp|P01013|OVAX_CHICK
-patent	pat|country|patent|sequence-number	pat|US|RE33188|1
-pre-grant patent	pgp|country|application-number|sequence-number	pgp|EP|0238993|7
-RefSeq	ref|accession|name	ref|NM_010450.1|
-general database reference (a reference to a database that's not in this list)	gnl|database|integer gnl|database|string gnl|taxon|9606 gnl|PID|e1632
-GenInfo integrated database	gi|integer	gi|21434723
-DDBJ	dbj|accession|locus	dbj|BAC85684.1|
-PRF	prf|accession|name	prf||0806162C
-PDB	pdb|entry|chain	pdb|1I4L|D
-third-party GenBank	tpg|accession|name	tpg|BK003456|
-third-party EMBL	tpe|accession|name	tpe|BN000123|
-third-party DDBJ	tpd|accession|name	tpd|FAA00017|
-TrEMBL	tr|accession|name	tr|Q90RT2|Q90RT2_9HIV1
 
+## Mitochondria - chrM, MT, etc.
+
+The mitochondrial chromosome is usually labelled chrM or MT, but there are
+also different sequences found across some genomes. * Current builds should
+only be using rCRS or RSRS, but be aware that RSRS has not been widely 
+adopted.
+
+
+| Name              | Length (bp) | NCBI Identifiers
+------------------------------------------------------------
+| RSRS              | 16569       | Not in Genbank
+| rCRS              | 16569       | [J01415.2/NC_012920.1](https://www.ncbi.nlm.nih.gov/nucleotide/J01415.2)
+| CRS               | 16569       | Removed after release of rCRS
+| Yoruba Sequence   | 16571       | [AF347015/NC_001807.4](https://www.ncbi.nlm.nih.gov/nucleotide/AF347015)
+| Uganda Sequence   | 16559       | [D38112](https://www.ncbi.nlm.nih.gov/nucleotide/D38112.1)
+| Swedish Sequence  | 16570       | [X93334](https://www.ncbi.nlm.nih.gov/nucleotide/X93334)
+| Japanese Sequence | 16554       | [AB055387](https://www.ncbi.nlm.nih.gov/nucleotide/AB055387)
+
+
+- Revised Sapiens Reference Sequence - RSRS
+  
+  Behar et al proposed a new sequence that is an "ancestral" reference rather
+  than a "leaf" reference. Some groups are still using rCRS because they
+  say the drawbacks to having yet another reference sequence floating around 
+  outweigh the benefits of using the ancestral sequence.
+  
+  Behar DM, van Oven M, Rosset S, et al. A "Copernican" reassessment of the 
+  human mitochondrial DNA tree from its root. Am J Hum Genet. 2012;90(4):675-84.
+
+- * Revised Cambridge Reference Sequence - rCRS
+  
+  Most common sequence used currently. Found in the NCBI/GRC fasta downloads for
+  GRCh38.
+
+- Cambridge Reference Sequence - CRS
+
+  The first draft of the full mitochondrial sequence published. This was later
+  corrected and released as rCRS. The original sequence was removed from Genbank
+  and should no longer be used.
+
+- Other Sequences
+
+  Some other sequences can be found that are less common. Generally rCRS should
+  be preferred over these, and remapping might be required for older microarray
+  data that used these sequences.
+
+
+ 
