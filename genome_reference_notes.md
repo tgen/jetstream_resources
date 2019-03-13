@@ -303,15 +303,15 @@ only be using rCRS or RSRS, but be aware that RSRS has not been widely
 adopted.
 
 
-| Name              | Length (bp) | NCBI Identifiers
-------------------------------------------------------------
-| RSRS              | 16569       | Not in Genbank
-| rCRS              | 16569       | [J01415.2/NC_012920.1](https://www.ncbi.nlm.nih.gov/nucleotide/J01415.2)
-| CRS               | 16569       | Removed after release of rCRS
-| Yoruba Sequence   | 16571       | [AF347015/NC_001807.4](https://www.ncbi.nlm.nih.gov/nucleotide/AF347015)
-| Uganda Sequence   | 16559       | [D38112](https://www.ncbi.nlm.nih.gov/nucleotide/D38112.1)
-| Swedish Sequence  | 16570       | [X93334](https://www.ncbi.nlm.nih.gov/nucleotide/X93334)
-| Japanese Sequence | 16554       | [AB055387](https://www.ncbi.nlm.nih.gov/nucleotide/AB055387)
+| Name              | Length (bp) | NCBI Identifiers |
+|-------------------|-------------|------------------|
+| RSRS              | 16569       | Not in Genbank |
+| rCRS              | 16569       | [J01415.2/NC_012920.1](https://www.ncbi.nlm.nih.gov/nucleotide/J01415.2) |
+| CRS               | 16569       | Removed after release of rCRS |
+| Yoruba Sequence   | 16571       | [AF347015/NC_001807.4](https://www.ncbi.nlm.nih.gov/nucleotide/AF347015) |
+| Uganda Sequence   | 16559       | [D38112](https://www.ncbi.nlm.nih.gov/nucleotide/D38112.1) |
+| Swedish Sequence  | 16570       | [X93334](https://www.ncbi.nlm.nih.gov/nucleotide/X93334) |
+| Japanese Sequence | 16554       | [AB055387](https://www.ncbi.nlm.nih.gov/nucleotide/AB055387) |
 
 
 - Revised Sapiens Reference Sequence - RSRS
