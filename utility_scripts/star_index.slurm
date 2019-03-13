@@ -36,9 +36,9 @@ STAR \
 # Error Capture
 if [ "$?" = "0" ]
 then
-    echo "PASSED_STAR_INDEX" >> README
+    echo "PASSED_STAR_INDEX_SJDB-${SJDB_OVERHANG}" >> README
 else
-    touch FAILED_STAR_INDEX
-    echo "FAILED_STAR_INDEX" >> README
+    touch FAILED_STAR_INDEX_SJDB-${SJDB_OVERHANG}
+    echo "FAILED_STAR_INDEX_SJDB-${SJDB_OVERHANG}" >> README
     exit 1
 fi
