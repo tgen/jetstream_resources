@@ -424,7 +424,7 @@ fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
 echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm >> README
+cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm >> README
 echo >> README
 
 ####################################
@@ -469,7 +469,7 @@ echo >> README
 
 # Create the Salmon index
 echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,FASTA='GRCh38tgen_decoy_alts_hla.fa' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
+sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,TRANSCRIPTOME_FASTA='../../Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
