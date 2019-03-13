@@ -8,7 +8,7 @@
 ## Script to create star index files
 
 ## Usage:
-## sbatch --export ALL,GTF='transcriptome.gtf',FASTA='genome.fa',SJDB_OVERHANG='75',INDEX_DIR='output_dir' star_index.slurm
+## sbatch --export ALL,GTF='transcriptome.gtf',FASTA='genome.fa',SJDB_OVERHANG='74',INDEX_DIR='75bpReads' star_index.slurm
 
 set -ux
 module load STAR/2.6.1d
@@ -27,7 +27,6 @@ fi
 
 STAR \
   --runMode genomeGenerate \
-  --outFileNamePrefix "${INDEX_DIR}" \
   --genomeDir "${INDEX_DIR}" \
   --runThreadN 19 \
   --sjdbOverhang "${SJDB_OVERHANG}" \
