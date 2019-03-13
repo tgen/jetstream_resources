@@ -75,6 +75,7 @@ echo >> README
 echo "Download README from NCBI" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/README_analysis_sets.txt
 fc -ln -1 >> README
+echo >> README
 
 ####################################
 ## Download BWA REFERENCE GENOME
@@ -139,28 +140,29 @@ echo >> README
 # Add symbolic link to indicate which FASTA is used by BWA
 ln -s GRCh38tgen_decoy_alts_hla.fa BWA_FASTA
 
-# Clean up the directory to store the downloads
-mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
-mv bwa.kit downloads
-mv README_analysis_sets.txt downloads
-mv bwakit_HLA.fasta downloads
-
 # Create faidx and dict files
-echo "Create faidx index using samtools" >> README
+echo "Create BWA faidx index using samtools" >> README
 module load samtools/1.9
 fc -ln -1 >> README
 samtools faidx GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README
 echo >> README
 
-echo "Create dictionary file using samtools" >> README
+echo "Create BWA dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
-    --species "Homo sapiens" \
-    --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
-    --output GRCh38tgen_decoy_alts_hla.dict \
-    GRCh38tgen_decoy_alts_hla.fa
+--species "Homo sapiens" \
+--uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
+--output GRCh38tgen_decoy_alts_hla.dict \
+GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README
 echo >> README
+
+# Clean up the directory to store the downloads
+mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
+mv bwa.kit downloads
+mv README_analysis_sets.txt downloads
+mv bwakit_HLA.fasta downloads
+rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
 
 ####################################
 ## INDEX BWA REFERENCE GENOME
@@ -235,8 +237,10 @@ echo >> README
 echo "Download fasta file for STAR, version without alternate contigs and no HLA alleles added" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
 fc -ln -1 >> README
-# Archive a copy in the downloads section
-echo "Archive compressed STAR fasta file download" >> README
+echo >> README
+
+# Archive a copy in the downloads section then decompress
+echo "Archive compressed STAR fasta file download then decompress" >> README
 cp GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz downloads/
 fc -ln -1 >> README
 gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
@@ -245,8 +249,6 @@ echo >> README
 
 # Rename fastq file
 echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README
-cp GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna downloads/
-fc -ln -1 >> README
 mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38tgen_decoy.fa
 fc -ln -1 >> README
 echo >> README
@@ -262,10 +264,10 @@ echo >> README
 
 echo "Create STAR dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
-    --species "Homo sapiens" \
-    --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
-    --output GRCh38tgen_decoy.dict \
-    GRCh38tgen_decoy.fa
+--species "Homo sapiens" \
+--uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
+--output GRCh38tgen_decoy.dict \
+GRCh38tgen_decoy.fa
 fc -ln -1 >> README
 echo >> README
 
@@ -390,6 +392,7 @@ echo >> README
 echo "Confirm the starting and final GTF have the same line count" >> README
 FINAL_GTF_LINES=`cat Homo_sapiens.GRCh38.95.ucsc.gtf | wc -l`
 fc -ln -1 >> README
+echo >> README
 
 if [ ${INPUT_GTF_LINES} -eq ${FINAL_GTF_LINES} ]
 then
@@ -406,11 +409,23 @@ else
     echo
     exit 1
 fi
+echo >> README
 
 # Clean-up directory
 rm temp_*
 mkdir downloads
 mv Homo_sapiens.GRCh38.95.gtf downloads
+
+# Create transcriptome fasta file derived from processed GTF
+# This submission records the jobID so the next step does not start until this is complete
+echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
+GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='../../genome_reference/GRCh38tgen_decoy.fa',GTF='Homo_sapiens.GRCh38.95.ucsc.gtf',OUTPUT='Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm)
+fc -ln -1 >> README
+echo >> README
+echo "Specific script code as follows:" >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm >> README
+echo >> README
 
 ####################################
 ## Generate Gene Model Specific - tool_specific_resources
@@ -443,7 +458,71 @@ else
     cd salmon
 fi
 
+# Initialize a salmon specific README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
+# Create the Salmon index
+echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
+sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,FASTA='GRCh38tgen_decoy_alts_hla.fa' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
+fc -ln -1 >> README
+echo >> README
+echo "Specific script code as follows:" >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm >> README
+echo >> README
+
+####################################
+## Generate Salmon Index
+####################################
+
+cd ..
+# Make star index directory if not available
+if [ -e star ]
+then
+    echo "STAR directory exists, moving into it"
+    cd star
+else
+    echo "STAR directory NOT fount, creating and moving into it now"
+    mkdir star
+    cd star
+fi
+
+# Initialize a star specific README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+
+# Create the STAR index files
+echo "Create STAR index files for 75bp read length" >> README
+sbatch --export ALL,GTF='../../Homo_sapiens.GRCh38.95.ucsc.gtf',FASTA='../../../../genome_reference/GRCh38tgen_decoy.fa',SJDB_OVERHANG='74',INDEX_DIR='75bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.slurm
+fc -ln -1 >> README
+echo >> README
+
+echo "Create STAR index files for 100bp read length" >> README
+sbatch --export ALL,GTF='../../Homo_sapiens.GRCh38.95.ucsc.gtf',FASTA='../../../../genome_reference/GRCh38tgen_decoy.fa',SJDB_OVERHANG='99',INDEX_DIR='100bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.slurm
+fc -ln -1 >> README
+echo >> README
+
+echo "Create STAR index files for 150bp read length" >> README
+sbatch --export ALL,GTF='../../Homo_sapiens.GRCh38.95.ucsc.gtf',FASTA='../../../../genome_reference/GRCh38tgen_decoy.fa',SJDB_OVERHANG='149',INDEX_DIR='150bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.slurm
+fc -ln -1 >> README
+echo >> README
+
+echo >> README
+echo "Specific script code as follows:" >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/star_index.slurm >> README
+echo >> README
 exit 0
 
 ####################################
