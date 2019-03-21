@@ -187,14 +187,14 @@ else
     cd tool_specific_resources
 fi
 
-if [ -e bwa ]
+if [ -e "bwa_0.7.17" ]
 then
     echo "The BWA directory exists, moving into it"
-    cd bwa
+    cd "bwa_0.7.17"
 else
     echo "The BWA directory NOT fount, creating and moving into it now"
-    mkdir bwa
-    cd bwa
+    mkdir "bwa_0.7.17"
+    cd "bwa_0.7.17"
 fi
 
 # Initialize a bwa index README
@@ -456,14 +456,14 @@ fi
 ####################################
 
 # Make salmon index directory if not available
-if [ -e salmon ]
+if [ -e "salmon_0.12.0" ]
 then
     echo "Salmon directory exists, moving into it"
-    cd salmon
+    cd "salmon_0.12.0"
 else
     echo "Salmon directory NOT fount, creating and moving into it now"
-    mkdir salmon
-    cd salmon
+    mkdir "salmon_0.12.0"
+    cd "salmon_0.12.0"
 fi
 
 # Initialize a salmon specific README
@@ -491,14 +491,14 @@ echo >> README
 
 cd ..
 # Make star index directory if not available
-if [ -e star ]
+if [ -e "star_2.6.1d" ]
 then
     echo "STAR directory exists, moving into it"
-    cd star
+    cd "star_2.6.1d"
 else
     echo "STAR directory NOT fount, creating and moving into it now"
-    mkdir star
-    cd star
+    mkdir "star_2.6.1d"
+    cd "star_2.6.1d"
 fi
 
 # Initialize a star specific README
