@@ -1,17 +1,23 @@
 #!/bin/bash -i
-
+HELP="Build_hg38tgen.sh
+usage: Build_hg38tgen.sh <PARENT_DIR> <REFDIRNAME(optional)> <CREATOR(optional)> 
+"
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
+set -ue
+
+PARENT_DIR=${1:-$(pwd)}
+TOPLEVEL_DIR=${2:-hg38tgen}
+CREATOR=${3:-${USER}}
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PATH_TO_REPO="$(dirname "${SCRIPT_DIR}")"
+
 
 ####################################
 ## Configure and make Directory Structure
 ####################################
-
-PATH_TO_REPO="/home/jkeats/git_repositories/jetstream_resources/"
-PARENT_DIR="/home/tgenref/homo_sapiens/grch38_hg38"
-TOPLEVEL_DIR="hg38tgen"
-CREATOR="Jonathan Keats"
 
 # Change to parent directory
 cd ${PARENT_DIR}
