@@ -427,7 +427,7 @@ mv Homo_sapiens.GRCh38.95.gtf downloads
 # Create transcriptome fasta file derived from processed GTF
 # This submission records the jobID so the next step does not start until this is complete
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='../../genome_reference/GRCh38tgen_decoy.fa',GTF='Homo_sapiens.GRCh38.95.ucsc.gtf',OUTPUT='Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm)
+GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='../../genome_reference/GRCh38tgen_decoy.fa',GTF='Homo_sapiens.GRCh38.95.ucsc.gtf',OUTPUT='Homo_sapiens.GRCh38.95.ucsc.transcriptome.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm)
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
@@ -477,7 +477,7 @@ echo >> README
 
 # Create the Salmon index
 echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,TRANSCRIPTOME_FASTA='../../Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
+sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,TRANSCRIPTOME_FASTA='../../Homo_sapiens.GRCh38.95.ucsc.transcriptome.fasta' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
