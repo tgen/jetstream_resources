@@ -1,17 +1,23 @@
 #!/bin/bash -i
-
+HELP="Build_hg38tgen.sh
+usage: Build_hg38tgen.sh <PARENT_DIR> <REFDIRNAME(optional)> <CREATOR(optional)> 
+"
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
+set -ue
+
+PARENT_DIR=${1:-$(pwd)}
+TOPLEVEL_DIR=${2:-hg38tgen}
+CREATOR=${3:-${USER}}
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+PATH_TO_REPO="$(dirname "${SCRIPT_DIR}")"
+
 
 ####################################
 ## Configure and make Directory Structure
 ####################################
-
-PATH_TO_REPO="/home/jkeats/git_repositories/jetstream_resources/"
-PARENT_DIR="/home/tgenref/homo_sapiens/grch38_hg38"
-TOPLEVEL_DIR="hg38tgen"
-CREATOR="Jonathan Keats"
 
 # Change to parent directory
 cd ${PARENT_DIR}
@@ -171,24 +177,24 @@ rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
 ####################################
 cd ..
 
-if [ -e tool_specific_resources ]
+if [ -e tool_resources ]
 then
-    echo "tool_specific_resources directory exists, moving into it"
-    cd tool_specific_resources
+    echo "tool_resources directory exists, moving into it"
+    cd tool_resources
 else
-    echo "tool_specific_resources directory NOT fount, creating and moving into it now"
-    mkdir tool_specific_resources
-    cd tool_specific_resources
+    echo "tool_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_resources
+    cd tool_resources
 fi
 
-if [ -e bwa ]
+if [ -e "bwa_0.7.17" ]
 then
     echo "The BWA directory exists, moving into it"
-    cd bwa
+    cd "bwa_0.7.17"
 else
     echo "The BWA directory NOT fount, creating and moving into it now"
-    mkdir bwa
-    cd bwa
+    mkdir "bwa_0.7.17"
+    cd "bwa_0.7.17"
 fi
 
 # Initialize a bwa index README
@@ -421,7 +427,7 @@ mv Homo_sapiens.GRCh38.95.gtf downloads
 # Create transcriptome fasta file derived from processed GTF
 # This submission records the jobID so the next step does not start until this is complete
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='../../genome_reference/GRCh38tgen_decoy.fa',GTF='Homo_sapiens.GRCh38.95.ucsc.gtf',OUTPUT='Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm)
+GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='../../genome_reference/GRCh38tgen_decoy.fa',GTF='Homo_sapiens.GRCh38.95.ucsc.gtf',OUTPUT='Homo_sapiens.GRCh38.95.ucsc.transcriptome.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm)
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
@@ -430,18 +436,18 @@ cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm >> README
 echo >> README
 
 ####################################
-## Generate Gene Model Specific - tool_specific_resources
+## Generate Gene Model Specific - tool_resources
 ####################################
 
-# Make gene_model specific tool_specific_resources directory if not available
-if [ -e tool_specific_resources ]
+# Make gene_model specific tool_resources directory if not available
+if [ -e tool_resources ]
 then
-    echo "Gene Model tool_specific_resources directory exists, moving into it"
-    cd tool_specific_resources
+    echo "Gene Model tool_resources directory exists, moving into it"
+    cd tool_resources
 else
-    echo "Gene Model tool_specific_resources directory NOT fount, creating and moving into it now"
-    mkdir tool_specific_resources
-    cd tool_specific_resources
+    echo "Gene Model tool_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_resources
+    cd tool_resources
 fi
 
 
@@ -450,14 +456,14 @@ fi
 ####################################
 
 # Make salmon index directory if not available
-if [ -e salmon ]
+if [ -e "salmon_0.12.0" ]
 then
     echo "Salmon directory exists, moving into it"
-    cd salmon
+    cd "salmon_0.12.0"
 else
     echo "Salmon directory NOT fount, creating and moving into it now"
-    mkdir salmon
-    cd salmon
+    mkdir "salmon_0.12.0"
+    cd "salmon_0.12.0"
 fi
 
 # Initialize a salmon specific README
@@ -471,7 +477,7 @@ echo >> README
 
 # Create the Salmon index
 echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,TRANSCRIPTOME_FASTA='../../Homo_sapiens.GRCh38.95.ucsc.fasta' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
+sbatch --dependency=afterok:${GTF_FASTA_JOBID} --export ALL,TRANSCRIPTOME_FASTA='../../Homo_sapiens.GRCh38.95.ucsc.transcriptome.fasta' ${PATH_TO_REPO}/utility_scripts/salmon_index.slurm
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
@@ -485,14 +491,14 @@ echo >> README
 
 cd ..
 # Make star index directory if not available
-if [ -e star ]
+if [ -e "star_2.6.1d" ]
 then
     echo "STAR directory exists, moving into it"
-    cd star
+    cd "star_2.6.1d"
 else
     echo "STAR directory NOT fount, creating and moving into it now"
-    mkdir star
-    cd star
+    mkdir "star_2.6.1d"
+    cd "star_2.6.1d"
 fi
 
 # Initialize a star specific README
