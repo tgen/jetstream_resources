@@ -177,14 +177,14 @@ rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
 ####################################
 cd ..
 
-if [ -e tool_specific_resources ]
+if [ -e tool_resources ]
 then
-    echo "tool_specific_resources directory exists, moving into it"
-    cd tool_specific_resources
+    echo "tool_resources directory exists, moving into it"
+    cd tool_resources
 else
-    echo "tool_specific_resources directory NOT fount, creating and moving into it now"
-    mkdir tool_specific_resources
-    cd tool_specific_resources
+    echo "tool_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_resources
+    cd tool_resources
 fi
 
 if [ -e "bwa_0.7.17" ]
@@ -436,18 +436,18 @@ cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm >> README
 echo >> README
 
 ####################################
-## Generate Gene Model Specific - tool_specific_resources
+## Generate Gene Model Specific - tool_resources
 ####################################
 
-# Make gene_model specific tool_specific_resources directory if not available
-if [ -e tool_specific_resources ]
+# Make gene_model specific tool_resources directory if not available
+if [ -e tool_resources ]
 then
-    echo "Gene Model tool_specific_resources directory exists, moving into it"
-    cd tool_specific_resources
+    echo "Gene Model tool_resources directory exists, moving into it"
+    cd tool_resources
 else
-    echo "Gene Model tool_specific_resources directory NOT fount, creating and moving into it now"
-    mkdir tool_specific_resources
-    cd tool_specific_resources
+    echo "Gene Model tool_resources directory NOT fount, creating and moving into it now"
+    mkdir tool_resources
+    cd tool_resources
 fi
 
 
