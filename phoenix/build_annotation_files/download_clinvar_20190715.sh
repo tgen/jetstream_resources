@@ -56,7 +56,7 @@ bcftools index --threads 4 temp_renamed.bcf
 ## Update the contig header (need to use an unreleased version with this new feature) so lengths are included
 /home/jkeats/downloads/bcftools/bcftools reheader \
 	--fai ${FAI} \
-	temp_renamed.vcf \
+	temp_renamed.bcf \
 	| \
 	bcftools view \
 	--output-type b \
