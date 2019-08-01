@@ -48,6 +48,7 @@ bcftools annotate \
     --output-type b \
     --output gnomad.exomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
     gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf
+bcftools index --threads 4 gnomad.exomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
 
 rm gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz
 rm gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz.md5
@@ -84,6 +85,7 @@ bcftools annotate \
     --output-type b \
     --output gnomad.genomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
     gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf
+bcftools index --threads 4 gnomad.genomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
 
 rm gnomad.genomes.r2.1.1.sites.liftover_grch38.vcf.bgz
 rm gnomad.genomes.r2.1.1.sites.liftover_grch38.vcf.bgz.md5
