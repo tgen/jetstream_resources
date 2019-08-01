@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 
-# CLINVAR_20190715* Downloaded July 27, 2019 by Jonathan Keats
+# Automated Script to download and build CLINVAR VCF file for usage in Phoenix workflow
 
-# Usage: download_clinvar_20190715.sh
+# Usage: ./build_clinvar_20190715.sh
 
 # Write this full document as a README
 cat $0 > README
+
+# Added user information and timestamp to README
+USER=`whoami`
+DATE=`date`
+echo "Downloaded and Processed by:  ${USER}" >> README
+echo ${DATE} >> README
 
 # Load required modules
 module load samtools/1.9
@@ -65,3 +71,9 @@ bcftools index --threads 4 clinvar_20190715_hg38tgen.bcf
 
 # Remove all the temp files
 rm temp_*
+
+############################
+###
+### Download and Processing Notes
+###
+############################
