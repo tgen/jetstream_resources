@@ -54,7 +54,7 @@ echo
 bcftools view \
     --threads 4 \
     --output-type z \
-    --output-file CosmicCodingMuts_v89_GRCh38.vcf.bgz
+    --output-file CosmicCodingMuts_v89_GRCh38.vcf.bgz \
     CosmicCodingMuts_v89_GRCh38.vcf
 bcftools index --tbi CosmicCodingMuts_v89_GRCh38.vcf.bgz
 
@@ -104,7 +104,7 @@ echo
 bcftools view \
     --threads 4 \
     --output-type z \
-    --output-file CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
+    --output-file CosmicNonCodingMuts_v89_GRCh38.vcf.bgz \
     CosmicNonCodingMuts_v89_GRCh38.vcf
 bcftools index --tbi CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
 
