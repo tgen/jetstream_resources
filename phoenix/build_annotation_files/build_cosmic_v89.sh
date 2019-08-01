@@ -40,21 +40,31 @@ DOWNLOAD_KEY=`echo $RESPONSE | sed 's/"}//g' | sed 's/{"url":"https:\/\/cog.sang
 # Download Cosmic Coding Mutations file (Authentication token expires after 1 hour)
 curl "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v89/VCF/CosmicCodingMuts.vcf.gz${DOWNLOAD_KEY}" > CosmicCodingMuts_v89_GRCh38.vcf.gz
 
+# The downloaded file is not bgzip so it needs to be decompressed with gunzip before processing
+gunzip CosmicCodingMuts_v89_GRCh38.vcf.gz
+
 # Check the contigs in the file, for matching the contigs need to match and coming from ensemble they will be 1 not chr1, etx..
 echo
 echo "Unique contig list in Cosmic Coding Mutations File:"
-bcftools view -H CosmicCodingMuts_v89_GRCh38.vcf.gz | cut -f1 | sort | uniq
+bcftools view -H CosmicCodingMuts_v89_GRCh38.vcf | cut -f1 | sort | uniq
 echo
 ### As expected only contigs in the VCF are 1-22, X, Y, MT in both files
 
+# Convert to block compressed and create .tbi index, seems needed, not sure why
+bcftools view \
+    --threads 4 \
+    --output-type z \
+    --output-file CosmicCodingMuts_v89_GRCh38.vcf.bgz
+    CosmicCodingMuts_v89_GRCh38.vcf
+bcftools index --tbi CosmicCodingMuts_v89_GRCh38.vcf.bgz
+
 # Update the contig names using bcftools
-bcftools index --threads 4 CosmicCodingMuts_v89_GRCh38.vcf.gz
 bcftools annotate \
 	--threads 4 \
 	--rename-chrs /home/jkeats/git_repositories/GRCh38_CrossMapping/GRCh38_Cosmic89_2_UCSC_Contigs.txt \
 	--output-type b \
 	--output temp_renamed.bcf \
-	CosmicCodingMuts_v89_GRCh38.vcf.gz
+	CosmicCodingMuts_v89_GRCh38.vcf.bgz
 bcftools index --threads 4 temp_renamed.bcf
 
 # Add updated contig header lines and add missing ones, required current bcftools version
@@ -80,21 +90,31 @@ RESPONSE=`curl -H "Authorization: Basic ${TOKEN}" https://cancer.sanger.ac.uk/co
 DOWNLOAD_KEY=`echo $RESPONSE | sed 's/"}//g' | sed 's/{"url":"https:\/\/cog.sanger.ac.uk\/cosmic\/GRCh38\/cosmic\/v89\/VCF\/CosmicNonCodingVariants.vcf.gz//g'`
 curl "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v89/VCF/CosmicNonCodingVariants.vcf.gz${DOWNLOAD_KEY}" > CosmicNonCodingMuts_v89_GRCh38.vcf.gz
 
+# The downloaded file is not bgzip so it needs to be decompressed with gunzip before processing
+gunzip CosmicNonCodingMuts_v89_GRCh38.vcf.gz
+
 # Check the contigs in the file, for matching the contigs need to match and coming from ensemble they will be 1 not chr1, etx..
 echo
 echo "Unique contig list in Cosmic Coding Mutations File:"
-bcftools view -H CosmicNonCodingMuts_v89_GRCh38.vcf.gz | cut -f1 | sort | uniq
+bcftools view -H CosmicNonCodingMuts_v89_GRCh38.vcf | cut -f1 | sort | uniq
 echo
 ### As expected only contigs in the VCF are 1-22, X, Y, MT in both files
 
+# Convert to block compressed and create .tbi index, seems needed, not sure why
+bcftools view \
+    --threads 4 \
+    --output-type z \
+    --output-file CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
+    CosmicNonCodingMuts_v89_GRCh38.vcf
+bcftools index --tbi CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
+
 # Update the contig names using bcftools
-bcftools index --threads 4 CosmicNonCodingMuts_v89_GRCh38.vcf.gz
 bcftools annotate \
 	--threads 4 \
 	--rename-chrs /home/jkeats/git_repositories/GRCh38_CrossMapping/GRCh38_Cosmic89_2_UCSC_Contigs.txt \
 	--output-type b \
 	--output temp_renamed.bcf \
-	CosmicNonCodingMuts_v89_GRCh38.vcf.gz
+	CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
 bcftools index --threads 4 temp_renamed.bcf
 
 # Add updated contig header lines and add missing ones, required current bcftools version
