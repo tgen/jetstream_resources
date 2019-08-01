@@ -1,9 +1,17 @@
 #!/bin/sh
 
-# dbSNP build 152 Downloaded July 27, 2019 by Jonathan Keats
+# Automated Script to download and build dbSNP build 152 VCF file for usage in Phoenix workflow
+
+# Usage: ./build_dbSNP_b152.sh
 
 # Write this full document as a README
 cat $0 > README
+
+# Added user information and timestamp to README
+USER=`whoami`
+DATE=`date`
+echo "Downloaded and Processed by:  ${USER}" >> README
+echo ${DATE} >> README
 
 # Load required modules
 module load samtools/1.9
@@ -72,4 +80,8 @@ bcftools index --threads 4 --stats dbSNP_b152_hg38tgen.bcf
 # Remove temp files
 rm temp_*
 
-
+############################
+###
+### Download and Processing Notes
+###
+############################

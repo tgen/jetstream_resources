@@ -2,7 +2,7 @@
 
 # Automated Script to download and build COSMIC coding and non-coding mutation VCF files for usage in Phoenix workflow
 
-# Usage: ./build_clinvar_20190715.sh
+# Usage: ./build_cosmic_v89.sh
 
 # Write this full document as a README
 cat $0 > README
