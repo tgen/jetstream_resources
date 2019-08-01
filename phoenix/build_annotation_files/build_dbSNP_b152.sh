@@ -71,3 +71,5 @@ bcftools index --threads 4 --stats dbSNP_b152_hg38tgen.bcf
 
 # Remove temp files
 rm temp_*
+
+
