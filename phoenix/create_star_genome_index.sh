@@ -99,17 +99,17 @@ echo >> README
 
 # Create the STAR index files
 echo "Create STAR index files for 75bp read length" >> README
-sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG='74',INDEX_DIR='75bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.sh
+sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="74",INDEX_DIR="75bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
 fc -ln -1 >> README
 echo >> README
 
 echo "Create STAR index files for 100bp read length" >> README
-sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG='99',INDEX_DIR='100bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.sh
+sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="99",INDEX_DIR="100bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
 fc -ln -1 >> README
 echo >> README
 
 echo "Create STAR index files for 150bp read length" >> README
-sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG='149',INDEX_DIR='150bpReads' ${PATH_TO_REPO}/utility_scripts/star_index.sh
+sbatch --export ALL,GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="149",INDEX_DIR="150bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
 fc -ln -1 >> README
 echo >> README
 
@@ -118,4 +118,3 @@ echo "Specific script code as follows:" >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/star_index.sh >> README
 echo >> README
-
