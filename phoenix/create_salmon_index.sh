@@ -101,7 +101,7 @@ echo >> README
 
 # Create the Salmon index
 echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION},TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
+sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
