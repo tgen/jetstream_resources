@@ -121,7 +121,7 @@ INPUT_GTF_LINES=`cat ${GTF_FILE_FLAT} | wc -l`
 # Check that all contigs exist in renaming key
 cut -f1 ${GTF_FILE_FLAT} | grep -v "#" | sort | uniq > temp_gtf_unique_contig_list
 GTF_CONTIG_NUMBER=`wc -l temp_gtf_unique_contig_list | awk '{print $1}'`
-RENAME_CONTIG_NUMBER=`wc -l ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv | awk '{print $1}'`
+RENAME_CONTIG_NUMBER=`wc -l ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv | awk '{print $1}'`
 # Test if the rename key and GTF have the same number of contigs
 if [ ${GTF_CONTIG_NUMBER} -eq ${RENAME_CONTIG_NUMBER} ]
 then
@@ -135,7 +135,7 @@ else
 fi
 #Just because the number of contigs matches doesn't mean they are the same ones
 #Make a list of unique rename original ensembl contig names
-cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv > temp_rename_key_contig_list
+cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv > temp_rename_key_contig_list
 #Merge the two lists and test if they all match using unique count as they should all be 2
 MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}'`
 #Test if the number of matching contigs is correct
@@ -178,7 +178,7 @@ echo >> README
 
 # Update column 1 file with new contig names
 echo "Update column 1 file with new contig names" >> README
-for line in `cat ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv`
+for line in `cat ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv`
 do
     OLD=`echo ${line} | cut -d, -f1`
     NEW=`echo ${line} | cut -d, -f2`
