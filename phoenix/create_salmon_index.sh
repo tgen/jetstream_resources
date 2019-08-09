@@ -24,6 +24,16 @@ else
     exit 1
 fi
 
+# Check that the reference genome for RNA was created successfully
+if [ -e RNA_FASTA_GENERATION_COMPLETE ]
+then
+    echo "RNA fasta exists, moving forward"
+else
+    echo "RNA fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
+fi
+
 # Check gene_model directory if not available
 if [ -e gene_model ]
 then
