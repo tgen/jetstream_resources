@@ -24,13 +24,23 @@ else
     exit 1
 fi
 
+# Check that the reference genome for RNA was created successfully
+if [ -e RNA_FASTA_GENERATION_COMPLETE ]
+then
+    echo "RNA fasta exists, moving forward"
+else
+    echo "RNA fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
+fi
+
 # Check gene_model directory if not available
 if [ -e gene_model ]
 then
     echo "Gene Model directory exists, moving into it"
     cd gene_model
 else
-    echo "Gene Model directory NOT found, IT IS REQUIRED, EXITING"
+    echo "Gene Model directory NOT found, IT IS REQUIRED, exiting as it should be created by a previous step"
     exit 1
 fi
 
@@ -40,9 +50,17 @@ then
     echo "Specific Gene Model directory exists, moving into it"
     cd ${GENE_MODEL_NAME}
 else
-    echo "Specific Gene Model directory NOT found, IT IS REQUIRED, EXITING"
+    echo "Specific Gene Model directory NOT found, IT IS REQUIRED, exiting as it should be created by a previous step"
     exit 1
 fi
+
+# Check that the required GTF was created successfully
+if [ -e GENE_MODEL_GTF_GENERATION_COMPLETE ]
+then
+    echo "Required gene model GTF exists, moving forward"
+else
+    echo "Required gene model GTF DOES NOT exist, exiting"
+    exit 2
 
 # Make gene_model specific tool_resources directory if not available
 if [ -e tool_resources ]
