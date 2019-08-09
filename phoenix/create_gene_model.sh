@@ -137,7 +137,7 @@ fi
 #Make a list of unique rename original ensembl contig names
 cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv > temp_rename_key_contig_list
 #Merge the two lists and test if they all match using unique count as they should all be 2
-MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}``
+MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}'`
 #Test if the number of matching contigs is correct
 if [ ${GTF_CONTIG_NUMBER} -eq ${MATCHING_CONTIG_NUMBER} ]
 then
