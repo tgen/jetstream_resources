@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-
 # Usage: create_gene_model.sh <Config.ini>
+
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
+HISTFILE=~/.bash_history
+set -o history
+set -ue
 
 # Read required variables from configuration file
 . ${1}
@@ -28,10 +32,10 @@ fi
 # Make ensembl_v95 directory if not available
 if [ -e ${GENE_MODEL_NAME} ]
 then
-    echo "Gene Model directory exists, moving into it"
+    echo "Specific Gene Model directory exists, moving into it"
     cd ${GENE_MODEL_NAME}
 else
-    echo "Gene Model directory NOT fount, creating and moving into it now"
+    echo "Specific Gene Model directory NOT fount, creating and moving into it now"
     mkdir ${GENE_MODEL_NAME}
     cd ${GENE_MODEL_NAME}
 fi
@@ -163,9 +167,8 @@ echo >> README
 
 # Clean-up directory
 rm temp_*
-rm ${GTF_FILE_FLAT}
 mkdir downloads
-mv ${GTF_FILE_GZ} downloads
+mv ${GTF_FILE_FLAT} downloads
 
 # Create transcriptome fasta file derived from processed GTF
 # This submission records the jobID so the next step does not start until this is complete
@@ -175,5 +178,5 @@ fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
 echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.slurm >> README
+cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh >> README
 echo >> README
