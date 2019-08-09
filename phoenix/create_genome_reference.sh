@@ -165,6 +165,8 @@ mv README_analysis_sets.txt downloads
 mv bwakit_HLA.fasta downloads
 rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
 
+# Add flag to top level to indicate process is complete
+touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE
 
 ####################################
 ## Download STAR REFERENCE GENOME
@@ -211,3 +213,6 @@ samtools dict --assembly GRCh38 \
     GRCh38tgen_decoy.fa
 fc -ln -1 >> README
 echo >> README
+
+# Add flag to top level to indicate process is complete
+touch ${TOPLEVEL_DIR}/RNA_FASTA_GENERATION_COMPLETE
