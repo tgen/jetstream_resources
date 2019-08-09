@@ -173,7 +173,7 @@ mv ${GTF_FILE_FLAT} downloads
 # Create transcriptome fasta file derived from processed GTF
 # This submission records the jobID so the next step does not start until this is complete
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-GTF_FASTA_JOBID=$(sbatch --parsable --export ALL,GENOME='${REFERENCE_RNA_GENOME_FASTA}',GTF='${GTF_FILE_BASE}.ucsc.gtf',OUTPUT='${GTF_FILE_BASE}.ucsc.transcriptome.fasta' ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh)
+sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
 fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
