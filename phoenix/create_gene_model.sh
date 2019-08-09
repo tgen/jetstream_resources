@@ -10,7 +10,8 @@
 ## Download Gene Model File
 ####################################
 
-# move back to top level directory
+# move to top level directory
+mkdir -p ${TOPLEVEL_DIR}
 cd ${TOPLEVEL_DIR}
 
 # Make gene_model directory if not available
