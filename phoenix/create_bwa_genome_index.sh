@@ -83,9 +83,9 @@ ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_
 
 # Create bwa index files using bwa utility script
 echo "Create bwa index as follows:" >> README
-sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm
+sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
 fc -ln -1 >> README
 echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/bwa_index.slurm >> README
+cat ${PATH_TO_REPO}/utility_scripts/bwa_index.sh >> README
 echo >> README
 echo >> README
