@@ -24,6 +24,16 @@ else
     exit 1
 fi
 
+# Check that the reference genome was created successfully
+if [ -e GENOME_FASTA_GENERATION_COMPLETE ]
+then
+    echo "Genome fasta exists, moving forward"
+else
+    echo "Genome fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
+fi
+
 ####################################
 ## Generate BWA index
 ####################################
