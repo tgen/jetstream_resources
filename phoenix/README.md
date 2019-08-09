@@ -6,5 +6,6 @@ These scripts are designed to create the full reference dataset needed for the P
 * create_genome_reference.sh
   * create_bwa_genome_index.sh
   * create_gene_model.sh
-    * create_salmon_index.sh
+    * --> transcriptome_fasta_creation
+      * create_salmon_index.sh
     * create_star_genome_index.sh
