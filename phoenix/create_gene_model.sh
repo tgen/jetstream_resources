@@ -10,15 +10,23 @@ set -ue
 # Read required variables from configuration file
 . ${1}
 
-####################################
-## Download Gene Model File
-####################################
 
-# move to top level directory
-mkdir -p ${TOPLEVEL_DIR} || true
-cd ${TOPLEVEL_DIR}
 
-# Make gene_model directory if not available
+####################################
+## Navigate Directory Structure
+###################################
+
+# Check top level directory if not available
+if [ -e ${TOPLEVEL_DIR} ]
+then
+    echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
+    cd ${TOPLEVEL_DIR}
+else
+    echo "Top level directory NOT found, IT IS REQUIRED, EXITING"
+    exit 1
+fi
+
+# Check gene_model directory if not available
 if [ -e gene_model ]
 then
     echo "Gene Model directory exists, moving into it"
@@ -32,13 +40,17 @@ fi
 # Make specific gene model directory
 if [ -e ${GENE_MODEL_NAME} ]
 then
-    echo "Specific Gene Model directory exists, moving into it"
-    cd ${GENE_MODEL_NAME}
+    echo "Specific Gene Model directory exists, exiting to prevent overwriting"
+    exit 2
 else
     echo "Specific Gene Model directory NOT fount, creating and moving into it now"
     mkdir ${GENE_MODEL_NAME}
     cd ${GENE_MODEL_NAME}
 fi
+
+####################################
+## Download Gene Model File
+####################################
 
 # Initialize a gene_model specific README
 touch README

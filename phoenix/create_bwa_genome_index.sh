@@ -11,22 +11,21 @@ set -ue
 . ${1}
 
 ####################################
-## Configure and make Directory Structure
+## Navigate Directory Structure
 ###################################
 
-# Make top level directory if not available
+# Check top level directory if not available
 if [ -e ${TOPLEVEL_DIR} ]
 then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
 else
-    echo "Top level directory NOT fount, creating and moving into it now"
-    mkdir -p ${TOPLEVEL_DIR}
-    cd ${TOPLEVEL_DIR}
+    echo "Top level directory NOT found, IT IS REQUIRED, EXITING"
+    exit 1
 fi
 
 ####################################
-## INDEX BWA REFERENCE GENOME
+## Generate BWA index
 ####################################
 
 if [ -e tool_resources ]
@@ -41,8 +40,8 @@ fi
 
 if [ -e "bwa_${BWA_VERSION}" ]
 then
-    echo "The BWA directory exists, moving into it"
-    cd bwa_${BWA_VERSION}
+    echo "The BWA directory exists, exiting to prevent overwriting existing index"
+    exit 2
 else
     echo "The BWA directory was NOT fount, creating and moving into it now"
     mkdir bwa_${BWA_VERSION}
