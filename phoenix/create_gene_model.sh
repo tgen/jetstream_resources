@@ -15,7 +15,7 @@ set -ue
 ####################################
 
 # move to top level directory
-mkdir -p ${TOPLEVEL_DIR}
+mkdir -p ${TOPLEVEL_DIR} || true
 cd ${TOPLEVEL_DIR}
 
 # Make gene_model directory if not available
@@ -44,7 +44,7 @@ fi
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources" >> README
+echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
