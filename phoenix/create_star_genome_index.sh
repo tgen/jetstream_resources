@@ -61,6 +61,7 @@ then
 else
     echo "Required gene model GTF DOES NOT exist, exiting"
     exit 2
+fi
 
 # Make gene_model specific tool_resources directory if not available
 if [ -e tool_resources ]
