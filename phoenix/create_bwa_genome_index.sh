@@ -10,9 +10,6 @@ set -ue
 # Read required variables from configuration file
 . ${1}
 
-## Load required modules to ensure needed tools are in your path
-module load bwa/${BWA_VERSION}
-
 ####################################
 ## Configure and make Directory Structure
 ###################################

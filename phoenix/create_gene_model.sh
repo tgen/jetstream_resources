@@ -29,7 +29,7 @@ else
     cd gene_model
 fi
 
-# Make ensembl_v95 directory if not available
+# Make specific gene model directory
 if [ -e ${GENE_MODEL_NAME} ]
 then
     echo "Specific Gene Model directory exists, moving into it"
