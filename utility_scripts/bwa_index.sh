@@ -8,9 +8,9 @@
 ## Script to create bwa index files
 
 ## Usage:
-## sbatch --export ALL,FASTA='genome.fa' bwa_index.slurm
+## sbatch --export ALL,FASTA="genome.fa",BWA_VERSION="0.17.1" bwa_index.sh
 
-module load bwa/0.7.17
+module load bwa/${BWA_VERSION}
 
 bwa index ${FASTA}
 
