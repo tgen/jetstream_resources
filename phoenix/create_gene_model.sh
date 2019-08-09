@@ -23,7 +23,27 @@ then
     cd ${TOPLEVEL_DIR}
 else
     echo "Top level directory NOT found, IT IS REQUIRED, EXITING"
-    exit 1
+    exit 2
+fi
+
+# Check that the reference genome was created successfully
+if [ -e GENOME_FASTA_GENERATION_COMPLETE ]
+then
+    echo "Genome fasta exists, moving forward"
+else
+    echo "Genome fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
+fi
+
+# Check that the reference genome for RNA was created successfully
+if [ -e RNA_FASTA_GENERATION_COMPLETE ]
+then
+    echo "RNA fasta exists, moving forward"
+else
+    echo "RNA fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
 fi
 
 # Check gene_model directory if not available
@@ -97,6 +117,38 @@ echo >> README
 # 2737564 Homo_sapiens.GRCh38.95.gtf
 # Set variable for testing
 INPUT_GTF_LINES=`cat ${GTF_FILE_FLAT} | wc -l`
+
+# Check that all contigs exist in renaming key
+cut -f1 ${GTF_FILE_FLAT} | grep -v "#" | sort | uniq > temp_gtf_unique_contig_list
+GTF_CONTIG_NUMBER=`wc -l temp_gtf_unique_contig_list | awk '{print $1}'`
+RENAME_CONTIG_NUMBER=`wc -l ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv | awk '{print $1}'`
+# Test if the rename key and GTF have the same number of contigs
+if [ ${GTF_CONTIG_NUMBER} -eq ${RENAME_CONTIG_NUMBER} ]
+then
+    echo "Number of unique contigs lines match in GTF and rename key"
+else
+    echo
+    echo "WARNING - number of contigs DOES NOT match between GTF and rename key"
+    echo "Exiting, this MUST BE FIXED"
+    echo
+    exit 2
+fi
+#Just because the number of contigs matches doesn't mean they are the same ones
+#Make a list of unique rename original ensembl contig names
+cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl95_ucsc_mappings_keats.csv > temp_rename_key_contig_list
+#Merge the two lists and test if they all match using unique count as they should all be 2
+MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}``
+#Test if the number of matching contigs is correct
+if [ ${GTF_CONTIG_NUMBER} -eq ${MATCHING_CONTIG_NUMBER} ]
+then
+    echo "All contigs names match in the GTF and rename key"
+else
+    echo
+    echo "WARNING - number of unique contig names DOES NOT match between GTF and rename key"
+    echo "Exiting, this MUST BE FIXED"
+    echo
+    exit 2
+fi
 
 echo "For processing the file needs to be split into 3 parts" >> README
 echo "--- 1) header section" >> README
@@ -192,3 +244,6 @@ echo "Specific script code as follows:" >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh >> README
 echo >> README
+
+# Indicate GTF was created successfully
+touch GENE_MODEL_GTF_GENERATION_COMPLETE
