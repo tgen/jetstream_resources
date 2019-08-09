@@ -36,6 +36,7 @@ if [ ${GTF_TRANSCRIPTS} -eq ${FASTA_TRANSCRIPTS} ]
 then
     echo "Output transcripts match as expected"
     echo "Output transcripts match as expected" >> README
+    touch TRANSCRIPTOME_FASTA_GENERATION_COMPLETE
     exit 0
 else
     echo "Output transcripts DO NOT match as expected"
