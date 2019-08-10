@@ -8,34 +8,25 @@
 ## Script to create star index files
 
 ## Usage:
-## sbatch --export ALL,STAR_VERSION=2.7.1a,GTF='transcriptome.gtf',FASTA='genome.fa',SJDB_OVERHANG='74',INDEX_DIR='75bpReads' star_index.sh
+## sbatch --export ALL,STAR_VERSION='2.7.1a',GTF='transcriptome.gtf',FASTA='genome.fa',SJDB_OVERHANG='74',INDEX_DIR='75bpReads' star_index.sh
 
 set -ux
 
 module load STAR/${STAR_VERSION}
 
-# TODO:
-# GTF=${1}
-# FASTA=${2}
-# sbatch star_index.slurm transcriptome.gtf genome.fa
-# bash star_index.slurm transcriptome.gtf genome.fa
-# READ_LENGTH=${1}
-# SJDB_OVERHANG=READ_LENGTH-1
-#GTF=../../Homo_sapiens.GRCh38.95.ucsc.gtf
-#FASTA=../../../../Homo_sapiens.GRCh38.noalt.fasta
-#SJDB_OVERHANG="${1}"
-#INDEX_DIR=./GRCh38.95_${1}bp/
+# Create requested index file, assumes it was called from an appropriate directory where you expect a star index
 
 if [ -d "${INDEX_DIR}" ]; then
   echo "Index already exists: ${INDEX_DIR}"
   exit 1
 else
   mkdir -p "${INDEX_DIR}"
+  cd ${INDEX_DIR}"
 fi
 
 STAR \
   --runMode genomeGenerate \
-  --genomeDir "${INDEX_DIR}" \
+  --genomeDir "../${INDEX_DIR}" \
   --runThreadN 19 \
   --sjdbOverhang "${SJDB_OVERHANG}" \
   --genomeFastaFiles "${FASTA}" \
