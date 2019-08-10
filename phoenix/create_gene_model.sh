@@ -229,6 +229,35 @@ else
 fi
 echo >> README
 
+# Create reflat file from GTF for Picard RNAseqMetrics
+# Uses gtfToGenePred from UCSC
+# http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
+echo "Create refflat file from GTF for picard rnaSeqMetrics" >> README
+${GTFTOGENEPRED_BINARY} -genePredExt \
+    -ignoreGroupsWithoutExons \
+    ${GTF_FILE_BASE}.ucsc.gtf \
+    /dev/stdout \
+    | \
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.txt
+fc -ln -1 >> README
+echo >> README
+
+# Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
+echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
+grep -w "rRNA" ${GTF_FILE_BASE}.ucsc.gtf \
+    | \
+    cut -f1,4,5,7,9 \
+    | \
+    sed 's/gene_id "//g' \
+    | \
+    sed 's/"; transcript_id "/\'$'\t''/g' \
+    | \
+    cut -f1-5 > temp_RibosomalLocations.txt
+fc -ln -1 >> README
+cat ${REFERENCE_RNA_GENOME_DICT} temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ucsc.ribo.interval_list
+fc -ln -1 >> README
+echo >> README
+
 # Clean-up directory
 rm temp_*
 mkdir downloads
@@ -247,3 +276,12 @@ echo >> README
 
 # Indicate GTF was created successfully
 touch GENE_MODEL_GTF_GENERATION_COMPLETE
+
+
+
+
+
+
+
+
+
