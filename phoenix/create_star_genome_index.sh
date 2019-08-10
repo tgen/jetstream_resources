@@ -90,8 +90,8 @@ else
 fi
 
 # Initialize a star specific README
-touch README
 echo >> README
+echo "------------------------------------------------------" >> README
 echo "For details on file creation see the associated github repository:" >> README
 echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
@@ -99,23 +99,16 @@ date >> README
 echo >> README
 
 # Create the STAR index files
-echo "Create STAR index files for 75bp read length" >> README
-sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="74",INDEX_DIR="75bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
-fc -ln -1 >> README
-echo >> README
+for line in `cat ${PATH_TO_REPO}/utility_files/star_index_lengths.csv`
+do
 
-echo "Create STAR index files for 100bp read length" >> README
-sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="99",INDEX_DIR="100bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
-fc -ln -1 >> README
-echo >> README
+    OVERHANG=`echo ${line} | cut -d"," -f1`
+    DIR=`echo ${line} | cut -d"," -f2`
+    echo "Create STAR index files for ${DIR}" >> README
+    sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
+    fc -ln -1 >> README
+    echo >> README
 
-echo "Create STAR index files for 150bp read length" >> README
-sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="149",INDEX_DIR="150bpReads" ${PATH_TO_REPO}/utility_scripts/star_index.sh
-fc -ln -1 >> README
-echo >> README
+done
 
-echo >> README
-echo "Specific script code as follows:" >> README
-echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/star_index.sh >> README
-echo >> README
+echo "------------------------------------------------------" >> README
