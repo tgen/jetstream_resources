@@ -21,7 +21,7 @@ if [ -d "${INDEX_DIR}" ]; then
   exit 1
 else
   mkdir -p "${INDEX_DIR}"
-  cd ${INDEX_DIR}"
+  cd "${INDEX_DIR}"
 fi
 
 STAR \
