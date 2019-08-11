@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: create_star_genome_index.sh <Config.ini>
+# Usage: create_REFERENCE_RNA_GENOME_FASTA_index.sh <Config.ini>
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
@@ -105,7 +105,7 @@ do
     OVERHANG=`echo ${line} | cut -d"," -f1`
     DIR=`echo ${line} | cut -d"," -f2`
     echo "Create STAR index files for ${DIR}" >> README
-    sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
+    sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${GENE_MODEL_GTF}",FASTA="${REFERENCE_RNA_GENOME_FASTA}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
 
 done
 fc -ln -1 >> README
