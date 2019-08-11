@@ -106,9 +106,10 @@ do
     DIR=`echo ${line} | cut -d"," -f2`
     echo "Create STAR index files for ${DIR}" >> README
     sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${STAR_GTF}",FASTA="${STAR_GENOME}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
-    fc -ln -1 >> README
-    echo >> README
 
 done
+fc -ln -1 >> README
+echo >> README
+echo "Index Generation Script: ${PATH_TO_REPO}/utility_scripts/star_index.sh" >> README
 
 echo "------------------------------------------------------" >> README
