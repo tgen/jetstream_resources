@@ -9,3 +9,4 @@ These scripts are designed to create the full reference dataset needed for the P
     * --> transcriptome_fasta_creation
       * create_salmon_index.sh
     * create_star_genome_index.sh
+    * create_snpEff_db.sh
