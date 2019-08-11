@@ -16,9 +16,10 @@ module load STAR/${STAR_VERSION}
 
 # Create requested index file, assumes it was called from an appropriate directory where you expect a star index
 
-if [ -d "${INDEX_DIR}" ]; then
-  echo "Index already exists: ${INDEX_DIR}"
-  exit 1
+if [ -d "${INDEX_DIR}" ]
+then
+  echo "Index already exists: ${INDEX_DIR}" >> README
+  exit 2
 else
   mkdir -p "${INDEX_DIR}"
   cd "${INDEX_DIR}"
@@ -35,8 +36,10 @@ STAR \
 # Error Capture
 if [ "$?" = "0" ]
 then
+    cd ..
     echo "PASSED_STAR_INDEX_SJDB-${SJDB_OVERHANG}" >> README
 else
+    cd ..
     touch FAILED_STAR_INDEX_SJDB-${SJDB_OVERHANG}
     echo "FAILED_STAR_INDEX_SJDB-${SJDB_OVERHANG}" >> README
     exit 1
