@@ -11,7 +11,10 @@
 
 module load snpEff/${SNPEFF_VERSION}
 
-java -jar snpEff.jar build -gtf22 -v ${SNPEFF_DB_NAME}
+# Call snpEff build, normally this would be java -jar snpEff but the module load points to a wrapper script
+# With module load snpEff/v4_3t
+$ snpEff == java -jar snpEff.jar
+snpEff build -gtf22 -v ${SNPEFF_DB_NAME}
 
 touch CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE
 
