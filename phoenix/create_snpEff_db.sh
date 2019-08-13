@@ -169,6 +169,6 @@ fi
 
 # Navigate to main snpEff folder and launch creation script
 cd ../..
-sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH} ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
+sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
 fc -ln -1 >> README_${SNPEFF_DB_NAME}
 echo >> README_${SNPEFF_DB_NAME}
