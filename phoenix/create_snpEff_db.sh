@@ -98,6 +98,18 @@ echo "Created and downloaded by ${CREATOR}" >> README_${SNPEFF_DB_NAME}
 date >> README_${SNPEFF_DB_NAME}
 echo >> README_${SNPEFF_DB_NAME}
 
+# Copy the snpEff config file to current directory
+echo "Copy snpEff config file with any required modifications to directory" >> README_${SNPEFF_DB_NAME}
+cp ${PATH_TO_REPO}/utility_files/snpEff.config .
+fc -ln -1 >> README_${SNPEFF_DB_NAME}
+echo >> README_${SNPEFF_DB_NAME}
+
+# Capture the full path to the config file to pass to snpEff
+echo "Capture the full path of the snpEff config file" >> README_${SNPEFF_DB_NAME}
+SNPEFF_CONFIG_PATH=`realpath snpEff.config`
+fc -ln -1 >> README_${SNPEFF_DB_NAME}
+echo >> README_${SNPEFF_DB_NAME}
+
 # Make snpEff data directory if not available
 if [ -e data ]
 then
@@ -157,6 +169,6 @@ fi
 
 # Navigate to main snpEff folder and launch creation script
 cd ../..
-sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
+sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH} ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
 fc -ln -1 >> README_${SNPEFF_DB_NAME}
 echo >> README_${SNPEFF_DB_NAME}
