@@ -83,7 +83,6 @@ echo "Extract just the common SNV on chrX from the dbSNP vcf" >> README
 echo "Remove any variants in the pseudoautosomal regions" >> README
 bcftools filter \
     --threads 8 \
-    --types snps \
     --regions chrX \
     --targets ^chrX:10001-2781479,chrX:155701383-156030895 \
     --include 'INFO/VC == "SNV" & INFO/COMMON == 1' \
@@ -93,8 +92,10 @@ bcftools filter \
 fc -ln -1 >> README
 echo >> README
 
-# Create a list of exon coordinates from the GTF file
-grep "exon" ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/Homo_sapiens.GRCh38.97.ucsc.gtf | cut -f1,4,5 > temp_exons_all.bed
+# need to filter to snps --types snps \
+
+# Create a list of exon coordinates from the GTF file, and correct start to bed format
+grep "exon" ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/Homo_sapiens.GRCh38.97.ucsc.gtf | cut -f1,4,5 | awk '{OFS="\t" ; print $1, $2-1, $3}' > temp_exons_all.bed
 fc -ln -1 >> README
 echo >> README
 # Many exons overlap so use bedtools to collapse the overlaps
