@@ -28,7 +28,7 @@ else
     exit 1
 fi
 
-ToDo: Fix needed checks like for dbSNP VCF and exon filter file
+#ToDo: Fix needed checks like for dbSNP VCF and exon filter file
 ## Needed inputs
 # 1) dbSNP list
 # 2) exon bed file
