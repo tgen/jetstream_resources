@@ -95,18 +95,24 @@ echo >> README
 # need to filter to snps --types snps \
 
 # Create a list of exon coordinates from the GTF file, and correct start to bed format
+echo "Create an BED file with the exons in GTF" >> README
 grep "exon" ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/Homo_sapiens.GRCh38.97.ucsc.gtf | cut -f1,4,5 | awk '{OFS="\t" ; print $1, $2-1, $3}' > temp_exons_all.bed
 fc -ln -1 >> README
 echo >> README
+
 # Many exons overlap so use bedtools to collapse the overlaps
-bedtools sort temp_exons_all.bed > temp_exons_all_sorted.bed
+echo "Sort the BED file to prepare for collapsing" >> README
+bedtools sort -i temp_exons_all.bed > temp_exons_all_sorted.bed
 fc -ln -1 >> README
 echo >> README
+
+echo "Collapse the BED file exons to removed overlaps and prevent selection of the same SNP multiple times" >> README
 bedtools merge -i temp_exons_all_sorted.bed > temp_exons_collapsed.bed
 fc -ln -1 >> README
 echo >> README
 
 # Filter the list to known exon coordiantes so the list is useful for genomes, exomes, and likely even RNAseq
+echo "Filter the chrX snps to just those in the exon regions but gender determination in genomes and exomes" >> README
 bcftools filter \
     --targets-file temp_exons_collapsed.bed \
     --output-type z \
@@ -115,7 +121,13 @@ bcftools filter \
 fc -ln -1 >> README
 echo >> README
 
-#rm temp_*
+# Create bed file for usage with freebayes to run genotyping
+echo "Create a BED file of the positions in question for usage with freebayes" >> README
+bcftools view -H chrx_common_dbSNPv152_snv_exons.vcf.gz | cut -f1,2 | awk '{OFS="\t" ; print $1, $2-1, $2}' > chrx_common_dbSNPv152_snv_exons.bed
+fc -ln -1 >> README
+echo >> README
+
+rm temp_*
 
 echo >> README
 echo >> README
