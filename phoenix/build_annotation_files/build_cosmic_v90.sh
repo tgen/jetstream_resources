@@ -131,9 +131,9 @@ bcftools index --threads 4 temp_renamed.bcf
 bcftools index --threads 4 CosmicNonCodingMuts_v90_hg38tgen.bcf
 
 rm temp_*
-rm CosmicNonCodingMuts_v89_GRCh38.vcf.bgz.tbi
-rm CosmicNonCodingMuts_v89_GRCh38.vcf.bgz
-rm CosmicNonCodingMuts_v89_GRCh38.vcf
+rm CosmicNonCodingMuts_v90_GRCh38.vcf.bgz.tbi
+rm CosmicNonCodingMuts_v90_GRCh38.vcf.bgz
+rm CosmicNonCodingMuts_v90_GRCh38.vcf
 
 ############################
 ###
