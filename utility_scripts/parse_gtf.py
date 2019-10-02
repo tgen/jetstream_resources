@@ -4,7 +4,6 @@ import argparse
 import logging as log
 import shutil
 import sys
-
 import GTF
 
 
@@ -33,10 +32,9 @@ def make_parser_args():
 	parser._action_groups.pop()
 	required = parser.add_argument_group('required arguments')
 	optional = parser.add_argument_group('optional arguments')
-	isRequired = True
 
 	required.add_argument('--gtf',
-	                      required=isRequired,
+	                      required=True,
 	                      action=UniqueStore,
 	                      help='URL to download GTF file or full path to a GTF (can be compressed or not)')
 	required.add_argument('--out',
@@ -52,6 +50,8 @@ def main(args, cmdline):
 	with open(args['out'], 'w') as wo:
 		for i in range(len(p)):
 			wo.write("{}\t{}\t{}\t{}___{}\t{}\t{}\n".format(p['seqname'][i], p['start'][i], p['end'][i], p['gene_id'][i], p['gene_name'][i],p['gene_biotype'][i], p['strand'][i]))
+
+
 
 if __name__ == '__main__':
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
 	try:
 		main(args, cmdline)
 	except Exception as e:
-		log.error("ERROR: Exception got Raised; Check you inputs and/or options ; {}".format(e))
+		log.error("ERROR: Exception got Raised; Check you inputs and/or options\n; {}".format(e))
 		sys.exit(1)
 	sys.exit()
 
