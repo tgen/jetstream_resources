@@ -50,7 +50,7 @@ def make_parser_args():
 def main(args, cmdline):
 	p = GTF.dataframe(args['gtf'])  ## dataframe returns a pandas.core.data.DataFrame
 	with open(args['out'], 'w') as wo:
-		for i in range(len(GTF.dataframe(args['gtf']))):
+		for i in range(len(p)):
 			wo.write("{}\t{}\t{}\t{}___{}\t{}\t{}\n".format(p['seqname'][i], p['start'][i], p['end'][i], p['gene_id'][i], p['gene_name'][i],p['gene_biotype'][i], p['strand'][i]))
 
 if __name__ == '__main__':
