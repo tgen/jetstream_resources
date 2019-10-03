@@ -3,7 +3,8 @@
 import argparse
 import logging as log
 import shutil
-import sys
+from sys import exit
+from sys import argv
 import GTF
 
 
@@ -24,7 +25,7 @@ class UniqueStore(argparse.Action):
 def check_if_executable_in_path(list_executables):
 	for executable in list_executables:
 		if shutil.which(executable) is None:
-			sys.exit(str(executable) + "  NOT IN PATH ; Aborting;")
+			exit(str(executable) + "  NOT IN PATH ; Aborting;")
 
 
 def make_parser_args():
@@ -36,17 +37,17 @@ def make_parser_args():
 	required.add_argument('--gtf',
 	                      required=True,
 	                      action=UniqueStore,
-	                      help='URL to download GTF file or full path to a GTF (can be compressed or not)')
+	                      help='full or relative path to an __Uncompressed__ GTF')
 	required.add_argument('--out',
 	                      required=True,
 	                      action=UniqueStore,
-	                      help='name of the output file')
+	                      help='name of the output file (full or relative path)')
 
 	return parser
 
 
-def main(args, cmdline):
-	p = GTF.dataframe(args['gtf'])  ## dataframe returns a pandas.core.data.DataFrame
+def main(args):
+	p = GTF.dataframe(args['gtf'])  ## GFT.dataframe returns a pandas.core.data.DataFrame
 	with open(args['out'], 'w') as wo:
 		for i in range(len(p)):
 			wo.write("{}\t{}\t{}\t{}___{}\t{}\t{}\n".format(p['seqname'][i], p['start'][i], p['end'][i], p['gene_id'][i], p['gene_name'][i],p['gene_biotype'][i], p['strand'][i]))
@@ -63,15 +64,18 @@ if __name__ == '__main__':
 	##TODO check if ALL intended python packages are present in python3
 
 	# capture command line
-	cmdline = ' '.join(sys.argv)
+	cmdline = ' '.join(argv)
+	log.info(' '.join(["Command Line captured: ", cmdline]))
+
+	# capture arguments
 	parser = make_parser_args()
 	args = vars(parser.parse_args())  # vars() function returns a dictionary of key-value arguments
 	log.info(str(args))
-	log.info(' '.join(["Command Line captured: ", cmdline]))
+	
 	try:
-		main(args, cmdline)
+		main(args)
 	except Exception as e:
 		log.error("ERROR: Exception got Raised; Check you inputs and/or options\n; {}".format(e))
-		sys.exit(1)
-	sys.exit()
+		exit(1)
+	exit()
 
