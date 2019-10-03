@@ -33,7 +33,7 @@ ENSEMBL_VERSION=97
 DIR_IN=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}
 EXPECTED_GTF_FILE=${DIR_IN}/Homo_sapiens.GRCh38.${ENSEMBL_VERSION}.ucsc.gtf
 DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/tool_resources/delly/ensembl_v${ENSEMBL_VERSION}
-DIR_OUT="."
+#DIR_OUT="."
 
 
 COUNT_GTF_FILES_FOUND=$(find $(dirname ${EXPECTED_GTF_FILE}) -type f -name "$(basename ${EXPECTED_GTF_FILE})" | wc -l)
