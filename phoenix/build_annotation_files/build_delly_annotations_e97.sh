@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# This version of python3 with pandas is required
+module load python/3.6.0
+
 set -euo pipefail
 
 function make_file_list_biotypes_to_keep(){
