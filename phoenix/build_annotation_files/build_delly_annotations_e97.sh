@@ -30,9 +30,10 @@ TR_V_pseudogene" > ${FILE_OUT}
 }
 
 ENSEMBL_VERSION=97
-DIR_IN=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION/
-EXPECTED_GTF_FILE=${DIR_IN}/Homo_sapiens.GRCh38.${ENSEMBL_VERSION.ucsc.gtf
-DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/tool_resources/delly/ensembl_v${ENSEMBL_VERSION}/
+DIR_IN=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}
+EXPECTED_GTF_FILE=${DIR_IN}/Homo_sapiens.GRCh38.${ENSEMBL_VERSION}.ucsc.gtf
+DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/tool_resources/delly/ensembl_v${ENSEMBL_VERSION}
+DIR_OUT="."
 
 
 COUNT_GTF_FILES_FOUND=$(find $(dirname ${EXPECTED_GTF_FILE}) -type f -name "$(basename ${EXPECTED_GTF_FILE})" | wc -l)
@@ -44,7 +45,7 @@ else
 	exit 1
 fi
 
-if [[ ! -e ../../utility_scripts/parse_gtf.py && ! -e ../../utility_scripts/GTF.py ]]
+if [[ ! -e $(dirname $(readlink -f $0))/../../utility_scripts/parse_gtf.py && ! -e $(dirname $(readlink -f $0))/../../utility_scripts/GTF.py ]]
 then
 	echo -e "ERROR: Missing Python scripts; Scripts parse_gtf and GTF.py scripts MUST be in << utility_scripts >> directory "
 	exit 1
@@ -54,7 +55,7 @@ fi
 mkdir -p ${DIR_OUT}
 FILE_LIST_BIOTYPES=${DIR_OUT}/list_biotypes_to_keep_for_grep.txt
 make_file_list_biotypes_to_keep ${FILE_LIST_BIOTYPES}
-INTERMEDIATE_GTF=${DIR_OUT}/${GTF_FILE}_gene.gtf
+INTERMEDIATE_GTF=${DIR_OUT}/$(basename ${GTF_FILE%.*})_gene.gtf
 BED_ANNOFILE_ALL_BIOTYPES=${DIR_OUT}/delly_anno_$(basename ${GTF_FILE%.*}).all_biotypes.bed
 BED_ANNOFILE_KEPT_BIOTYPES=${DIR_OUT}/delly_anno_$(basename ${GTF_FILE%.*}).bed
 
@@ -66,7 +67,7 @@ if [[ $? -ne 0 ]] ;	then echo -e "ERROR: Subset GTF by GENE only FAILED; Abortin
 
 
 echo -e "parsing GTF ... and making all_biotype bed file ..."
-python ../../utility_scripts/parse_gtf.py --gtf ${INTERMEDIATE_GTF} --out ${BED_ANNOFILE_ALL_BIOTYPES}
+python $(dirname $(readlink -f $0))/../../utility_scripts/parse_gtf.py --gtf ${INTERMEDIATE_GTF} --out ${BED_ANNOFILE_ALL_BIOTYPES}
 echo -e "subsetting by specific biotypes ..."
 cat ${BED_ANNOFILE_ALL_BIOTYPES} | grep -wf ${FILE_LIST_BIOTYPES}  > ${BED_ANNOFILE_KEPT_BIOTYPES}
 if [[ $? -ne 0 ]] ;	then echo -e "ERROR: grep FAILED ;Aborting ;" ; exit 1 ; fi
