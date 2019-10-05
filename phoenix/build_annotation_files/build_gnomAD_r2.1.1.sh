@@ -50,7 +50,7 @@ bcftools annotate \
     gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf
 bcftools index --threads 4 gnomad.exomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
 
-bcftools stats --threads 8 gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf
+bcftools stats --threads 8 gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf > gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf.stats
 plot-vcfstats --no-PDF --title "GnomAD Exomes" -p plots_vcfstats_exomes gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf.stats
 
 rm gnomad.exomes.r2.1.1.sites.liftover_grch38.vcf.bgz
@@ -90,7 +90,7 @@ bcftools annotate \
     gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf
 bcftools index --threads 4 gnomad.genomes.r2.1.1.sites.liftover_grch38_NoINFO.bcf
 
-bcftools stats --threads 8 gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf
+bcftools stats --threads 8 gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf > gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf.stats
 plot-vcfstats --no-PDF --title "GnomAD Genomes" -p plots_vcfstats_genomes gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf.stats
 
 rm gnomad.genomes.r2.1.1.sites.liftover_grch38.vcf.bgz
