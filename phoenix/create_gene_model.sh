@@ -258,6 +258,18 @@ cat ${REFERENCE_RNA_GENOME_DICT} temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.
 fc -ln -1 >> README
 echo >> README
 
+echo "Create refflat file from GTF for IGV genemodel tracks with HUGO IDs" >> README
+${GTFTOGENEPRED_BINARY} -genePredExt \
+    -ignoreGroupsWithoutExons \
+    -geneNameAsName2 \
+    ${GTF_FILE_BASE}.ucsc.gtf \
+    /dev/stdout \
+    | \
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.hugoID.txt
+fc -ln -1 >> README
+echo >> README
+
+
 # Clean-up directory
 rm temp_*
 mkdir downloads
