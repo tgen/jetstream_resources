@@ -15,6 +15,7 @@ echo ${DATE} >> README
 
 # Load required modules
 module load samtools/1.9
+module load gatk/4.1.3.0
 
 ############################
 ###
@@ -95,6 +96,90 @@ plot-vcfstats --no-PDF --title "GnomAD Genomes" -p plots_vcfstats_genomes gnomad
 
 rm gnomad.genomes.r2.1.1.sites.liftover_grch38.vcf.bgz
 rm gnomad.genomes.r2.1.1.sites.liftover_grch38.vcf.bgz.md5
+
+############################
+###
+### Create Genome and Exome versions for MuTect Input
+###
+############################
+
+# Make Allele Frequency Only VCF
+# Clear ID and QUAL and delete all INFO fields other than AF
+bcftools annotate \
+    --threads 8 \
+    --remove ID,QUAL,^INFO/AF \
+    --output-type z \
+    --output gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz \
+    gnomad.exomes.r2.1.1.sites.liftover_grch38.bcf
+# Create TBI index
+bcftools index --threads 4 --tbi gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+# Select Common Bi-Allelic SNPs got Mutects Contamination Testing
+bcftools view \
+    --threads 8 \
+    --apply-filters PASS \
+    --include 'AF>=0.05' \
+    --types snps \
+    --min-alleles 2 \
+    --max-alleles 2 \
+    --output-type z \
+    --output-file gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutectContamination.vcf.gz \
+    gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+# Create TBI index
+bcftools index --threads 4 --tbi gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutectContamination.vcf.gz
+
+
+# Make Allele Frequency Only VCF
+# Clear ID and QUAL and delete all INFO fields other than AF
+bcftools annotate \
+    --threads 8 \
+    --remove ID,QUAL,^INFO/AF \
+    --output-type z \
+    --output gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz \
+    gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf
+# Create TBI index
+bcftools index --threads 4 --tbi gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+# Select Common Bi-Allelic SNPs got Mutects Contamination Testing
+bcftools view \
+    --threads 8 \
+    --apply-filters PASS \
+    --include 'AF>=0.05' \
+    --types snps \
+    --min-alleles 2 \
+    --max-alleles 2 \
+    --output-type z \
+    --output-file gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutectContamination.vcf.gz \
+    gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+# Create TBI index
+bcftools index --threads 4 --tbi gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutectContamination.vcf.gz
+
+## BROAD VERSION OF THE SAME PROCESSES (https://github.com/broadinstitute/gatk/blob/master/scripts/mutect2_wdl/mutect_resources.wdl)
+# Clear ID and QUAL and delete all INFO fields other than AF
+# Save off the header for later:
+# grep '^#' ${input_vcf} > header &
+# Get all lines in the file except the header:
+# Preserve all fields before INFO, Grab only the AF annotation from the INFO Field
+# replace ID (3rd) and QUAL (6th) columns with '.' (empty):
+# grep -v "^#" ${input_vcf} | sed -e 's#\(.*\)\t\(.*\)\t\(.*\)\t\(.*\)\t\(.*\)\t\(.*\)\t\(.*\)\t.*;AF=\([0-9]*\.[e0-9+-]*\).*#\1\t\2\t.\t\4\t\5\t.\t\7\tAF=\8#g' > simplified_body &
+# Wait for background processes to finish:
+# wait
+# Consolidate files:
+# cat header simplified_body > simplified.vcf
+# Zip the VCF:
+# bgzip simplified.vcf -O ${output_name}.vcf.gz
+# Index output file:
+# gatk --java-options "-Xmx${command_mem}g" IndexFeatureFile -F ${output_name}.vcf.gz
+# Cleanup:
+# rm -f header body simplified_info simplified_body simplified.vcf simplified.vcf.idx
+# Select Common Bi-Allelic SNPs
+# gatk --java-options "-Xmx${command_mem}g" SelectVariants \
+#            -V ${input_vcf} \
+#            -select-type SNP -restrict-alleles-to BIALLELIC \
+#            -select "AF > ${minimum_allele_frequency}" \
+#            -O ${output_name}.vcf.gz \
+#            --lenient
+
 
 
 ############################
