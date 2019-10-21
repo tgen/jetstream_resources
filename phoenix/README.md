@@ -9,4 +9,11 @@ These scripts are designed to create the full reference dataset needed for the P
     * transcriptome_fasta_creation (automatic initiation by gene_model script)
       * create_salmon_index.sh
     * create_star_genome_index.sh 
-    * create_snpEff_db.sh 
+    * create_snpEff_db.sh
+* build_clinivar_20190715.sh
+* build_cosmic_v90.sh
+* build_dbSNP_b152.sh
+  * create_genderCheck_SNP_list.sh
+* build_delly_annotations_e97.sh (UPDATE, dependancies???)
+* build_gnomeAD_r3.0.sh
+* build lymphocyte_count_windows.sh
