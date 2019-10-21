@@ -63,7 +63,7 @@ then
     echo "Specific Gene Model directory exists, exiting to prevent overwriting"
     exit 2
 else
-    echo "Specific Gene Model directory NOT fount, creating and moving into it now"
+    echo "Specific Gene Model directory NOT fount, creating it now and moving into it"
     mkdir ${GENE_MODEL_NAME}
     cd ${GENE_MODEL_NAME}
 fi
