@@ -7,8 +7,8 @@ set -ue
 
 # Automated Script to download and configure VEP database for Phoenix workflow
 
-# Usage: ./build_vep_database.sh <resources.ini>
-# Sbatch Usage: sbatch --nodes=1 --cpus-per-task=10 --time=0-72:00:00 build_vep_database.sh <resources.ini>
+# Usage: ./create_vep_database.sh <resources.ini>
+# Sbatch Usage: sbatch --nodes=1 --cpus-per-task=10 --time=0-72:00:00 create_vep_database.sh <resources.ini>
 
 # Check to resources.ini was provided on the command line
 if [ -n "$1" ]
