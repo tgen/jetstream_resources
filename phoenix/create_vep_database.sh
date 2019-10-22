@@ -59,10 +59,7 @@ else
     cd v${ENSEMBL_VERSION}
 fi
 
-# Write this full document as a README
-cat $0 > README
-
-# Initialize a salmon specific README
+# Initialize a process specific README
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
