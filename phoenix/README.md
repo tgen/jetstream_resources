@@ -10,6 +10,7 @@ These scripts are designed to create the full reference dataset needed for the P
       * create_salmon_index.sh
     * create_star_genome_index.sh 
     * create_snpEff_db.sh
+      * **NOTE**: make sure you update the snpEff.config in the utility_files directory BEFORE RUNNING
 * build_clinivar_20190715.sh
 * build_cosmic_v90.sh
 * build_dbSNP_b152.sh
