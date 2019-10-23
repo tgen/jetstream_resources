@@ -79,7 +79,7 @@ fc -ln -1 >> README
 echo >> README
 
 echo "Compare checksums" >> README
-md5sum --check CHECKSUMS
+sum homo_sapiens_vep_${ENSEMBL_VERSION}_GRCh38.tar.gz
 fc -ln -1 >> README
 echo >> README
 
