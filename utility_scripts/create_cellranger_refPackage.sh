@@ -12,6 +12,7 @@
 REFERENCE_RNA_GENOME_FASTA=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/genome_reference/GRCh38tgen_decoy.fa
 INPUT_GTF=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v98/Homo_sapiens.GRCh38.98.ucsc.gtf
 CELLRANGER_VERSION="3.1.0"
+FILTERED_GTF=Homo_sapiens.GRCh38.98.ucsc.10xflt.gtf
 
 # Load cellranger version
 module load cellranger/${CELLRANGER_VERSION}
