@@ -114,6 +114,18 @@ bcftools annotate \
 # Create TBI index
 bcftools index --threads 4 --tbi gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
 
+bcftools view \
+    --threads 8 \
+    --apply-filters PASS \
+    --output-type z \
+    --output-file gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect2.vcf.gz \
+    gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+mv gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect2.vcf.gz gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+rm gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz.tbi
+bcftools index --threads 4 --tbi gnomad.exomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+
 # Select Common Bi-Allelic SNPs got Mutects Contamination Testing
 bcftools view \
     --threads 8 \
@@ -138,6 +150,18 @@ bcftools annotate \
     --output gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz \
     gnomad.genomes.r2.1.1.sites.liftover_grch38.bcf
 # Create TBI index
+bcftools index --threads 4 --tbi gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+bcftools view \
+    --threads 8 \
+    --apply-filters PASS \
+    --output-type z \
+    --output-file gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect2.vcf.gz \
+    gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+mv gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect2.vcf.gz gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
+
+rm gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz.tbi
 bcftools index --threads 4 --tbi gnomad.genomes.r2.1.1.sites.liftover_grch38_ForMutect.vcf.gz
 
 # Select Common Bi-Allelic SNPs got Mutects Contamination Testing
