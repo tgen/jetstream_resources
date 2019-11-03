@@ -35,7 +35,7 @@ TR_V_pseudogene" > ${FILE_OUT}
 ENSEMBL_VERSION=98
 DIR_IN=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}
 EXPECTED_GTF_FILE=${DIR_IN}/Homo_sapiens.GRCh38.${ENSEMBL_VERSION}.ucsc.gtf
-DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v98/tool_resources/delly/ensembl_v${ENSEMBL_VERSION}
+DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}/tool_resources/delly
 #DIR_OUT="."
 
 
