@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: ./build_dbSNP_b152.sh
+# Usage: ./build_lymphocyte_count_windows.sh
 
 # Write this full document as a README
 cat $0 > README
