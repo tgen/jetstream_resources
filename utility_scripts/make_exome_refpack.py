@@ -483,7 +483,7 @@ def main(args=None):
             )
 
         log.critical("Saving results...")
-        RESULTSFILES.save_all(prefix=out_prefix)
+        RESULTSFILES.save_all(prefix=args.out_prefix)
     finally:
         if args.save_temp:
             log.critical("Saving temp files...")
