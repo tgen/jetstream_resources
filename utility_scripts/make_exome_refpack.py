@@ -221,6 +221,31 @@ def arg_parser():
         help='Enable cna ref file creation'
     )
 
+    parser.add_argument(
+        '--style',
+        action='store_true',
+        help='Style of reference - chr vs no chr'
+    )
+
+    parser.add_argument(
+        '--parent_dir',
+        action='store_true',
+        help='Location of where capture kits are stored'
+    )
+
+    parser.add_argument(
+        '--exome_code',
+        action='store_true',
+        help='Code for the exome (helps with naming)'
+    )
+
+    parser.add_argument(
+        '--exome_path',
+        action='store_true',
+        help='Path to exome capture kit subfolder'
+    )
+
+
     return parser
 
 
@@ -458,7 +483,8 @@ def main(args=None):
             )
 
         log.critical("Saving results...")
-        RESULTSFILES.save_all(prefix=args.out_prefix)
+        build_path = args.parent_prefix + args.exome_path + args.exome_code
+        RESULTSFILES.save_all(prefix=build_path)
     finally:
         if args.save_temp:
             log.critical("Saving temp files...")
