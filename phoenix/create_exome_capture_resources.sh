@@ -126,6 +126,8 @@ do
 
     KIT_CODE=`echo ${line} | cut -d"," -f1`
     KIT_NAME=`echo ${line} | cut -d"," -f2`
+    TARGETS_BED=`echo ${line} | cut -d"," -f3`
+    BAITS_BED=`echo ${line} | cut -d"," -f4`
 
     # Check if capture kit directory already exists in this location
     if [ -e $KIT_CODE ]
@@ -141,11 +143,15 @@ do
         cd $KIT_CODE
 
         # Run script to create needed files from expected inputs
+        make_exome_refpack.py -t ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${TARGETS_BED} -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} -r ${REFERENCE_DNA_GENOME_DICT} -g ${GENE_MODEL_GTF}
 
 
         # Back up to main directory
         cd ..
     fi
+
+    ## Exit after first as a test
+    exit 0
 
 done
 
