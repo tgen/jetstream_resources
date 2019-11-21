@@ -483,7 +483,7 @@ def main(args=None):
             )
 
         log.critical("Saving results...")
-        build_path = args.parent_prefix + args.exome_path + args.exome_code
+        build_path = args.parent_dir + args.exome_path + args.exome_code
         RESULTSFILES.save_all(prefix=build_path)
     finally:
         if args.save_temp:
