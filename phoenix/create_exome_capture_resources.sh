@@ -153,6 +153,9 @@ do
             -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} \
             -r ${REFERENCE_DNA_GENOME_BASENAME} \
             -g ${GENE_MODEL_GTF} \
+            --parent_dir ${PARENT_DIR}/capture_kits/ \
+            --exome_code ${KIT_CODE} \
+            --exome_path ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/tool_resources/capture_kits/${KIT_CODE} \
             --out-prefix ${KIT_CODE}_${GENOME_SUBVERSION_NAME}_${GENE_MODEL_NAME}
 
 
