@@ -111,6 +111,11 @@ fi
 ## Generate Required Capture Kit Resoureces
 ####################################
 
+# load required tools
+module load GATK/4.1.4.0-GCCcore-8.2.0-Java-1.8
+module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+module load Python/3.7.2-foss-2019a
+
 # Initialize a capture kit specific README
 echo >> README
 echo "------------------------------------------------------" >> README
@@ -143,7 +148,7 @@ do
         cd $KIT_CODE
 
         # Run script to create needed files from expected inputs
-        ${PATH_TO_REPO}/utility_scripts/make_exome_refpack.py \
+        python3 ${PATH_TO_REPO}/utility_scripts/make_exome_refpack.py \
             -t ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${TARGETS_BED} \
             -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} \
             -r ${REFERENCE_DNA_GENOME_DICT} \
