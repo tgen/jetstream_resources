@@ -143,7 +143,12 @@ do
         cd $KIT_CODE
 
         # Run script to create needed files from expected inputs
-        make_exome_refpack.py -t ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${TARGETS_BED} -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} -r ${REFERENCE_DNA_GENOME_DICT} -g ${GENE_MODEL_GTF}
+        ${PATH_TO_REPO}/utility_scripts/make_exome_refpack.py \
+            -t ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${TARGETS_BED} \
+            -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} \
+            -r ${REFERENCE_DNA_GENOME_DICT} \
+            -g ${GENE_MODEL_GTF} \
+            --out-prefix ${KIT_CODE}_${GENOME_SUBVERSION_NAME}_${GENE_MODEL_NAME}
 
 
         # Back up to main directory
