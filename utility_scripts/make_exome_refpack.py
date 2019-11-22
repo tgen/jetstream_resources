@@ -275,7 +275,7 @@ def picard_bedtointervallist(bed, refdict, out_path):
 def bedtools_intersect(a, b, out_path):
     """Writes bedfile to out_path that includes all intervals in "a" which
     intersect any interval in "b". """
-    cmd = f'{BEDTOOLS_PATH} intersect -header -wa -a "{a}" -b "{b}" > "{out_path}"'
+    cmd = f'{BEDTOOLS_PATH} intersect -wa -a "{a}" -b "{b}" > "{out_path}"'
     run_ext_process(cmd, shell=True)
 
 
@@ -283,25 +283,25 @@ def bedtools_intersect_v(a, b, out_path):
     """Writes bedfile to out_path that includes all intervals in "a" which
     intersect any interval in "b". Uses -v option: Only report those entries 
     in A that have no overlap in B."""
-    cmd = f'{BEDTOOLS_PATH} intersect -header -v -a "{a}" -b "{b}" > "{out_path}"'
+    cmd = f'{BEDTOOLS_PATH} intersect -v -a "{a}" -b "{b}" > "{out_path}"'
     run_ext_process(cmd, shell=True)
 
 
 def bedtools_slop(bed, genome, out_path, b=100):
     """bed can be path to a BED/GFF/VCF"""
-    cmd = f'{BEDTOOLS_PATH} slop -header -b "{b}" -g "{genome}" -i "{bed}" > "{out_path}"'
+    cmd = f'{BEDTOOLS_PATH} slop -b "{b}" -g "{genome}" -i "{bed}" > "{out_path}"'
     run_ext_process(cmd, shell=True)
 
 
 def bedtools_sort_faidx(bed, faidx, out_path):
-    cmd = f'{BEDTOOLS_PATH} sort -header -faidx "{faidx}" -i "{bed}" > "{out_path}"'
+    cmd = f'{BEDTOOLS_PATH} sort -faidx "{faidx}" -i "{bed}" > "{out_path}"'
     run_ext_process(cmd, shell=True)
 
 
 def bedtools_smerge(bed, faidx, out_path):
     cmd = f'set -o pipefail && ' \
-          f'{BEDTOOLS_PATH} sort -header -faidx "{faidx}" -i "{bed}" | ' \
-          f'"{BEDTOOLS_PATH}" merge -header -i stdin > "{out_path}"'
+          f'{BEDTOOLS_PATH} sort -faidx "{faidx}" -i "{bed}" | ' \
+          f'"{BEDTOOLS_PATH}" merge -i stdin > "{out_path}"'
     run_ext_process(cmd, shell=True)
 
 
@@ -390,7 +390,6 @@ def make_cna_index(bed_path, cna_template_bed, out_path, x='23', y='24'):
     cmd_args = [
         BEDTOOLS_PATH,
         'intersect',
-        '-header',
         '-c',
         '-a', cna_template_bed,
         '-b', tmp_bed_path
