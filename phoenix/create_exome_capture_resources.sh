@@ -160,9 +160,6 @@ do
         cd ..
     fi
 
-    ## Exit after first as a test
-    exit 0
-
 done
 
 echo "------------------------------------------------------" >> README
