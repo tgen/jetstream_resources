@@ -5,7 +5,7 @@
 # Requires: jetstream in the user path?
 
 # Load needed modules
-module load R/3.4.4
+#module load R/3.4.4 (using native R on merck as there is an X11/ciaro error with this version), and merckx doesn't see the phoenix version with fix
 module load python/3.6.0
 
 # make folder for summary
