@@ -194,8 +194,8 @@ project_summary <- task_summary %>%
 ##############################################
   
 # Read in project summary files
-study_task_summary <- read_delim(opt$task_summary, delim = "\t", col_types = "ccdddd")
-study_project_summary <- read_delim(opt$study_summary, delim = "\t", col_types = "cdd")
+study_task_summary <- read_delim(opt$task_summary, delim = "\t", col_types = "ccidddd")
+study_project_summary <- read_delim(opt$study_summary, delim = "\t", col_types = "cidd")
 
 # Concatonate into Project summary files
 study_task_summary <- bind_rows(study_task_summary, task_summary)
