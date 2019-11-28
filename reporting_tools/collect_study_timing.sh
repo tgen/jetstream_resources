@@ -13,8 +13,8 @@ mkdir -p timing_summary
 
 # enter summary folder and create initial study template files
 cd timing_summary
-echo -e Project"\t"Group"\t"Total_CPU_Hours"\t"Total_Elapsed_Hours"\t"PCT_CPU_Hours"\t"PCT_Elapsed_Hours > study_task_summary.txt
-echo -e Project"\t"Total_CPU_Hours"\t"Total_Elapsed_Hours > study_project_summary.txt
+echo -e Project"\t"Group"\t"Tasks"\t"Total_CPU_Hours"\t"Total_Elapsed_Hours"\t"PCT_CPU_Hours"\t"PCT_Elapsed_Hours > study_task_summary.txt
+echo -e Project"\t"Tasks"\t"Total_CPU_Hours"\t"Total_Elapsed_Hours > study_project_summary.txt
 
 echo
 echo

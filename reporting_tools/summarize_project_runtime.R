@@ -159,7 +159,8 @@ ggsave(file=paste(project_name, "_CPUhours_by_Task_per_Group.png", sep=""), dpi=
 # Group and summarize to get realtime and CPU hours by task Group
 task_summary <- data %>% 
   group_by(Group) %>% 
-  summarise(Total_CPU_Hours = sum(Hours), 
+  summarise(Tasks = n(),
+            Total_CPU_Hours = sum(Hours), 
             Total_Elapsed_Hours = as.double(sum(Elapsed)/3600),
             ) %>% 
   mutate(PCT_CPU_Hours = Total_CPU_Hours/sum(Total_CPU_Hours)) %>% 
@@ -183,7 +184,8 @@ ggsave(file=paste(project_name, "_CPUhours_by_TaskGroup.png", sep=""), dpi=150)
 # Generate Project Summary
 project_summary <- task_summary %>% 
   group_by(Project) %>% 
-  summarise(Total_CPU_Hours = sum(Total_CPU_Hours), 
+  summarise(Tasks = sum(Tasks),
+            Total_CPU_Hours = sum(Total_CPU_Hours), 
             Total_Elapsed_Hours = (sum(Total_Elapsed_Hours)),
   )
 
