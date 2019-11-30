@@ -161,7 +161,9 @@ task_summary <- data %>%
   group_by(Group) %>% 
   summarise(Tasks = n(),
             Total_CPU_Hours = sum(Hours), 
+            Max_Task_CPU_Hours = max(Hours),
             Total_Elapsed_Hours = as.double(sum(Elapsed)/3600),
+            Max_Task_Elapsed_Hours = max(Elapsed)
             ) %>% 
   mutate(PCT_CPU_Hours = Total_CPU_Hours/sum(Total_CPU_Hours)) %>% 
   mutate(PCT_Elapsed_Hours = Total_Elapsed_Hours/sum(Total_Elapsed_Hours))
@@ -181,6 +183,8 @@ ggplot(task_summary, aes(x=Group, y=Total_CPU_Hours)) +
   coord_flip()
 ggsave(file=paste(project_name, "_CPUhours_by_TaskGroup.png", sep=""), dpi=150)
 
+
+
 # Generate Project Summary
 project_summary <- task_summary %>% 
   group_by(Project) %>% 
@@ -194,7 +198,7 @@ project_summary <- task_summary %>%
 ##############################################
   
 # Read in project summary files
-study_task_summary <- read_delim(opt$task_summary, delim = "\t", col_types = "ccidddd")
+study_task_summary <- read_delim(opt$task_summary, delim = "\t", col_types = "ccidddtdd")
 study_project_summary <- read_delim(opt$study_summary, delim = "\t", col_types = "cidd")
 
 # Concatonate into Project summary files
