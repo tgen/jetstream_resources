@@ -33,6 +33,8 @@ TR_V_pseudogene" > ${FILE_OUT}
 }
 
 ENSEMBL_VERSION=98
+URL_FILE_CONTIG_EXCL="https://raw.githubusercontent.com/dellytools/delly/master/excludeTemplates/human.hg38.excl.tsv"
+
 DIR_IN=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}
 EXPECTED_GTF_FILE=${DIR_IN}/Homo_sapiens.GRCh38.${ENSEMBL_VERSION}.ucsc.gtf
 DIR_OUT=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/gene_model/ensembl_v${ENSEMBL_VERSION}/tool_resources/delly
@@ -75,8 +77,15 @@ echo -e "subsetting by specific biotypes ..."
 cat ${BED_ANNOFILE_ALL_BIOTYPES} | grep -wf ${FILE_LIST_BIOTYPES}  > ${BED_ANNOFILE_KEPT_BIOTYPES}
 if [[ $? -ne 0 ]] ;	then echo -e "ERROR: grep FAILED ;Aborting ;" ; exit 1 ; fi
 
+echo -e "Downloading the GRCh38 contig exclusion file provided by Delly's Author ... (if file exists; otherwise Error and Manually intervention is required) "
+echo -e "running command: << wget ${URL_FILE_CONTIG_EXCL} >>"
+wget ${URL_FILE_CONTIG_EXCL}
+if [[ $? -ne 0 ]] ;	then echo -e "ERROR: wget FAILED for file ${URL_FILE_CONTIG_EXCL} ;Aborting ;" ; exit 1 ; fi
+mv human.hg38.excl.tsv hg38.excl
+
+
 echo -e "Cleaning temporary files ..."
-rm ${BED_ANNOFILE_ALL_BIOTYPES} ${INTERMEDIATE_GTF} ${FILE_LIST_BIOTYPES}
+rm ${BED_ANNOFILE_ALL_BIOTYPES} ${INTERMEDIATE_GTF} ${FILE_LIST_BIOTYPES} 
 
 echo -e "Build Anno File for Delly: DONE"
 exit
