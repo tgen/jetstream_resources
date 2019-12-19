@@ -447,25 +447,25 @@ def main(args=None):
 
     try:
         targets_intervallist = RESULTSFILES.create('.targets.interval_list')
-		no_header_targets_intervallist = RESULTSFILES.create('.no.header.targets.interval_list')
+        no_header_targets_intervallist = RESULTSFILES.create('.no.header.targets.interval_list')
         extended_bed = RESULTSFILES.create('.extended.bed')
 
         picard_bedtointervallist(
             bed=args.targets,
             refdict=refdict,
             out_path=targets_intervallist
-			no_header_out_path=no_header_targets_intervallist
+            no_header_out_path=no_header_targets_intervallist
         )
 
         if args.baits:
             baits_intervallist = RESULTSFILES.create('.baits.interval_list')
-			no_header_baits_intervallist = RESULTSFILES.create('.no.header.baits.interval_list')
+            no_header_baits_intervallist = RESULTSFILES.create('.no.header.baits.interval_list')
 
             picard_bedtointervallist(
                 bed=args.baits,
                 refdict=refdict,
                 out_path=baits_intervallist
-				no_header_out_path=no_header_baits_intervallist
+                no_header_out_path=no_header_baits_intervallist
             )
 
         make_extended_bed(
