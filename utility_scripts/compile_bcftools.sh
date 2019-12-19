@@ -46,7 +46,7 @@ cd downloads
 wget https://github.com/samtools/bcftools/releases/download/1.10.1/bcftools-${VERSION}.tar.bz2
 
 # Decompress package
-tar xvjf bcftools-${VERSION}.tar.gz
+tar xvjf bcftools-${VERSION}.tar.bz
 
 # Enter decompressed folder to complile
 cd bcftools-${VERSION}
