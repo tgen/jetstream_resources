@@ -453,7 +453,7 @@ def main(args=None):
         picard_bedtointervallist(
             bed=args.targets,
             refdict=refdict,
-            out_path=targets_intervallist
+            out_path=targets_intervallist,
             no_header_out_path=no_header_targets_intervallist
         )
 
@@ -464,7 +464,7 @@ def main(args=None):
             picard_bedtointervallist(
                 bed=args.baits,
                 refdict=refdict,
-                out_path=baits_intervallist
+                out_path=baits_intervallist,
                 no_header_out_path=no_header_baits_intervallist
             )
 
