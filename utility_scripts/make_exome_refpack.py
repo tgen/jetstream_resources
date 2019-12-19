@@ -260,7 +260,7 @@ def run_ext_process(cmd_args, check=True, **kwargs):
     subprocess.run(cmd_args, check=check, **kwargs)
 
 
-def picard_bedtointervallist(bed, refdict, out_path):
+def picard_bedtointervallist(bed, refdict, out_path, no_header_out_path):
     """Starts a Picard BedToIntervalList process that writes to out_path"""
     cmd = f'{GATK_PATH} BedToIntervalList -SD "{refdict}" --INPUT "{bed}" --OUTPUT "{out_path}"'
     run_ext_process(cmd, shell=True)
@@ -271,6 +271,13 @@ def picard_bedtointervallist(bed, refdict, out_path):
         msg = f'Expected output ({out_path}) not found for command: {cmd}'
         raise ChildProcessError(msg)
 
+	cmd = f'grep -v "@" "{out_path}" > {no_header_out_path}'
+	run_ext_process(cmd, shell=True)
+
+	if not os.path.exists(no_header_out_path):
+		msg = f'Expected output ({no_header_out_path}) not found for command: {cmd}'
+		raise ChildProcessError(msg)
+	
 
 def bedtools_intersect(a, b, out_path):
     """Writes bedfile to out_path that includes all intervals in "a" which
@@ -440,21 +447,25 @@ def main(args=None):
 
     try:
         targets_intervallist = RESULTSFILES.create('.targets.interval_list')
+		no_header_targets_intervallist = RESULTSFILES.create('.no.header.targets.interval_list')
         extended_bed = RESULTSFILES.create('.extended.bed')
 
         picard_bedtointervallist(
             bed=args.targets,
             refdict=refdict,
             out_path=targets_intervallist
+			no_header_out_path=no_header_targets_intervallist
         )
 
         if args.baits:
             baits_intervallist = RESULTSFILES.create('.baits.interval_list')
+			no_header_baits_intervallist = RESULTSFILES.create('.no.header.baits.interval_list')
 
             picard_bedtointervallist(
                 bed=args.baits,
                 refdict=refdict,
                 out_path=baits_intervallist
+				no_header_out_path=no_header_baits_intervallist
             )
 
         make_extended_bed(
