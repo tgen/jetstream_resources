@@ -271,12 +271,12 @@ def picard_bedtointervallist(bed, refdict, out_path, no_header_out_path):
         msg = f'Expected output ({out_path}) not found for command: {cmd}'
         raise ChildProcessError(msg)
 
-	cmd = f'grep -v "@" "{out_path}" > {no_header_out_path}'
-	run_ext_process(cmd, shell=True)
+    cmd = f'grep -v "@" "{out_path}" > {no_header_out_path}'
+    run_ext_process(cmd, shell=True)
 
-	if not os.path.exists(no_header_out_path):
-		msg = f'Expected output ({no_header_out_path}) not found for command: {cmd}'
-		raise ChildProcessError(msg)
+    if not os.path.exists(no_header_out_path):
+        msg = f'Expected output ({no_header_out_path}) not found for command: {cmd}'
+        raise ChildProcessError(msg)
 	
 
 def bedtools_intersect(a, b, out_path):
