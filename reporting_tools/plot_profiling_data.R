@@ -4,6 +4,7 @@
 suppressPackageStartupMessages(require(tidyverse))
 suppressPackageStartupMessages(require(optparse))
 #suppressPackageStartupMessages(require(cowplot))
+suppressPackageStartupMessages(require(gridExtra))
 
 # Define Options
 option_list = list(
@@ -38,7 +39,7 @@ option_list = list(
               type="character", 
               default=NULL, 
               help="Name of first input process", 
-              metavar="process_name (process1)"),
+              metavar="process1_name"),
   make_option(c("-b", "--input2"), 
               type="character", 
               default=NULL, 
@@ -48,7 +49,7 @@ option_list = list(
               type="character", 
               default=NULL, 
               help="Name of second input process", 
-              metavar="process_name (process2)"),
+              metavar="process2_name"),
   make_option(c("-c", "--input3"), 
               type="character", 
               default=NULL, 
@@ -58,7 +59,7 @@ option_list = list(
               type="character", 
               default=NULL, 
               help="Name of third input process", 
-              metavar="process_name (process3)")
+              metavar="process3_name")
 ); 
 
 opt_parser = OptionParser(option_list=option_list);
@@ -174,18 +175,17 @@ filename_cpu <- paste(opt$input1_process, "cpu.png", sep = "_")
 p_cpu <- ggplot(plot_data, aes(Time, CPU, color = Process)) + 
   geom_line() + 
   geom_hline(yintercept = opt$max_cpu_pct, color = "red", linetype = "dashed") + 
-  xlim(c(0,250)) + 
-  ggtitle(opt$task_title) + 
+  #ggtitle(opt$task_title) + 
   theme(plot.title = element_text(hjust=0.5), legend.position="top")
 p_cpu
-ggsave(filename_cpu, width = 20)
+ggsave(filename_cpu)
 
 filename_mem <- paste(opt$input1_process, "mem.png", sep = "_")
 
 p_mem <- ggplot(plot_data, aes(Time, Real_MEM, color = Process)) + 
   geom_line() + 
   geom_hline(yintercept = opt$max_mem_gb, color = "red", linetype = "dashed") + 
-  ggtitle(opt$task_title) + 
+  #ggtitle(opt$task_title) + 
   theme(plot.title = element_text(hjust=0.5), legend.position="top")
 p_mem
 ggsave(filename_mem)
@@ -193,3 +193,9 @@ ggsave(filename_mem)
 # plot as a single image to fit on our google slide template (8.5w, 4h)
 #p_grid <- plot_grid(p_cpu, p_mem, ncol = 2, nrow = 1)
 #save_plot(filename, p_grid, ncol = 2, base_asp = 1.2, base_width = 8.5)
+
+filename_grid <- paste(opt$input1_process, "grid.png", sep = "_")
+
+p_grid <- grid.arrange(p_cpu, p_mem, top=opt$task_title, ncol=2, nrow=1)
+p_grid
+ggsave(filename_grid, p_grid, height = 4, width = 8.5)
