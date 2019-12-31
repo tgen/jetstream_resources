@@ -104,8 +104,7 @@ write_tsv(data1, "data1.tsv")
 
 if(opt$number_of_inputs > 1){
   print("Two or three inputs provided")
-  data2 <- read_delim(opt$input2, 
-                      delim = " ", 
+  data2 <- read_table2(opt$input2, 
                       comment = "#", 
                       col_names = c("Time", "CPU", "Real_MEM", "Virtual_MEM"), 
                       col_types = "nnnn")
@@ -119,8 +118,7 @@ if(opt$number_of_inputs > 1){
 
 if(opt$number_of_inputs == 3){
   print("Three inputs provided")
-  data3 <- read_delim(opt$input3, 
-                      delim = " ", 
+  data3 <- read_table2(opt$input3, 
                       comment = "#", 
                       col_names = c("Time", "CPU", "Real_MEM", "Virtual_MEM"), 
                       col_types = "nnnn")
