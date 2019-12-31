@@ -3,6 +3,7 @@
 # Load required modules
 suppressPackageStartupMessages(require(tidyverse))
 suppressPackageStartupMessages(require(optparse))
+#suppressPackageStartupMessages(require(cowplot))
 
 # Define Options
 option_list = list(
@@ -89,8 +90,7 @@ if (is.null(opt$input1_process)){
 # Load data files add columns
 ##############################################
 
-data1 <- read_delim(opt$input1, 
-                    delim = " ", 
+data1 <- read_table2(opt$input1, 
                     comment = "#", 
                     col_names = c("Time", "CPU", "Real_MEM", "Virtual_MEM"), 
                     col_types = "nnnn")
@@ -171,11 +171,27 @@ if(opt$number_of_inputs == 1){
 # Plot results
 ##############################################
 
-filename_cpu <- paste(opt$input1_process, "png", sep = ".")
+filename_cpu <- paste(opt$input1_process, "cpu.png", sep = "_")
 
-ggplot(plot_data, aes(Timepoint, CPU, color = Process)) + 
+p_cpu <- ggplot(plot_data, aes(Time, CPU, color = Process)) + 
   geom_line() + 
   geom_hline(yintercept = opt$max_cpu_pct, color = "red", linetype = "dashed") + 
-  ggtitle(opt$task_title)
+  xlim(c(0,250)) + 
+  ggtitle(opt$task_title) + 
+  theme(plot.title = element_text(hjust=0.5), legend.position="top")
+p_cpu
+ggsave(filename_cpu, width = 20)
 
-ggsave(filename_cpu)
+filename_mem <- paste(opt$input1_process, "mem.png", sep = "_")
+
+p_mem <- ggplot(plot_data, aes(Time, Real_MEM, color = Process)) + 
+  geom_line() + 
+  geom_hline(yintercept = opt$max_mem_gb, color = "red", linetype = "dashed") + 
+  ggtitle(opt$task_title) + 
+  theme(plot.title = element_text(hjust=0.5), legend.position="top")
+p_mem
+ggsave(filename_mem)
+
+# plot as a single image to fit on our google slide template (8.5w, 4h)
+#p_grid <- plot_grid(p_cpu, p_mem, ncol = 2, nrow = 1)
+#save_plot(filename, p_grid, ncol = 2, base_asp = 1.2, base_width = 8.5)
