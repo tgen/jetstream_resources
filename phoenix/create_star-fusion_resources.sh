@@ -111,7 +111,7 @@ echo >> README
 
 # Capture the md5sum filename
 echo "Capture the md5sum filename" >> README
-MD5_FILENAME=`basename ${STARFUSION_PnP_MD5_DOWNLOAD_LINK}
+MD5_FILENAME=`basename ${STARFUSION_PnP_MD5_DOWNLOAD_LINK}`
 fc -ln -1 >> README
 echo >> README
 
