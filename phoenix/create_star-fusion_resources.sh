@@ -117,9 +117,8 @@ echo >> README
 
 # Check the MD5 checksum matches and capture error if it doesn't
 echo "Check the MD5 checksum matches" >> README
+echo "     md5sum --check ${MD5_FILENAME}" >> README
 md5sum --check ${MD5_FILENAME}
-fc -ln -1 >> README
-echo >> README
 
 if [ $? -eq 0 ]
 then
@@ -131,11 +130,16 @@ else
     exit 1
 fi
 
-# Decompress the downloaded plug-n-play file
-echo "Decompress the downloaded bundle" >> README
-tar xvzf ${STARFUSION_PnP_DOWNLOAD_LINK}
+# Capture the buncle tar filename
+echo "Capture the md5sum filename" >> README
+BUNDLE_FILENAME=`basename ${STARFUSION_PnP_DOWNLOAD_LINK}`
 fc -ln -1 >> README
 echo >> README
+
+# Decompress the downloaded plug-n-play file
+echo "Decompress the downloaded bundle" >> README
+echo "    tar xvzf ${BUNDLE_FILENAME}" >> README
+tar xvzf ${BUNDLE_FILENAME}
 
 if [ $? -eq 0 ]
 then
