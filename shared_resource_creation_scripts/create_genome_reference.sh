@@ -84,42 +84,98 @@ echo >> README
 
 echo "## Download reference fasta from ${GENOME_SOURCE}" >> README
 echo >> README
-echo "wget ${GENOME_FASTA_DOWNLOAD_LINK}"
+echo "wget ${GENOME_FASTA_DOWNLOAD_LINK}" >> README
 wget ${GENOME_FASTA_DOWNLOAD_LINK}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: download fasta checksum"
+else
+    touch FAILED_DOWNLOAD_FASTA_CHECKSUM
+    echo "FAILED: download fasta checksum" >> README
+    exit 1
+fi
 
 echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
 echo >> README
-echo "wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}"
+echo "wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
 wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: download fasta"
+else
+    touch FAILED_DOWNLOAD_FASTA
+    echo "FAILED: download fasta" >> README
+    exit 1
+fi
 
 # Check MD5SUM
 
 # Decompressed the downloaded reference fasta
+echo "## Determine the downloaded fasta filename" >> README
+echo "    GENOME_FASTA_DOWNLOAD_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK}`" >> README
 GENOME_FASTA_DOWNLOAD_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK}`
-
-gunzip ${GENOME_FASTA_DOWNLOAD_FILENAME}
-
-# Add symbolic link to indicate which FASTA is used by BWA
-GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`
-ln -s ${GENOME_FASTA_DECOMPRESSED_FILENAME} BWA_FASTA
-
-# Create faidx and dict files
-echo "Create faidx index using samtools" >> README
-echo "samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}"
-samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}
-fc -ln -1 >> README
 echo >> README
 
-echo "Create BWA dictionary file using samtools" >> README
+echo "## Decompress the Downloaded FASTA file" >> README
+echo "    gunzip ${GENOME_FASTA_DOWNLOAD_FILENAME}" >> README
+gunzip ${GENOME_FASTA_DOWNLOAD_FILENAME}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: gunzip fasta"
+else
+    touch FAILED_GUNZIP_FASTA
+    echo "FAILED: gunzip fasta" >> README
+    exit 1
+fi
+echo >> README
+
+# Create faidx and dict files
+echo "## Determine the decompressed FASTA filename" >> README
+echo "    GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`" >> README
+GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`
+echo >> README
+
+echo "## Create faidx index using samtools" >> README
+echo "    samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
+samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: samtools faidx"
+else
+    touch FAILED_SAMTOOLS_FAIDX
+    echo "FAILED: samtools faidx" >> README
+    exit 1
+fi
+echo >> README
+
+echo "## Determine the decompressed FASTA basename" >> README
+echo "    GENOME_FASTA_DECOMPRESSED_BASENAME=`basename ${GENOME_FASTA_DECOMPRESSED_FILENAME} ".fa"`" >> README
 GENOME_FASTA_DECOMPRESSED_BASENAME=`basename ${GENOME_FASTA_DECOMPRESSED_FILENAME} ".fa"`
+echo >> README
+
+echo "## Create BWA dictionary file using samtools" >> README
+echo "    samtools dict --assembly ${GENOME_ASSEMBLY_NAME} --species "${SPECIES}" --output ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
 samtools dict --assembly ${GENOME_ASSEMBLY_NAME} \
     --species "${SPECIES}" \
     --output ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict \
     ${GENOME_FASTA_DECOMPRESSED_FILENAME}
-fc -ln -1 >> README
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: samtools dict"
+else
+    touch FAILED_SAMTOOLS_DICT
+    echo "FAILED: samtools dict" >> README
+    exit 1
+fi
 echo >> README
 
-
 # Add flag to top level to indicate process is complete
+echo "## Add process completion flag to top level direcory" >> README
+echo "    touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE" >> README
 touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE
 
