@@ -114,7 +114,6 @@ echo "Create BWA dictionary file using samtools" >> README
 GENOME_FASTA_DECOMPRESSED_BASENAME=`basename ${GENOME_FASTA_DECOMPRESSED_FILENAME} ".fa"`
 samtools dict --assembly ${GENOME_ASSEMBLY_NAME} \
     --species "${SPECIES}" \
-    --uri "${GENOME_FASTA_DECOMPRESSED_FILENAME}" \
     --output ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict \
     ${GENOME_FASTA_DECOMPRESSED_FILENAME}
 fc -ln -1 >> README
