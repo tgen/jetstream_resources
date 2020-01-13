@@ -105,8 +105,8 @@ ln -s ${GENOME_FASTA_DECOMPRESSED_FILENAME} BWA_FASTA
 
 # Create faidx and dict files
 echo "Create faidx index using samtools" >> README
-echo "samtools faidx ${GENOME_FASTA_NAME}"
-samtools faidx ${GENOME_FASTA_NAME}
+echo "samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}"
+samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}
 fc -ln -1 >> README
 echo >> README
 
