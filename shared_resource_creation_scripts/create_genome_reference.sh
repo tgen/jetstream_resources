@@ -151,10 +151,16 @@ else
   exit 1
 fi
 
+# Determine the expected decompressed fasta filename
+echo "## Determine the decompressed FASTA filename" >> README
+echo "    GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`" >> README
+GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`
+echo >> README
+
 # Decompressed the downloaded reference fasta
 echo "## Decompress the Downloaded FASTA file" >> README
-echo "    gunzip --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}" >> README
-gunzip --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}
+echo "    gunzip -c ${GENOME_FASTA_DOWNLOAD_FILENAME} > ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
+gunzip -c ${GENOME_FASTA_DOWNLOAD_FILENAME} > ${GENOME_FASTA_DECOMPRESSED_FILENAME}
 # Error Capture
 if [ "$?" = "0" ]
 then
@@ -167,11 +173,6 @@ fi
 echo >> README
 
 # Create faidx and dict files
-echo "## Determine the decompressed FASTA filename" >> README
-echo "    GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`" >> README
-GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`
-echo >> README
-
 echo "## Create faidx index using samtools" >> README
 echo "    samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
 samtools faidx ${GENOME_FASTA_DECOMPRESSED_FILENAME}
