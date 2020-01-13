@@ -117,7 +117,7 @@ GENOME_FASTA_DOWNLOAD_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK}`
 echo >> README
 
 # Check MD5SUM
-if [ ${GENOME_SOURCE} == "ensembl"]
+if [ ${GENOME_SOURCE} == "ensembl" ]
 then
   echo "ENSEMBL is supported"
   # Ensembl now uses "sum" for check sum validation
