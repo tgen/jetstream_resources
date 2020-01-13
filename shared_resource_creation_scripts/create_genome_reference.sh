@@ -159,8 +159,8 @@ echo >> README
 
 # Decompressed the downloaded reference fasta
 echo "## Decompress the Downloaded FASTA file" >> README
-echo "    gzip --decompress --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}" >> README
-gzip --decompress --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}
+echo "    gunzip -c ${GENOME_FASTA_DOWNLOAD_FILENAME} > ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
+gunzip -c ${GENOME_FASTA_DOWNLOAD_FILENAME} > ${GENOME_FASTA_DECOMPRESSED_FILENAME}
 # Error Capture
 if [ "$?" = "0" ]
 then
