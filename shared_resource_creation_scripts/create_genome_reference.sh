@@ -20,7 +20,7 @@ fi
 . ${1}
 
 ## Load required modules to ensure needed tools are in your path
-module load samtools/${SAMTOOLS_VERSION}
+module load ${SAMTOOLS_VERSION}
 
 ####################################
 ## Configure and make Directory Structure
