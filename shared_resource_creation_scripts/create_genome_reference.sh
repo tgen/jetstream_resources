@@ -83,23 +83,8 @@ echo >> README
 ####################################
 
 echo "## Download reference fasta from ${GENOME_SOURCE}" >> README
-echo >> README
-echo "wget ${GENOME_FASTA_DOWNLOAD_LINK}" >> README
+echo "    wget ${GENOME_FASTA_DOWNLOAD_LINK}" >> README
 wget ${GENOME_FASTA_DOWNLOAD_LINK}
-# Error Capture
-if [ "$?" = "0" ]
-then
-    echo "Completed: download fasta checksum"
-else
-    touch FAILED_DOWNLOAD_FASTA_CHECKSUM
-    echo "FAILED: download fasta checksum" >> README
-    exit 1
-fi
-
-echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
-echo >> README
-echo "wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
-wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
 # Error Capture
 if [ "$?" = "0" ]
 then
@@ -109,18 +94,67 @@ else
     echo "FAILED: download fasta" >> README
     exit 1
 fi
+echo >> README
 
-# Check MD5SUM
+echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
+echo "    wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
+wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: download fasta checksum"
+else
+    touch FAILED_DOWNLOAD_FASTA_CHECKSUM
+    echo "FAILED: download fasta checksum" >> README
+    exit 1
+fi
+echo >> README
 
-# Decompressed the downloaded reference fasta
+# Determine the downloaded fasta filename
 echo "## Determine the downloaded fasta filename" >> README
 echo "    GENOME_FASTA_DOWNLOAD_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK}`" >> README
 GENOME_FASTA_DOWNLOAD_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK}`
 echo >> README
 
+# Check MD5SUM
+if [ ${GENOME_SOURCE} == "ensembl"]
+then
+  echo "ENSEMBL is supported"
+  # Ensembl now uses "sum" for check sum validation
+  # Extract the provided checksum and number of 512bit blocks
+  PROVIDED_CHECKSUM=`grep ${GENOME_FASTA_DOWNLOAD_FILENAME} CHECKSUMS | cut -d" " -f1`
+  PROVIDED_512bitBLOCKS=`grep ${GENOME_FASTA_DOWNLOAD_FILENAME} CHECKSUMS | cut -d" " -f2`
+  # Calculate the checksum of the downlaoded file
+  VALIDATION_SUM=`sum ${GENOME_FASTA_DOWNLOAD_FILENAME}`
+  VALIDATION_CHECKSUM=`echo ${VALIDATION_SUM} | cut -d" " -f1`
+  VALIDATION_512bitBLOCKS=`echo ${VALIDATION_SUM} | cut -d" " -f2`
+  # Validate Checksum
+  if [ ${PROVIDED_CHECKSUM} -eq ${VALIDATION_CHECKSUM} ]
+  then
+    echo "Complete: checksum validation"
+  else
+    echo "FAILED: checksum validation"
+    touch FAILED_CHECKSUM_VALIDATION
+    exit 1
+  fi
+  # Validate 512 bit blocks
+  if [ ${PROVIDED_512bitBLOCKS} -eq ${VALIDATION_512bitBLOCKS} ]
+  then
+    echo "Complete: checksum 512bit blocks validation"
+  else
+    echo "FAILED: checksum 512bit blocks validation"
+    touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
+    exit 1
+  fi
+else
+  echo "Current Genome Source is NOT SUPPORTED"
+  exit 1
+fi
+
+# Decompressed the downloaded reference fasta
 echo "## Decompress the Downloaded FASTA file" >> README
-echo "    gunzip ${GENOME_FASTA_DOWNLOAD_FILENAME}" >> README
-gunzip ${GENOME_FASTA_DOWNLOAD_FILENAME}
+echo "    gunzip --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}" >> README
+gunzip --keep ${GENOME_FASTA_DOWNLOAD_FILENAME}
 # Error Capture
 if [ "$?" = "0" ]
 then
