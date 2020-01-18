@@ -149,9 +149,9 @@ then
     touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
     exit 1
   fi
-elif [ ${GENOME_SOURCE} == "ncbi" ]
+elif [ ${GENOME_SOURCE} == "1000G" ]
 then
-  echo "NCBI is supported"
+  echo "1000G is supported"
   echo "WARNING - No checksum provided the file CANNOT be validated"
 else
   echo "Current Genome Source is NOT SUPPORTED"
