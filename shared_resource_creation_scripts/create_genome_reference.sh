@@ -96,19 +96,22 @@ else
 fi
 echo >> README
 
-echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
-echo "    wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
-wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
-# Error Capture
-if [ "$?" = "0" ]
+if [${GENOME_FASTA_MD5_DOWNLOAD_LINK} != "NA"]
 then
-    echo "Completed: download fasta checksum"
-else
-    touch FAILED_DOWNLOAD_FASTA_CHECKSUM
-    echo "FAILED: download fasta checksum" >> README
-    exit 1
+  echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
+  echo "    wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
+  wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "Completed: download fasta checksum"
+  else
+      touch FAILED_DOWNLOAD_FASTA_CHECKSUM
+      echo "FAILED: download fasta checksum" >> README
+      exit 1
+  fi
+  echo >> README
 fi
-echo >> README
 
 # Determine the downloaded fasta filename
 echo "## Determine the downloaded fasta filename" >> README
