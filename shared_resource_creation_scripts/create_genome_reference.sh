@@ -96,7 +96,7 @@ else
 fi
 echo >> README
 
-if [${GENOME_FASTA_MD5_DOWNLOAD_LINK} != "NA"]
+if [ ${GENOME_FASTA_MD5_DOWNLOAD_LINK} != "NA" ]
 then
   echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
   echo "    wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
@@ -149,6 +149,10 @@ then
     touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
     exit 1
   fi
+elif [ ${GENOME_SOURCE} == "ncbi" ]
+then
+  echo "NCBI is supported"
+  echo "WARNING - No checksum provided the file CANNOT be validated"
 else
   echo "Current Genome Source is NOT SUPPORTED"
   exit 1
