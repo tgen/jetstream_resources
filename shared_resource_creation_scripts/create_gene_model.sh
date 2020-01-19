@@ -1,0 +1,371 @@
+#!/usr/bin/env bash
+
+# Usage: create_gene_model.sh <Config.ini>
+
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
+HISTFILE=~/.bash_history
+set -o history
+set -ue
+
+# Read required variables from configuration file
+. ${1}
+
+####################################
+## Navigate Directory Structure
+###################################
+
+# Check top level directory if not available
+if [ -e ${TOPLEVEL_DIR} ]
+then
+    echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
+    cd ${TOPLEVEL_DIR}
+else
+    echo "Top level directory NOT found, IT IS REQUIRED, EXITING"
+    exit 2
+fi
+
+# Check that the reference genome was created successfully
+if [ -e GENOME_FASTA_GENERATION_COMPLETE ]
+then
+    echo "Genome fasta exists, moving forward"
+else
+    echo "Genome fasta generation complete flag NOT found"
+    echo "Try again later as this is required"
+    exit 2
+fi
+
+# Check gene_model directory if not available
+if [ -e gene_model ]
+then
+    echo "Gene Model directory exists, moving into it"
+    cd gene_model
+else
+    echo "Gene Model directory NOT fount, creating and moving into it now"
+    mkdir gene_model
+    cd gene_model
+fi
+
+# Make specific gene model directory
+if [ -e ${GENE_MODEL_NAME} ]
+then
+    echo "Specific Gene Model directory exists, exiting to prevent overwriting"
+    exit 2
+else
+    echo "Specific Gene Model directory NOT fount, creating it now and moving into it"
+    mkdir ${GENE_MODEL_NAME}
+    cd ${GENE_MODEL_NAME}
+fi
+
+####################################
+## Download Gene Model File
+####################################
+
+# Initialize a gene_model specific README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+echo "${GENE_MODEL_NAME} download and manipulated to align with reference genomes" >> README
+echo >> README
+
+# Download the gene model gtf
+echo "Download the gene model gtf"
+echo "Download the gene model gtf" >> README
+echo "wget ${GENE_MODEL_DOWNLOAD_LINK}" >> README
+wget ${GENE_MODEL_DOWNLOAD_LINK}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: download GTF"
+else
+    touch FAILED_DOWNLOAD_GTF
+    echo "FAILED: download GTF" >> README
+    exit 1
+fi
+echo >> README
+
+# Determine GTF filename
+echo "Capture the downloaded GTF filename"
+echo "Capture the downloaded GTF filename" >> README
+echo "GTF_FILE_GZ=`basename ${GENE_MODEL_DOWNLOAD_LINK}`" >> README
+GTF_FILE_GZ=`basename ${GENE_MODEL_DOWNLOAD_LINK}`
+
+# Determine if GTF checksum was provided and if so download it
+if [ ${GENE_MODEL_MD5_DOWNLOAD_LINK} != "NA" ]
+then
+  echo "## Download GTF checksum from ${GENEMODEL_SOURCE}" >> README
+  echo "    wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}" >> README
+  wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "Completed: download GTF checksum"
+  else
+      touch FAILED_DOWNLOAD_GTF_CHECKSUM
+      echo "FAILED: download GTF checksum" >> README
+      exit 1
+  fi
+  echo >> README
+fi
+
+
+# Check MD5SUM
+if [ ${GENEMODEL_SOURCE} == "ensembl" ]
+then
+  echo "ENSEMBL is supported"
+  # Ensembl now uses "sum" for check sum validation
+  # Extract the provided checksum and number of 512bit blocks
+  PROVIDED_CHECKSUM=`grep ${GTF_FILE_GZ} CHECKSUMS | cut -d" " -f1`
+  PROVIDED_512bitBLOCKS=`grep ${GTF_FILE_GZ} CHECKSUMS | cut -d" " -f2`
+  # Calculate the checksum of the downlaoded file
+  VALIDATION_SUM=`sum ${GTF_FILE_GZ}`
+  VALIDATION_CHECKSUM=`echo ${VALIDATION_SUM} | cut -d" " -f1`
+  VALIDATION_512bitBLOCKS=`echo ${VALIDATION_SUM} | cut -d" " -f2`
+  # Validate Checksum
+  if [ ${PROVIDED_CHECKSUM} -eq ${VALIDATION_CHECKSUM} ]
+  then
+    echo "Complete: checksum validation"
+  else
+    echo "FAILED: checksum validation"
+    touch FAILED_CHECKSUM_VALIDATION
+    exit 1
+  fi
+  # Validate 512 bit blocks
+  if [ ${PROVIDED_512bitBLOCKS} -eq ${VALIDATION_512bitBLOCKS} ]
+  then
+    echo "Complete: checksum 512bit blocks validation"
+  else
+    echo "FAILED: checksum 512bit blocks validation"
+    touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
+    exit 1
+  fi
+elif [ ${GENOME_SOURCE} == "OTHER" ]
+then
+  echo "OTHER is supported"
+  echo "WARNING - No checksum provided the file CANNOT be validated"
+  exit 2
+else
+  echo "Current Genome Source is NOT SUPPORTED"
+  exit 1
+fi
+
+# Determine expected decompressed GTF filename
+echo "Capture the expected decompressed GTF filename"
+echo "Capture the expected decompressed GTF filename" >> README
+echo "GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`" >> README
+GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`
+
+# Decompress GTF
+echo "Decompressing GTF"
+echo "Decompressing GTF" >> README
+echo "gunzip -c ${GTF_FILE_GZ} > ${GTF_FILE}" >> README
+gunzip -c ${GTF_FILE_GZ} > ${GTF_FILE}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: gunzip GTF"
+else
+    touch FAILED_GUNZIP_GTF
+    echo "FAILED: gunzip GTF" >> README
+    exit 1
+fi
+echo >> README
+
+echo "TEST - COMPLETE"
+exit 0
+
+
+
+
+# Capture the decompressed filename basename
+echo "Capture the decompressed filename basename" >> README
+GTF_FILE_BASE=`basename ${GTF_FILE_FLAT} ".gtf"`
+fc -ln -1 >> README
+echo >> README
+
+####################################
+## Create updated gene model with ucsc style contig names - JK Method, generates results identical to RR and AC
+####################################
+
+## FILE ACCOUNTING
+echo "Record the number of lines in original file" >> README
+wc -l ${GTF_FILE_FLAT} >> README
+fc -ln -1 >> README
+echo >> README
+# 2737564 Homo_sapiens.GRCh38.95.gtf
+# Set variable for testing
+INPUT_GTF_LINES=`cat ${GTF_FILE_FLAT} | wc -l`
+
+# Check that all contigs exist in renaming key
+cut -f1 ${GTF_FILE_FLAT} | grep -v "#" | sort | uniq > temp_gtf_unique_contig_list
+GTF_CONTIG_NUMBER=`wc -l temp_gtf_unique_contig_list | awk '{print $1}'`
+RENAME_CONTIG_NUMBER=`wc -l ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv | awk '{print $1}'`
+# Test if the rename key and GTF have the same number of contigs
+if [ ${GTF_CONTIG_NUMBER} -eq ${RENAME_CONTIG_NUMBER} ]
+then
+    echo "Number of unique contigs lines match in GTF and rename key"
+else
+    echo
+    echo "WARNING - number of contigs DOES NOT match between GTF and rename key"
+    echo "Exiting, this MUST BE FIXED"
+    echo
+    exit 2
+fi
+#Just because the number of contigs matches doesn't mean they are the same ones
+#Make a list of unique rename original ensembl contig names
+cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv > temp_rename_key_contig_list
+#Merge the two lists and test if they all match using unique count as they should all be 2
+MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}'`
+#Test if the number of matching contigs is correct
+if [ ${GTF_CONTIG_NUMBER} -eq ${MATCHING_CONTIG_NUMBER} ]
+then
+    echo "All contigs names match in the GTF and rename key"
+else
+    echo
+    echo "WARNING - number of unique contig names DOES NOT match between GTF and rename key"
+    echo "Exiting, this MUST BE FIXED"
+    echo
+    exit 2
+fi
+
+echo "For processing the file needs to be split into 3 parts" >> README
+echo "--- 1) header section" >> README
+echo "--- 2) after header column 1, this will be used to update contig names" >> README
+echo "--- 2) after header columns 2-end" >> README
+echo >> README
+
+# Create a header file
+echo "Extract header line to temp file" >> README
+grep "^#" ${GTF_FILE_FLAT} > temp_header
+fc -ln -1 >> README
+echo >> README
+
+# Create first column file
+echo "Extract column 1 without the header lines to temp file" >> README
+grep -v "^#" ${GTF_FILE_FLAT} | cut -f1 > temp_c1.txt
+fc -ln -1 >> README
+echo >> README
+
+
+# Create 2-final column file
+echo "Extract column 2 and subsequent without the header lines to temp file" >> README
+grep -v "^#" ${GTF_FILE_FLAT} | cut -f2- > temp_c2plus.txt
+fc -ln -1 >> README
+echo >> README
+
+
+# Update column 1 file with new contig names
+echo "Update column 1 file with new contig names" >> README
+for line in `cat ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv`
+do
+    OLD=`echo ${line} | cut -d, -f1`
+    NEW=`echo ${line} | cut -d, -f2`
+    echo "Changing:  $OLD  to  $NEW" >> README
+
+    # update in place
+    sed -i "s/\b${OLD}/${NEW}/g" temp_c1.txt
+done
+fc -ln -1 >> README
+echo >> README
+
+
+#Create final file
+echo "Create final updated GTF file with UCSC contig names" >> README
+paste temp_c1.txt temp_c2plus.txt > temp_new.gtf
+fc -ln -1 >> README
+cat temp_header temp_new.gtf > ${GTF_FILE_BASE}.ucsc.gtf
+fc -ln -1 >> README
+echo >> README
+
+# Check final GTF line count
+echo "Check Final GTF file length" >> README
+wc -l ${GTF_FILE_BASE}.ucsc.gtf >> README
+fc -ln -1 >> README
+echo >> README
+# 2737564 Homo_sapiens.GRCh38.95.ucsc.gtf  ## Matches starting line count!!
+
+# Confirm the starting and final GTF have the same line count
+echo "Confirm the starting and final GTF have the same line count" >> README
+FINAL_GTF_LINES=`cat ${GTF_FILE_BASE}.ucsc.gtf | wc -l`
+fc -ln -1 >> README
+echo >> README
+
+if [ ${INPUT_GTF_LINES} -eq ${FINAL_GTF_LINES} ]
+then
+    echo "Input and Final GTF files match"
+    echo "Input and Final GTF files match"  >> README
+else
+    echo
+    echo
+    echo "####### ERROR #########"
+    echo "Input and Final file lengths DO NOT match"
+    echo "Input = ${INPUT_GTF_LINES}"
+    echo "Final = ${FINAL_GTF_LINES}"
+    echo
+    echo
+    exit 1
+fi
+echo >> README
+
+# Create reflat file from GTF for Picard RNAseqMetrics
+# Uses gtfToGenePred from UCSC
+# http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
+echo "Create refflat file from GTF for picard rnaSeqMetrics" >> README
+${GTFTOGENEPRED_BINARY} -genePredExt \
+    -ignoreGroupsWithoutExons \
+    ${GTF_FILE_BASE}.ucsc.gtf \
+    /dev/stdout \
+    | \
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.txt
+fc -ln -1 >> README
+echo >> README
+
+# Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
+echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
+grep -w "rRNA" ${GTF_FILE_BASE}.ucsc.gtf \
+    | \
+    cut -f1,4,5,7,9 \
+    | \
+    sed 's/gene_id "//g' \
+    | \
+    sed 's/"; transcript_id "/\'$'\t''/g' \
+    | \
+    cut -f1-5 > temp_RibosomalLocations.txt
+fc -ln -1 >> README
+cat ${REFERENCE_RNA_GENOME_DICT} temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ucsc.ribo.interval_list
+fc -ln -1 >> README
+echo >> README
+
+echo "Create refflat file from GTF for IGV genemodel tracks with HUGO IDs" >> README
+${GTFTOGENEPRED_BINARY} -genePredExt \
+    -ignoreGroupsWithoutExons \
+    -geneNameAsName2 \
+    ${GTF_FILE_BASE}.ucsc.gtf \
+    /dev/stdout \
+    | \
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.hugoID.txt
+fc -ln -1 >> README
+echo >> README
+
+
+# Clean-up directory
+rm temp_*
+mkdir downloads
+mv ${GTF_FILE_FLAT} downloads
+
+# Create transcriptome fasta file derived from processed GTF
+# This submission records the jobID so the next step does not start until this is complete
+echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
+sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
+fc -ln -1 >> README
+echo >> README
+echo "Specific script code as follows:" >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh >> README
+echo >> README
+
+# Indicate GTF was created successfully
+touch GENE_MODEL_GTF_GENERATION_COMPLETE
