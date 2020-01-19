@@ -216,7 +216,7 @@ cut -f1 ${GTF_FILE} | grep -v "#" | sort | uniq > temp_gtf_contigs.txt
 echo "Checking that all GTF contigs exist in reference genome"
 for contig in `cat temp_gtf_contigs.txt`
 do
-  CONTIG_CHECK=grep -cw "${contig}" ${REFERENCE_GENOME_FAI}
+  CONTIG_CHECK=`grep -cw "${contig}" ${REFERENCE_GENOME_FAI}`
   if [ ${CONTIG_CHECK} -eq 1 ]
   then
     echo "GTF Contig: ${contig} exists in reference genome fasta"
