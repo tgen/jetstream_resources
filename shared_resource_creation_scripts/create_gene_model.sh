@@ -250,6 +250,7 @@ ${GTFTOGENEPRED_BINARY} -genePredExt \
     /dev/stdout \
     | \
     awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.txt
+fc -ln -1 >> README
 echo >> README
 
 # Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
@@ -265,6 +266,7 @@ grep -w "rRNA" ${GTF_FILE} \
     sed 's/"; transcript_id "/\'$'\t''/g' \
     | \
     cut -f1-5 > temp_RibosomalLocations.txt
+fc -ln -1 >> README
 echo >> README
 
 echo "Created final ribosome interval list file" >> README
@@ -283,6 +285,7 @@ ${GTFTOGENEPRED_BINARY} -genePredExt \
     /dev/stdout \
     | \
     awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.hugoID.txt
+fc -ln -1 >> README
 echo >> README
 
 # Create transcriptome fasta file derived from processed GTF
@@ -290,6 +293,7 @@ echo "Submitting transcriptome fasta generation process"
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
 #echo "sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh" >> README
 sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
+fc -ln -1 >> README
 echo >> README
 echo >> README
 echo "----------------------------------------------------------------------------">> README
