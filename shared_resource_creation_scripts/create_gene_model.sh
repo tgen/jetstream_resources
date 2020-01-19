@@ -243,7 +243,7 @@ done
 # http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
 echo "Creating RefFlat for picrard rnaSeqMetrics"
 echo "Create refflat file from GTF for picard rnaSeqMetrics" >> README
-echo "${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.txt" >> README
+#echo ${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.txt >> README
 ${GTFTOGENEPRED_BINARY} -genePredExt \
     -ignoreGroupsWithoutExons \
     ${GTF_FILE} \
@@ -255,7 +255,7 @@ echo >> README
 # Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
 echo "Creating ribosomal RNA locations file for Picar rnaSeqMetrics"
 echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
-echo "grep -w "rRNA" ${GTF_FILE} | cut -f1,4,5,7,9 | sed 's/gene_id "//g' | sed 's/"; transcript_id "/\'$'\t''/g' | cut -f1-5 > temp_RibosomalLocations.txt" >> README
+#echo "grep -w "rRNA" ${GTF_FILE} | cut -f1,4,5,7,9 | sed 's/gene_id "//g' | sed 's/"; transcript_id "/\'$'\t''/g' | cut -f1-5 > temp_RibosomalLocations.txt" >> README
 grep -w "rRNA" ${GTF_FILE} \
     | \
     cut -f1,4,5,7,9 \
@@ -275,7 +275,7 @@ echo >> README
 # Create refflat file from GTF fro IGV gene model track with HUGO IDs
 echo "Creating IGV RefFlat File"
 echo "Create refflat file from GTF for IGV genemodel tracks with HUGO IDs" >> README
-echo "${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons -geneNameAsName2 ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.hugoID.txt" >> README
+#echo "${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons -geneNameAsName2 ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.hugoID.txt" >> README
 ${GTFTOGENEPRED_BINARY} -genePredExt \
     -ignoreGroupsWithoutExons \
     -geneNameAsName2 \
@@ -288,7 +288,7 @@ echo >> README
 # Create transcriptome fasta file derived from processed GTF
 echo "Submitting transcriptome fasta generation process"
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-echo "sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh" >> README
+#echo "sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh" >> README
 sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
 echo >> README
 echo >> README
