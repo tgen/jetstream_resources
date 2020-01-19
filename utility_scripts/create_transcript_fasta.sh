@@ -4,6 +4,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task 8
+#SBATCH --partition defq,overflow
 
 ## Script to create a transcriptome fasta file from an input GTF and Genome.fa files
 
