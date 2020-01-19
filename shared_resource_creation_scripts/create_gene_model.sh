@@ -174,158 +174,88 @@ else
 fi
 echo >> README
 
-echo "TEST - COMPLETE"
-exit 0
-
-
-
-
 # Capture the decompressed filename basename
+echo "Capture the decompressed filename basename"
 echo "Capture the decompressed filename basename" >> README
+echo "GTF_FILE_BASE=`basename ${GTF_FILE_FLAT} ".gtf"`" >> README
 GTF_FILE_BASE=`basename ${GTF_FILE_FLAT} ".gtf"`
-fc -ln -1 >> README
 echo >> README
 
 ####################################
-## Create updated gene model with ucsc style contig names - JK Method, generates results identical to RR and AC
+## Determine required variables
 ####################################
 
-## FILE ACCOUNTING
-echo "Record the number of lines in original file" >> README
-wc -l ${GTF_FILE_FLAT} >> README
-fc -ln -1 >> README
-echo >> README
-# 2737564 Homo_sapiens.GRCh38.95.gtf
-# Set variable for testing
-INPUT_GTF_LINES=`cat ${GTF_FILE_FLAT} | wc -l`
-
-# Check that all contigs exist in renaming key
-cut -f1 ${GTF_FILE_FLAT} | grep -v "#" | sort | uniq > temp_gtf_unique_contig_list
-GTF_CONTIG_NUMBER=`wc -l temp_gtf_unique_contig_list | awk '{print $1}'`
-RENAME_CONTIG_NUMBER=`wc -l ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv | awk '{print $1}'`
-# Test if the rename key and GTF have the same number of contigs
-if [ ${GTF_CONTIG_NUMBER} -eq ${RENAME_CONTIG_NUMBER} ]
-then
-    echo "Number of unique contigs lines match in GTF and rename key"
-else
-    echo
-    echo "WARNING - number of contigs DOES NOT match between GTF and rename key"
-    echo "Exiting, this MUST BE FIXED"
-    echo
-    exit 2
-fi
-#Just because the number of contigs matches doesn't mean they are the same ones
-#Make a list of unique rename original ensembl contig names
-cut -d"," -f1 ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv > temp_rename_key_contig_list
-#Merge the two lists and test if they all match using unique count as they should all be 2
-MATCHING_CONTIG_NUMBER=`cat temp_gtf_unique_contig_list temp_rename_key_contig_list | sort | uniq -c | awk '{print $1}' | grep "2" | wc -l | awk '{print $1}'`
-#Test if the number of matching contigs is correct
-if [ ${GTF_CONTIG_NUMBER} -eq ${MATCHING_CONTIG_NUMBER} ]
-then
-    echo "All contigs names match in the GTF and rename key"
-else
-    echo
-    echo "WARNING - number of unique contig names DOES NOT match between GTF and rename key"
-    echo "Exiting, this MUST BE FIXED"
-    echo
-    exit 2
-fi
-
-echo "For processing the file needs to be split into 3 parts" >> README
-echo "--- 1) header section" >> README
-echo "--- 2) after header column 1, this will be used to update contig names" >> README
-echo "--- 2) after header columns 2-end" >> README
+# Determine the reference genome fasta full path
+echo "Determine the full path filename of the reference genome fasta" >> README
+echo "REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`" >> README
+REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`
+echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}" >> README
+REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}
 echo >> README
 
-# Create a header file
-echo "Extract header line to temp file" >> README
-grep "^#" ${GTF_FILE_FLAT} > temp_header
-fc -ln -1 >> README
+# Determine the full path to the reference fasta.fa.fai file
+echo "Determine full path filename of the reference genome fasta.fa.fai index file" >> README
+echo "REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}.fai" >> README
+REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}.fai
 echo >> README
 
-# Create first column file
-echo "Extract column 1 without the header lines to temp file" >> README
-grep -v "^#" ${GTF_FILE_FLAT} | cut -f1 > temp_c1.txt
-fc -ln -1 >> README
+# Determine the full path to the reference dict file
+echo "Determine the basename of the reference genome fasta to infer the .dict filename" >> README
+echo "REFERENCE_GENOME_DICT_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`" >> README
+REFERENCE_GENOME_DICT_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`
 echo >> README
 
+####################################
+## Check to ensure the GTF contigs and Genome Contigs Match
+####################################
 
-# Create 2-final column file
-echo "Extract column 2 and subsequent without the header lines to temp file" >> README
-grep -v "^#" ${GTF_FILE_FLAT} | cut -f2- > temp_c2plus.txt
-fc -ln -1 >> README
-echo >> README
+# Get a list of the unique contigs in the GTF
+cut -f1 ${GTF_FILE} | grep -v "#" | sort | uniq > temp_gtf_contigs.txt
 
-
-# Update column 1 file with new contig names
-echo "Update column 1 file with new contig names" >> README
-for line in `cat ${PATH_TO_REPO}/utility_files/ensembl97_ucsc_mappings_keats.csv`
+# Determine if any GTF contig DOES NOT exist in the reference genome (genome.fa.fai is a unique contig list)
+echo "Checking that all GTF contigs exist in reference genome"
+for contig in `cat temp_gtf_contigs.txt`
 do
-    OLD=`echo ${line} | cut -d, -f1`
-    NEW=`echo ${line} | cut -d, -f2`
-    echo "Changing:  $OLD  to  $NEW" >> README
-
-    # update in place
-    sed -i "s/\b${OLD}/${NEW}/g" temp_c1.txt
-done
-fc -ln -1 >> README
-echo >> README
-
-
-#Create final file
-echo "Create final updated GTF file with UCSC contig names" >> README
-paste temp_c1.txt temp_c2plus.txt > temp_new.gtf
-fc -ln -1 >> README
-cat temp_header temp_new.gtf > ${GTF_FILE_BASE}.ucsc.gtf
-fc -ln -1 >> README
-echo >> README
-
-# Check final GTF line count
-echo "Check Final GTF file length" >> README
-wc -l ${GTF_FILE_BASE}.ucsc.gtf >> README
-fc -ln -1 >> README
-echo >> README
-# 2737564 Homo_sapiens.GRCh38.95.ucsc.gtf  ## Matches starting line count!!
-
-# Confirm the starting and final GTF have the same line count
-echo "Confirm the starting and final GTF have the same line count" >> README
-FINAL_GTF_LINES=`cat ${GTF_FILE_BASE}.ucsc.gtf | wc -l`
-fc -ln -1 >> README
-echo >> README
-
-if [ ${INPUT_GTF_LINES} -eq ${FINAL_GTF_LINES} ]
-then
-    echo "Input and Final GTF files match"
-    echo "Input and Final GTF files match"  >> README
-else
+  CONTIG_CHECK=grep -cw "${contig}" ${REFERENCE_GENOME_FAI}
+  if [ ${CONTIG_CHECK} -eq 1 ]
+  then
+    echo "GTF Contig: ${contig} exists in reference genome fasta"
+  elif [ ${CONTIG_CHECK} -eq 0 ]
+  then
     echo
-    echo
-    echo "####### ERROR #########"
-    echo "Input and Final file lengths DO NOT match"
-    echo "Input = ${INPUT_GTF_LINES}"
-    echo "Final = ${FINAL_GTF_LINES}"
-    echo
+    echo "ERROR GTF Contig: ${contig} DOES NOT exist in reference genome fasta"
     echo
     exit 1
-fi
-echo >> README
+  else
+    echo "WARNING - UNEXPECTED EVENT"
+    echo "Contig count in reference genome is not 0 or 1 as expected"
+    exit 2
+  fi
+done
+
+####################################
+## Create required files produced from the GTF
+####################################
 
 # Create reflat file from GTF for Picard RNAseqMetrics
 # Uses gtfToGenePred from UCSC
 # http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/gtfToGenePred
+echo "Creating RefFlat for picrard rnaSeqMetrics"
 echo "Create refflat file from GTF for picard rnaSeqMetrics" >> README
+echo "${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.txt" >> README
 ${GTFTOGENEPRED_BINARY} -genePredExt \
     -ignoreGroupsWithoutExons \
-    ${GTF_FILE_BASE}.ucsc.gtf \
+    ${GTF_FILE} \
     /dev/stdout \
     | \
-    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.txt
-fc -ln -1 >> README
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.txt
 echo >> README
 
 # Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
+echo "Creating ribosomal RNA locations file for Picar rnaSeqMetrics"
 echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
-grep -w "rRNA" ${GTF_FILE_BASE}.ucsc.gtf \
+echo "grep -w "rRNA" ${GTF_FILE} | cut -f1,4,5,7,9 | sed 's/gene_id "//g' | sed 's/"; transcript_id "/\'$'\t''/g' | cut -f1-5 > temp_RibosomalLocations.txt" >> README
+grep -w "rRNA" ${GTF_FILE} \
     | \
     cut -f1,4,5,7,9 \
     | \
@@ -334,38 +264,45 @@ grep -w "rRNA" ${GTF_FILE_BASE}.ucsc.gtf \
     sed 's/"; transcript_id "/\'$'\t''/g' \
     | \
     cut -f1-5 > temp_RibosomalLocations.txt
-fc -ln -1 >> README
-cat ${REFERENCE_RNA_GENOME_DICT} temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ucsc.ribo.interval_list
-fc -ln -1 >> README
 echo >> README
 
+echo "Created final ribosome interval list file" >> README
+echo "cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dict temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ribo.interval_list" >> README
+cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dict temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ribo.interval_list
+echo >> README
+
+# Create refflat file from GTF fro IGV gene model track with HUGO IDs
+echo "Creating IGV RefFlat File"
 echo "Create refflat file from GTF for IGV genemodel tracks with HUGO IDs" >> README
+echo "${GTFTOGENEPRED_BINARY} -genePredExt -ignoreGroupsWithoutExons -geneNameAsName2 ${GTF_FILE} /dev/stdout | awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.hugoID.txt" >> README
 ${GTFTOGENEPRED_BINARY} -genePredExt \
     -ignoreGroupsWithoutExons \
     -geneNameAsName2 \
-    ${GTF_FILE_BASE}.ucsc.gtf \
+    ${GTF_FILE} \
     /dev/stdout \
     | \
-    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.ucsc.refFlat.hugoID.txt
-fc -ln -1 >> README
+    awk 'BEGIN { OFS="\t"} {print $12, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10}' > ${GTF_FILE_BASE}.refFlat.hugoID.txt
 echo >> README
-
-
-# Clean-up directory
-rm temp_*
-mkdir downloads
-mv ${GTF_FILE_FLAT} downloads
 
 # Create transcriptome fasta file derived from processed GTF
-# This submission records the jobID so the next step does not start until this is complete
+echo "Submitting transcriptome fasta generation process"
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
-fc -ln -1 >> README
+echo "sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh" >> README
+sbatch --parsable --export ALL,GENOME="${REFERENCE_GENOME_FASTA}",GTF="${GTF_FILE}",OUTPUT="${GTF_FILE_BASE}.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
 echo >> README
+echo >> README
+echo "----------------------------------------------------------------------------">> README
 echo "Specific script code as follows:" >> README
+echo >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh >> README
 echo >> README
 
 # Indicate GTF was created successfully
 touch GENE_MODEL_GTF_GENERATION_COMPLETE
+
+# Clean-up directory
+rm temp_*
+
+# Indicate completed
+echo "All Processes Completed"
