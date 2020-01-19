@@ -217,10 +217,10 @@ echo "Checking that all GTF contigs exist in reference genome"
 for contig in `cat temp_gtf_contigs.txt`
 do
   CONTIG_CHECK=`grep -cw "${contig}" ${REFERENCE_GENOME_FAI}`
-  if [ ${CONTIG_CHECK} -eq 1 ]
+  if [ ${CONTIG_CHECK} == 1 ]
   then
     echo "GTF Contig: ${contig} exists in reference genome fasta"
-  elif [ ${CONTIG_CHECK} -eq 0 ]
+  elif [ ${CONTIG_CHECK} == 0 ]
   then
     echo
     echo "ERROR GTF Contig: ${contig} DOES NOT exist in reference genome fasta"
@@ -229,6 +229,7 @@ do
   else
     echo "WARNING - UNEXPECTED EVENT"
     echo "Contig count in reference genome is not 0 or 1 as expected"
+    echo "Contig ${contig} was seen ${CONTIG_CHECK} times in the reference.fa.fai"
     exit 2
   fi
 done
