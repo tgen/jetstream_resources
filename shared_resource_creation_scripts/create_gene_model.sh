@@ -177,8 +177,8 @@ echo >> README
 # Capture the decompressed filename basename
 echo "Capture the decompressed filename basename"
 echo "Capture the decompressed filename basename" >> README
-echo "GTF_FILE_BASE=`basename ${GTF_FILE_FLAT} ".gtf"`" >> README
-GTF_FILE_BASE=`basename ${GTF_FILE_FLAT} ".gtf"`
+echo "GTF_FILE_BASE=`basename ${GTF_FILE} ".gtf"`" >> README
+GTF_FILE_BASE=`basename ${GTF_FILE} ".gtf"`
 echo >> README
 
 ####################################
