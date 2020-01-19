@@ -37,6 +37,34 @@ else
     cd ${TOPLEVEL_DIR}
 fi
 
+# Check if reference_genome directory exists or not, exit if so to prevent creating errors
+
+# Make reference_genome directory if not available
+if [ -e genome_reference ]
+then
+    echo "Genome Reference directory exists, exiting to prevent overwrite"
+    echo "----WARNING----"
+    exit 1
+else
+    # Initialize a top level README
+    touch README
+    echo >> README
+    echo "Reference Genome and related files required for JetStream ${WORKFLOW_NAME} Workflow" >> README
+    echo >> README
+    echo "For details on file creation see the associated github repository:" >> README
+    echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+    echo "Created and downloaded by ${CREATOR}" >> README
+    date >> README
+    echo >> README
+    echo "
+    Genome downloaded from ${GENOME_SOURCE}
+    Gene models downloaded from ${GENEMODEL_SOURCE}
+    "  >> README
+
+    echo "Genome Reference directory NOT fount, creating and moving into it now"
+    mkdir genome_reference
+    cd genome_reference
+fi
 # Initialize a top level README
 touch README
 echo >> README
@@ -55,17 +83,6 @@ Gene models downloaded from ${GENEMODEL_SOURCE}
 ####################################
 ## Create reference genomes from known sources
 ####################################
-
-# Make reference_genome directory if not available
-if [ -e genome_reference ]
-then
-    echo "Genome Reference directory exists, moving into it"
-    cd genome_reference
-else
-    echo "Genome Reference directory NOT fount, creating and moving into it now"
-    mkdir genome_reference
-    cd genome_reference
-fi
 
 # Initialize a reference_genome README
 touch README
