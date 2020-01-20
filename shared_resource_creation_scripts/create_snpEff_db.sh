@@ -126,6 +126,14 @@ cd data
 mkdir ${SNPEFF_DB_NAME}
 cd ${SNPEFF_DB_NAME}
 
+# Determine the reference genome fasta full path
+echo "Determine the full path filename of the reference genome fasta" >> ../../README
+echo "REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`" >> ../../README
+REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`
+echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}" >> ../../README
+REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}
+echo >> ../../README
+
 # Determine the GTF file full path
 echo "Determine the full path filename of the GTF file" >> ../..README
 echo "GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`" >> ../..README
@@ -161,7 +169,7 @@ then
     echo "Expected reference already exists in genomes directory"
 else
     echo "Genome reference fasta DOES NOT exits in genomes directory"
-    cp ${REFERENCE_DNA_GENOME_FASTA} ${SNPEFF_DB_NAME}.fa
+    cp ${REFERENCE_GENOME_FASTA} ${SNPEFF_DB_NAME}.fa
     fc -ln -1 >> ../../README
     echo >> ../../README
     gzip ${SNPEFF_DB_NAME}.fa
