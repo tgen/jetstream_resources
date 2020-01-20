@@ -5,6 +5,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task 8
+#SBATCH --partition defq,overflow
 
 # Usage: sbatch --export ALL,SNPEFF_VERSION="v4_3t",SNPEFF_DB_NAME="grch38.97",SNPEFF_CONFIG_PATH="/home/snpEff.config" build_snpEff_db.sh
 
@@ -19,4 +20,4 @@ snpEff build -gtf22 -v ${SNPEFF_DB_NAME} -c ${SNPEFF_CONFIG_PATH}
 
 touch CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE
 
-echo "CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE" >> README_${SNPEFF_DB_NAME}
+echo "CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE" >> README
