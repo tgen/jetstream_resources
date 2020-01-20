@@ -10,5 +10,9 @@ A JetStream workflow to support, old human genome things...
   * ../shared_resource_creation_scripts/create_gene_model.sh suncity_resources.ini
     * ../shared_resource_creation_scripts/create_star_genome_index.sh suncity_resources.ini star_index_lengths.csv 
     * ../shared_resource_creation_scripts/create_salmon_index.sh suncity_resources.ini 
-    * 
-    * create_snpEff_db.sh
+    * ../shared_resource_creation_scripts/create_snpEff_db.sh suncity_resources.ini 
+    * ../shared_resource_creation_scripts/create_vep_database.sh suncity_resources.ini 
+    * create_exome_capture_resources.sh
+    * create_star-fusion_resource.sh
+    * create_samtools_stats_non_N_region_file.sh
+    *   
