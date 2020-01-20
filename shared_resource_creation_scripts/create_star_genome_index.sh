@@ -132,7 +132,7 @@ echo >> README
 echo "Determine the full path filename of the GTF file" >> README
 echo "GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`" >> README
 GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`
-echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}" >> README
+echo "GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_FILE}" >> README
 GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_FILE}
 echo >> README
 
