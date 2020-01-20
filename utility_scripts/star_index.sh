@@ -4,6 +4,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task 20
+#SBATCH --partition defq,overflow
 
 ## Script to create star index files
 
