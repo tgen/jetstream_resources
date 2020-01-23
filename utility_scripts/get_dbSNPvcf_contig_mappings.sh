@@ -34,8 +34,6 @@ EUTILS_PATH=/home/jkeats/downloads/edirect/
 ### JSON.awk
 JSON_AWK=/home/jkeats/downloads/JSON.awk-1.3/JSON.awk
 
-
-
 #################################################
 ## Paramaterized Code
 
