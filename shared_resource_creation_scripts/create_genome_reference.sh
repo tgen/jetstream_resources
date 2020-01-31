@@ -264,7 +264,7 @@ echo >> README
 
 echo "    gatk IntervalListTools --SCATTER_COUNT 42 --SUBDIVISION_MODE BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW --UNIQUE true --SORT true --BREAK_BANDS_AT_MULTIPLES_OF 0 --INPUT ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list --OUTPUT chunk_intervals"
 gatk IntervalListTools \
-  --SCATTER_COUNT 42 \
+  --SCATTER_COUNT 50 \
   --SUBDIVISION_MODE BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW \
   --UNIQUE true \
   --SORT true \
@@ -281,7 +281,38 @@ else
     exit 1
 fi
 echo >> README
-# Add flag to top level to indicate process is complete
+
+# Create template strings of contigs and calling intervals for Jetstream YAML document
+
+# Calling contigs: - {"contig": chr1, "length": 248956422}
+cut -f2,3 ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict \
+  | \
+  grep -v "VN" \
+  | \
+  sed 's/SN://g' \
+  | \
+  sed 's/LN://g' \
+  | \
+  awk '{OFS="" ; print "- {\"contig\": ", $1, ", \"length\": ", $2, "}"}' > ${GENOME_FASTA_DECOMPRESSED_BASENAME}_calling_contigs.txt
+
+# Calling intervals: - {"contig": "chr1", "length": 197665, "start": 10001, "stop": 207666}
+grep -w "ACGTmer" ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list \
+  | \
+  cut -f1,2,3 \
+  | \
+  awk '{OFS="" ; print "- {\"contig\": \"", $1, "\", \"length\": ", $3-$2, ", \"start\": ", $2,  ", \"stop\": ", $3, "}"}' > ${GENOME_FASTA_DECOMPRESSED_BASENAME}_calling_intervals.txt
+# Sequence Groupings: - ['chr1'] OR - ['chr18', 'chr19', 'chr20']
+cut -f2,3 ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict \
+  | \
+  grep -v "VN" \
+  | \
+  sed 's/SN://g' \
+  | \
+  sed 's/LN://g' \
+  | \
+  awk '{OFS="" ; print "- [\x27", $1, "\x27]"}' > ${GENOME_FASTA_DECOMPRESSED_BASENAME}_sequence_groupings.txt
+
+# Add flag to top level to indicate process is completeq
 echo "## Add process completion flag to top level direcory" >> README
 echo "    touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE" >> README
 touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE
