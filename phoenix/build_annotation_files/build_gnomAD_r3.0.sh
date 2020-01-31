@@ -45,7 +45,7 @@ module load samtools/1.9
 echo
 echo
 
-# Download the current exome VCF
+# Download the current genome VCF
 wget https://storage.googleapis.com/gnomad-public/release/3.0/vcf/genomes/gnomad.genomes.r3.0.sites.vcf.bgz
 #235.68 GiB, MD5: f3501102192975da34b5d2c32f7c0791
 
@@ -72,7 +72,7 @@ plot-vcfstats --no-PDF --title "GnomADr3.0 Genomes" -p plots_vcfstats_genomes gn
 bcftools annotate \
     --threads 8 \
     --remove ID,QUAL,^INFO/AF \
-    --output-type z \
+    --output-type b \
     --output gnomad.genomes.r3.0.sites.pass.AnnotationReference.bcf \
     gnomad.genomes.r3.0.sites.pass.bcf
 # Create CSI index (This will be file used for bcftools database annotation purposes
