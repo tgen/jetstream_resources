@@ -46,7 +46,7 @@ echo "Found ${CONTIG_COUNT} contigs in the ${1} file"
 
 # Create table with header
 echo -e CONTIG"\t"GI"\t"SLEN"\t"GENOME_TYPE"\t"GENOME_SUBTYPE"\t"GENOME_SUBNAME"\t"ASSEMBLY_GI"\t"ASSEMBLY_ACC"\t"EXTRA_INFO > dbSNP_${2}_MetaData.txt
-
+# NT_113878.1
 echo
 # Parse out matching information from NCBI nucleotide database
 for CONTIG in `cat contig_list.txt`
