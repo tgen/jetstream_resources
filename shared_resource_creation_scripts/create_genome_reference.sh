@@ -21,6 +21,7 @@ fi
 
 ## Load required modules to ensure needed tools are in your path
 module load ${SAMTOOLS_VERSION}
+module load ${GATK_MODULE}
 
 ####################################
 ## Configure and make Directory Structure
@@ -233,6 +234,53 @@ else
 fi
 echo >> README
 
+
+# Create chunk/scatter intervals
+
+# Generate calling interval windows
+echo "## Create sequence analysis grouping chunks" >> README
+echo "    gatk ScatterIntervalsByNs --OUTPUT ${GENOME_FASTA_DECOMPRESSED_BASENAME}_NorACGT.interval_list --REFERENCE ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
+gatk ScatterIntervalsByNs \
+  --OUTPUT ${GENOME_FASTA_DECOMPRESSED_BASENAME}_NorACGT.interval_list \
+  --REFERENCE ${GENOME_FASTA_DECOMPRESSED_FILENAME}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: gatk ScatterInvervalsByNs"
+else
+    touch FAILED_GATK_SCATTERINVERVALSbyNS
+    echo "FAILED: gatk ScatterIntervalsByNs" >> README
+    exit 1
+fi
+echo >> README
+
+echo "    grep -w -v "Nmer" ${GENOME_FASTA_DECOMPRESSED_BASENAME}_NorACGT.interval_list > ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list" >> README
+grep -w -v "Nmer" ${GENOME_FASTA_DECOMPRESSED_BASENAME}_NorACGT.interval_list > ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list
+echo >> README
+
+echo "    mkdir chunk_intervals" >> README
+mkdir chunk_intervals
+echo >> README
+
+echo "    gatk IntervalListTools --SCATTER_COUNT 42 --SUBDIVISION_MODE BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW --UNIQUE true --SORT true --BREAK_BANDS_AT_MULTIPLES_OF 0 --INPUT ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list --OUTPUT chunk_intervals"
+gatk IntervalListTools \
+  --SCATTER_COUNT 42 \
+  --SUBDIVISION_MODE BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW \
+  --UNIQUE true \
+  --SORT true \
+  --BREAK_BANDS_AT_MULTIPLES_OF 0 \
+  --INPUT ${GENOME_FASTA_DECOMPRESSED_BASENAME}_ACGT.interval_list \
+  --OUTPUT chunk_intervals
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: gatk IntervalListTools"
+else
+    touch FAILED_GATK_IntervalListTools
+    echo "FAILED: gatk IntervalListTools" >> README
+    exit 1
+fi
+echo >> README
 # Add flag to top level to indicate process is complete
 echo "## Add process completion flag to top level direcory" >> README
 echo "    touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE" >> README
