@@ -69,8 +69,8 @@ fi
 # Make gnomad release version folder if not available
 if [ -e ${GNOMAD_RELEASE_VERSION} ]
 then
-    echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder exists, moving into it"
-    cd ${GNOMAD_RELEASE_VERSION}
+    echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder exists, exiting to prevent overwrite"
+    exit 1
 else
     echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder NOT fount, creating and moving into it now"
     mkdir -p ${GNOMAD_RELEASE_VERSION}
@@ -88,12 +88,6 @@ echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
-
-
-
-
-
-
 
 ############################
 ###
@@ -123,7 +117,7 @@ bcftools view \
 bcftools index --threads 4 gnomad.exomes.r2.1.1.sites.bcf
 
 bcftools stats --threads 8 gnomad.exomes.r2.1.1.sites.bcf > gnomad.exomes.r2.1.1.sites.bcf.stats
-plot-vcfstats --no-PDF --title "GnomAD Exomes" -p plots_vcfstats_exomes gnomad.exomes.r2.1.1.sites.bcf.stats
+#plot-vcfstats --no-PDF --title "GnomAD Exomes" -p plots_vcfstats_exomes gnomad.exomes.r2.1.1.sites.bcf.stats
 
 ## Prep for Mutect2 steps
 
@@ -194,7 +188,7 @@ bcftools index --threads 4 gnomad.genomes.r2.1.1.sites.bcf
 
 
 bcftools stats --threads 8 gnomad.genomes.r2.1.1.sites.bcf > gnomad.genomes.r2.1.1.sites.bcf.stats
-plot-vcfstats --no-PDF --title "GnomAD Genomes" -p plots_vcfstats_genomes gnomad.genomes.r2.1.1.sites.bcf.stats
+#plot-vcfstats --no-PDF --title "GnomAD Genomes" -p plots_vcfstats_genomes gnomad.genomes.r2.1.1.sites.bcf.stats
 
 
 ## Prep for Mutect2 steps
