@@ -7,6 +7,15 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
