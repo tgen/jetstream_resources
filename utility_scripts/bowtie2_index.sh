@@ -13,7 +13,7 @@
 
 module load ${BOWTIE2_MODULE}
 
-bowtie2-build index ${FASTA} ${BOWTIE_BASE}
+bowtie2-build --threads 10 ${FASTA} ${BOWTIE_BASE}
 
 # Error Capture
 if [ "$?" = "0" ]

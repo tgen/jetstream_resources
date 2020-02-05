@@ -63,8 +63,8 @@ then
     exit 2
 else
     echo "The Bowtie2 directory was NOT fount, creating and moving into it now"
-    mkdir bwa_${BOWTIE2_VERSION}
-    cd bwa_${BOWTIE2_VERSION}
+    mkdir bowtie2_${BOWTIE2_VERSION}
+    cd bowtie2_${BOWTIE2_VERSION}
 fi
 
 # Initialize a bowtie2 index README
@@ -82,7 +82,7 @@ echo >> README
 FASTA_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`
 
 # Determine the basename of the fasta to name the bowtie index outputs
-BOWTIE_BASE=`basename ${FASTA_FILENAME} ".gz"`
+BOWTIE_BASE=`basename ${FASTA_FILENAME} ".fa"`
 
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/${FASTA_FILENAME} ${FASTA_FILENAME}
