@@ -24,6 +24,7 @@ These scripts are designed to create the full reference dataset needed for the P
 * build_encode_blacklist.sh
 * build_lymphocyte_count_windows.sh
 * build_UCSC2ensembl_crossmapping.sh
+* build_centromere_and_heterochromatin_bed_files.sh
 
 ### Required binaries
 * wget
