@@ -45,8 +45,7 @@ bedtools intersect -wb -a Modeled_regions_for_GRCh38_centromere.bed \
 	sort -k1,1V -k2,2n -k3,3n > Modeled_regions_for_GRCh38_centromere_blacklist_intersect.bed
 
 # Merge the centromere regions and the overlaping encode blacklist regions together
-cat Modeled_regions_for_GRCh38_centromere.bed \
-	Modeled_regions_for_GRCh38_centromere_blacklist_intersect.bed | \
+cat Modeled_regions_for_GRCh38_centromere.bed Modeled_regions_for_GRCh38_centromere_blacklist_intersect.bed | \
 	cut -f1-4 | \
 	sort -k1,1V -k2,2n -k3,3n | \
 	bedtools merge > Modeled_regions_for_GRCh38_centromere_blacklist_merged.bed
