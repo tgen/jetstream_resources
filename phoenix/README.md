@@ -1,25 +1,31 @@
-# Automated Scripts for Reference File Creation
+# Phoenix Analysis Pipeline (GRCh38)
 
-These scripts are designed to create the full reference dataset needed for the Phoenix workflow. There is an expected order of script usage and each one checks that required steps are complete before they will start
+These scripts are designed to create the full reference dataset needed for the Phoenix workflow. 
+There is an expected order of script usage and each one checks that required steps are complete 
+before they will start.
+
+Because of difference between BWA for DNA alignment and STAR for RNA alignment this workflow leverages 
+two different but related reference genomes for DNA, has ALT-contigs as BWA is ALT-aware and HLA contigs, 
+while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aware.
 
 ### Script Usage Order
-* create_genome_reference.sh (downloads fasta files for DNA and RNA alignments)
-  * create_bwa_genome_index.sh
-  * create_gene_model.sh
-    * create_exome_capture_resources.sh
-    * transcriptome_fasta_creation (automatic initiation by gene_model script)
-      * create_salmon_index.sh
+* create_genome_reference.sh phoenix_resources.ini
+  * create_bwa_genome_index.sh phoenix_resources.ini
+  * create_gene_model.sh phoenix_resources.ini
+    * create_exome_capture_resources.sh phoenix_resources.ini
+    * create_salmon_index.sh
     * create_star_genome_index.sh
     * create_star-fusion_resource.sh
     * create_snpEff_db.sh
       * **NOTE**: make sure you update the snpEff.config in the utility_files directory BEFORE RUNNING
-    * create_samtools_stats_non_N_region_file.sh
-* create_vep_database.sh
+    * create_exome_capture_resources.sh phoenix_resources.ini
+    * create_samtools_stats_non_N_region_file.sh phoenix_resources.ini
+    * create_vep_database.sh phoenix_resources.ini
 * build_clinivar_20190715.sh
 * build_cosmic_v90.sh
 * build_dbSNP_b152.sh
   * create_genderCheck_SNP_list.sh
-* build_delly_annotations_e97.sh (UPDATE, dependancies???)
+* build_delly_annotations_e97.sh
 * build_gnomeAD_r3.0.sh
 * build_encode_blacklist.sh
 * build_lymphocyte_count_windows.sh
