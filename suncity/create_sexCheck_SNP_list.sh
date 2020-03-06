@@ -138,6 +138,14 @@ bcftools filter \
 fc -ln -1 >> README
 echo >> README
 
+# The vcf needs to be tbi indexed to work with freebayes
+echo "Create an index file for usage with freebayes" >> README
+bcftools index \
+    --tbi \
+    chrx_common_dbSNP${DBSNP_RELEASE_VERSION}_snv_exons.vcf.gz
+fc -ln -1 >> README
+echo >> README
+
 # Create bed file for usage with freebayes to run genotyping
 echo "Create a BED file of the positions in question for usage with freebayes" >> README
 bcftools view -H chrx_common_dbSNP${DBSNP_RELEASE_VERSION}_snv_exons.vcf.gz | cut -f1,2 | awk '{OFS="\t" ; print $1, $2-1, $2}' > chrx_common_dbSNP${DBSNP_RELEASE_VERSION}_snv_exons.bed
