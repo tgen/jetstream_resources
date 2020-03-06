@@ -43,7 +43,7 @@ then
     echo "tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "tool_resources directory NOT fount, creating and moving into it now"
+    echo "tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
