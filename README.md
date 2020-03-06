@@ -23,6 +23,9 @@ Multiple workflows exist to facilitate different analysis projects
 ### Coyote (https://github.com/tgen/coyote)
 * Dog analysis pipeline built around CanFam3.1, using ensembl version 98 gene models
 
+### CactusMouse (https://github.com/tgen/cactusMouse)
+* Mouse analysis pipeline built around mm10, using ..
+
 ## Other Provided Tools and Resources
 ### Utility Files
 * Files required for scripts in this repository
