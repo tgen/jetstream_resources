@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Usage: create_bwa_genome_index.sh <Config.ini>
-
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
@@ -76,7 +74,7 @@ echo >> README
 
 # Create bwa index files using bwa utility script
 echo "Create samtools stats non N region file of primary contigs with chrX and chrY removed as follows:" >> README
-sbatch --export ALL ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk ${REFERENCE_DNA_GENOME_FASTA} GRCh38tgen_decoy_alts_hla_samstats_no_N_1based_primary_contigs_no_chrX_chrY.txt chr1CONTIG_SEPchr2CONTIG_SEPchr3CONTIG_SEPchr4CONTIG_SEPchr5CONTIG_SEPchr6CONTIG_SEPchr7CONTIG_SEPchr8CONTIG_SEPchr9CONTIG_SEPchr10CONTIG_SEPchr11CONTIG_SEPchr12CONTIG_SEPchr13CONTIG_SEPchr14CONTIG_SEPchr15CONTIG_SEPchr16CONTIG_SEPchr17CONTIG_SEPchr18CONTIG_SEPchr19CONTIG_SEPchr20CONTIG_SEPchr21CONTIG_SEPchr22
+sbatch --export ALL ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk ${REFERENCE_DNA_GENOME_FASTA} GRCh37_suncity_samstats_no_N_1based_primary_contigs_no_chrX_chrY.txt chr1CONTIG_SEPchr2CONTIG_SEPchr3CONTIG_SEPchr4CONTIG_SEPchr5CONTIG_SEPchr6CONTIG_SEPchr7CONTIG_SEPchr8CONTIG_SEPchr9CONTIG_SEPchr10CONTIG_SEPchr11CONTIG_SEPchr12CONTIG_SEPchr13CONTIG_SEPchr14CONTIG_SEPchr15CONTIG_SEPchr16CONTIG_SEPchr17CONTIG_SEPchr18CONTIG_SEPchr19CONTIG_SEPchr20CONTIG_SEPchr21CONTIG_SEPchr22
 fc -ln -1 >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk >> README
