@@ -52,7 +52,7 @@ then
     echo "tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "tool_resources directory NOT fount, creating and moving into it now"
+    echo "tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
@@ -62,7 +62,7 @@ then
     echo "The Bowtie2 directory exists, exiting to prevent overwriting existing index"
     exit 2
 else
-    echo "The Bowtie2 directory was NOT fount, creating and moving into it now"
+    echo "The Bowtie2 directory was NOT found, creating and moving into it now"
     mkdir bowtie2_${BOWTIE2_VERSION}
     cd bowtie2_${BOWTIE2_VERSION}
 fi

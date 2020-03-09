@@ -85,7 +85,7 @@ then
     echo "snpEff directory exists, moving into it"
     cd snpEff_${SNPEFF_VERSION}
 else
-    echo "snpEff directory NOT fount, creating and moving into it now"
+    echo "snpEff directory NOT found, creating and moving into it now"
     mkdir snpEff_${SNPEFF_VERSION}
     cd snpEff_${SNPEFF_VERSION}
 fi
@@ -116,7 +116,7 @@ then
     echo "snpEff data directory exists, moving into it"
     cd data
 else
-    echo "snpEff data directory NOT fount, creating and moving into it now"
+    echo "snpEff data directory NOT found, creating and moving into it now"
     mkdir data
     cd data
 fi
@@ -127,7 +127,7 @@ then
     echo "snpEff ${SNPEFF_DB_NAME} directory exists, exiting to prevent errors"
     exit 2
 else
-    echo "snpEff ${SNPEFF_DB_NAME} directory NOT fount, creating and moving into it now"
+    echo "snpEff ${SNPEFF_DB_NAME} directory NOT found, creating and moving into it now"
     mkdir ${SNPEFF_DB_NAME}
     cd ${SNPEFF_DB_NAME}
 fi

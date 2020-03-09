@@ -43,7 +43,7 @@ then
     echo "tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "tool_resources directory NOT fount, creating and moving into it now"
+    echo "tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
@@ -53,7 +53,7 @@ then
     echo "The BWA directory exists, exiting to prevent overwriting existing index"
     exit 2
 else
-    echo "The BWA directory was NOT fount, creating and moving into it now"
+    echo "The BWA directory was NOT found, creating and moving into it now"
     mkdir bwa_${BWA_VERSION}
     cd bwa_${BWA_VERSION}
 fi

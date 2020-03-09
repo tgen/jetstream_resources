@@ -85,7 +85,7 @@ then
     echo "starFusion directory exists, moving into it"
     cd starFusion_${STARFUSION_PnP_ANNOTATION_VERSION}
 else
-    echo "starFusion directory NOT fount, creating and moving into it now"
+    echo "starFusion directory NOT found, creating and moving into it now"
     mkdir starFusion_${STARFUSION_PnP_ANNOTATION_VERSION}
     cd starFusion_${STARFUSION_PnP_ANNOTATION_VERSION}
 fi

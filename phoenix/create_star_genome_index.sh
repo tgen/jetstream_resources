@@ -84,7 +84,7 @@ then
     echo "STAR directory exists, moving into it"
     cd star_${STAR_VERSION}
 else
-    echo "STAR directory NOT fount, creating and moving into it now"
+    echo "STAR directory NOT found, creating and moving into it now"
     mkdir star_${STAR_VERSION}
     cd star_${STAR_VERSION}
 fi

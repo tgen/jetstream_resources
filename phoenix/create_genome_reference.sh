@@ -23,7 +23,7 @@ then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
 else
-    echo "Top level directory NOT fount, creating and moving into it now"
+    echo "Top level directory NOT found, creating and moving into it now"
     mkdir -p ${TOPLEVEL_DIR}
     cd ${TOPLEVEL_DIR}
 fi
@@ -60,7 +60,7 @@ then
     echo "Genome Reference directory exists, moving into it"
     cd genome_reference
 else
-    echo "Genome Reference directory NOT fount, creating and moving into it now"
+    echo "Genome Reference directory NOT found, creating and moving into it now"
     mkdir genome_reference
     cd genome_reference
 fi

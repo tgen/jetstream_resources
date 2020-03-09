@@ -39,7 +39,7 @@ then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
 else
-    echo "Top level directory NOT fount, creating and moving into it now"
+    echo "Top level directory NOT found, creating and moving into it now"
     mkdir -p ${TOPLEVEL_DIR}
     cd ${TOPLEVEL_DIR}
 fi
@@ -50,7 +50,7 @@ then
     echo "Public Databases folder exists, moving into it"
     cd public_databases
 else
-    echo "Public Databases folder NOT fount, creating and moving into it now"
+    echo "Public Databases folder NOT found, creating and moving into it now"
     mkdir -p public_databases
     cd public_databases
 fi
@@ -61,7 +61,7 @@ then
     echo "gnomAD folder exists, moving into it"
     cd gnomad
 else
-    echo "gnomAD folder NOT fount, creating and moving into it now"
+    echo "gnomAD folder NOT found, creating and moving into it now"
     mkdir -p gnomad
     cd gnomad
 fi
@@ -72,7 +72,7 @@ then
     echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder exists, exiting to prevent overwrite"
     exit 1
 else
-    echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder NOT fount, creating and moving into it now"
+    echo "gnomAD ${GNOMAD_RELEASE_VERSION} folder NOT found, creating and moving into it now"
     mkdir -p ${GNOMAD_RELEASE_VERSION}
     cd ${GNOMAD_RELEASE_VERSION}
 fi

@@ -62,7 +62,7 @@ then
     echo "The gatk_cnv directory exists, exiting to prevent overwriting existing interval lists."
     exit 2
 else
-    echo "The gatk_cnv directory was NOT fount, creating and moving into it now"
+    echo "The gatk_cnv directory was NOT found, creating and moving into it now"
     mkdir gatk_cnv
     cd gatk_cnv
 fi

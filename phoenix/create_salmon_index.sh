@@ -85,7 +85,7 @@ then
     echo "Salmon directory exists, moving into it"
     cd salmon_${SALMON_VERSION}
 else
-    echo "Salmon directory NOT fount, creating and moving into it now"
+    echo "Salmon directory NOT found, creating and moving into it now"
     mkdir salmon_${SALMON_VERSION}
     cd salmon_${SALMON_VERSION}
 fi

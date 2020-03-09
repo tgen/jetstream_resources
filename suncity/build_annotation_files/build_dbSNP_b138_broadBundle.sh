@@ -39,7 +39,7 @@ then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
 else
-    echo "Top level directory NOT fount, creating and moving into it now"
+    echo "Top level directory NOT found, creating and moving into it now"
     mkdir -p ${TOPLEVEL_DIR}
     cd ${TOPLEVEL_DIR}
 fi
@@ -50,7 +50,7 @@ then
     echo "Public Databases folder exists, moving into it"
     cd public_databases
 else
-    echo "Public Databases folder NOT fount, creating and moving into it now"
+    echo "Public Databases folder NOT found, creating and moving into it now"
     mkdir -p public_databases
     cd public_databases
 fi
@@ -61,7 +61,7 @@ then
     echo "dbSNP folder exists, moving into it"
     cd dbsnp
 else
-    echo "dbSNP folder NOT fount, creating and moving into it now"
+    echo "dbSNP folder NOT found, creating and moving into it now"
     mkdir -p dbsnp
     cd dbsnp
 fi
@@ -72,7 +72,7 @@ then
     echo "dbSNP ${DBSNP_RELEASE_VERSION} folder exists, exiting to prevent overwrite"
     exit 1
 else
-    echo "dbSNP ${DBSNP_RELEASE_VERSION} folder NOT fount, creating and moving into it now"
+    echo "dbSNP ${DBSNP_RELEASE_VERSION} folder NOT found, creating and moving into it now"
     mkdir -p ${DBSNP_RELEASE_VERSION}
     cd ${DBSNP_RELEASE_VERSION}
 fi

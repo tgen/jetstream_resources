@@ -53,7 +53,7 @@ then
     echo "The samtools_stats directory exists, exiting to prevent overwriting existing non_N_region_file."
     exit 2
 else
-    echo "The samtools_stats directory was NOT fount, creating and moving into it now"
+    echo "The samtools_stats directory was NOT found, creating and moving into it now"
     mkdir samtools_stats
     cd samtools_stats
 fi

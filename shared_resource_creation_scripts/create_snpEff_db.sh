@@ -93,7 +93,7 @@ then
     echo "snpEff directory exists, exiting to prevent overwrite"
     exit 1
 else
-    echo "snpEff directory NOT fount, creating and moving into it now"
+    echo "snpEff directory NOT found, creating and moving into it now"
     mkdir snpEff_${SNPEFF_VERSION}
     cd snpEff_${SNPEFF_VERSION}
 fi

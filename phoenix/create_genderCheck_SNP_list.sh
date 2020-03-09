@@ -52,7 +52,7 @@ then
     echo "tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "tool_resources directory NOT fount, creating and moving into it now"
+    echo "tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
@@ -62,7 +62,7 @@ then
     echo "The tgen_gender_check directory exists, exiting to prevent overwriting existing index"
     exit 2
 else
-    echo "The tgen_gender_check directory was NOT fount, creating and moving into it now"
+    echo "The tgen_gender_check directory was NOT found, creating and moving into it now"
     mkdir tgen_gender_check
     cd tgen_gender_check
 fi

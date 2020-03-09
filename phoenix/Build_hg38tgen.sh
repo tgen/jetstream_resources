@@ -28,7 +28,7 @@ then
     echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
     cd ${TOPLEVEL_DIR}
 else
-    echo "Top level directory NOT fount, creating and moving into it now"
+    echo "Top level directory NOT found, creating and moving into it now"
     mkdir ${TOPLEVEL_DIR}
     cd ${TOPLEVEL_DIR}
 fi
@@ -64,7 +64,7 @@ then
     echo "Genome Reference directory exists, moving into it"
     cd genome_reference
 else
-    echo "Genome Reference directory NOT fount, creating and moving into it now"
+    echo "Genome Reference directory NOT found, creating and moving into it now"
     mkdir genome_reference
     cd genome_reference
 fi
@@ -182,7 +182,7 @@ then
     echo "tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "tool_resources directory NOT fount, creating and moving into it now"
+    echo "tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
@@ -192,7 +192,7 @@ then
     echo "The BWA directory exists, moving into it"
     cd "bwa_0.7.17"
 else
-    echo "The BWA directory NOT fount, creating and moving into it now"
+    echo "The BWA directory NOT found, creating and moving into it now"
     mkdir "bwa_0.7.17"
     cd "bwa_0.7.17"
 fi
@@ -292,7 +292,7 @@ then
     echo "Gene Model directory exists, moving into it"
     cd gene_model
 else
-    echo "Gene Model directory NOT fount, creating and moving into it now"
+    echo "Gene Model directory NOT found, creating and moving into it now"
     mkdir gene_model
     cd gene_model
 fi
@@ -303,7 +303,7 @@ then
     echo "Gene Model directory exists, moving into it"
     cd ensembl_v95
 else
-    echo "Gene Model directory NOT fount, creating and moving into it now"
+    echo "Gene Model directory NOT found, creating and moving into it now"
     mkdir ensembl_v95
     cd ensembl_v95
 fi
@@ -445,7 +445,7 @@ then
     echo "Gene Model tool_resources directory exists, moving into it"
     cd tool_resources
 else
-    echo "Gene Model tool_resources directory NOT fount, creating and moving into it now"
+    echo "Gene Model tool_resources directory NOT found, creating and moving into it now"
     mkdir tool_resources
     cd tool_resources
 fi
@@ -461,7 +461,7 @@ then
     echo "Salmon directory exists, moving into it"
     cd "salmon_0.12.0"
 else
-    echo "Salmon directory NOT fount, creating and moving into it now"
+    echo "Salmon directory NOT found, creating and moving into it now"
     mkdir "salmon_0.12.0"
     cd "salmon_0.12.0"
 fi
@@ -496,7 +496,7 @@ then
     echo "STAR directory exists, moving into it"
     cd "star_2.6.1d"
 else
-    echo "STAR directory NOT fount, creating and moving into it now"
+    echo "STAR directory NOT found, creating and moving into it now"
     mkdir "star_2.6.1d"
     cd "star_2.6.1d"
 fi
