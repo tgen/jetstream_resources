@@ -1,10 +1,8 @@
 # Suncity Analysis Pipeline (GRCh37/b37/hg19 - hs37d5)
 
-A JetStream workflow to support, old human genome things...
+A JetStream workflow to support old human genome things...
 
-
-### This directory contains Automated scripts for building files need for Coyote pipeline
-
+### Script Usage Order
 * ../shared_resource_creation_scripts/create_genome_reference.sh suncity_resources.ini
   * ../shared_resource_creation_scripts/create_bwa_genome_index.sh suncity_resources.ini
   * ../shared_resource_creation_scripts/create_gene_model.sh suncity_resources.ini
@@ -16,5 +14,6 @@ A JetStream workflow to support, old human genome things...
      
     * create_exome_capture_resources.sh
     * create_star-fusion_resource.sh
-    * create_samtools_stats_non_N_region_file.sh
-    *   
+    * create_samtools_stats_non_N_region_file.sh suncity_resources.ini
+    * create_gatk_cnv_interval_list.sh suncity_resources.ini
+    * create_deepvariant_models.sh suncity_resources.ini

@@ -21,6 +21,8 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
     * create_exome_capture_resources.sh phoenix_resources.ini
     * create_samtools_stats_non_N_region_file.sh phoenix_resources.ini
     * create_vep_database.sh phoenix_resources.ini
+    * create_gatk_cnv_interval_list.sh phoenix_resources.ini
+    * create_deepvariant_models.sh phoenix_resources.ini
 * build_clinivar_20190715.sh
 * build_cosmic_v90.sh
 * build_dbSNP_b152.sh
