@@ -165,12 +165,21 @@ GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README
 echo >> README
 
+echo "Create 2bit genome reference" >> README
+rsync -aP rsync://hgdownload.soe.ucsc.edu/genome/admin/exe/linux.x86_64/faToTwoBit ./
+fc -ln -1 >> README
+echo >> README
+./faToTwoBit GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit
+fc -ln -1 >> README
+echo >> README
+
 # Clean up the directory to store the downloads
 mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
 mv bwa.kit downloads
 mv README_analysis_sets.txt downloads
 mv bwakit_HLA.fasta downloads
 rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
+rm faToTwoBit
 
 ####################################
 ## INDEX BWA REFERENCE GENOME
