@@ -80,17 +80,17 @@ wget ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_LINK}
 wget ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_MD5SUM_LINK}
 
 HAPMAP=`basename ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_LINK}`
-fc -ln -1 >> README
 if [ `md5sum ${HAPMAP} | cut -d " " -f 1` != `cut -d " " -f 1 ${HAPMAP}.md5` ]; then
     echo "The md5s do not match for ${HAPMAP}, please run the script to again."
     exit 1
 else
     echo "md5sum ${HAPMAP} | cut -d " " -f 1" >> README
-    echo "cut -d " " -f 1 ${HAPMAP}.md5" >> README
+    md5sum ${HAPMAP} | cut -d " " -f 1 >> README
     md5sum ${HAPMAP} | cut -d " " -f 1
+    echo "cut -d " " -f 1 ${HAPMAP}.md5" >> README
+    cut -d " " -f 1 ${HAPMAP}.md5 >> README
     cut -d " " -f 1 ${HAPMAP}.md5
 fi
-fc -ln -1 >> README
 echo >> README
 
 echo "wget ${BROAD_BUNDLE_MILLS_DOWNLOAD_LINK}" >> README
@@ -100,17 +100,17 @@ wget ${BROAD_BUNDLE_MILLS_DOWNLOAD_LINK}
 wget ${BROAD_BUNDLE_MILLS_MD5SUM_DOWNLOAD_LINK}
 
 MILLS=`basename ${BROAD_BUNDLE_MILLS_DOWNLOAD_LINK}`
-fc -ln -1 >> README
 if [ `md5sum ${MILLS} | cut -d " " -f 1` != `cut -d " " -f 1 ${MILLS}.md5` ]; then
     echo "The md5s do not match for ${MILLS}, please run the script to again."
     exit 1
 else
     echo "md5sum ${MILLS} | cut -d " " -f 1" >> README
-    echo "cut -d " " -f 1 ${MILLS}.md5" >> README
+    md5sum ${MILLS} | cut -d " " -f 1 >> README
     md5sum ${MILLS} | cut -d " " -f 1
+    echo "cut -d " " -f 1 ${MILLS}.md5" >> README
+    cut -d " " -f 1 ${MILLS}.md5 >> README
     cut -d " " -f 1 ${MILLS}.md5
 fi
-fc -ln -1 >> README
 echo >> README
 
 echo "wget ${BROAD_BUNDLE_1000G_DOWNLOAD_LINK}" >> README
@@ -120,7 +120,6 @@ wget ${BROAD_BUNDLE_1000G_DOWNLOAD_LINK}
 wget ${BROAD_BUNDLE_1000G_DOWNLOAD_MD5SUM_LINK}
 
 G1000=`basename ${BROAD_BUNDLE_1000G_DOWNLOAD_LINK}`
-fc -ln -1 >> README
 if [ `md5sum ${G1000} | cut -d " " -f 1` != `cut -d " " -f 1 ${G1000}.md5` ]; then
     echo "The md5s do not match for ${G1000}, please run the script to again."
     exit 1
@@ -132,8 +131,7 @@ else
     cut -d " " -f 1 ${G1000}.md5 >> README
     cut -d " " -f 1 ${G1000}.md5
 fi
-fc -ln -1 >> README
 echo >> README
 
+echo "wget ${BROAD_BUNDLE_1000Gphase3_DOWNLOAD_LINK}"
 wget ${BROAD_BUNDLE_1000Gphase3_DOWNLOAD_LINK}
-fc -ln -1 >> README
