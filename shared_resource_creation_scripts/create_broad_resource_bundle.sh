@@ -79,6 +79,8 @@ echo >> README
 wget ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_LINK}
 wget ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_MD5SUM_LINK}
 
+module load HTSlib/1.10.1-foss-2019a
+
 HAPMAP=`basename ${BROAD_BUNDLE_HAPMAP_DOWNLOAD_LINK}`
 if [ `md5sum ${HAPMAP} | cut -d " " -f 1` != `cut -d " " -f 1 ${HAPMAP}.md5` ]; then
     echo "The md5s do not match for ${HAPMAP}, please run the script to again."
@@ -90,6 +92,15 @@ else
     echo "cut -d " " -f 1 ${HAPMAP}.md5" >> README
     cut -d " " -f 1 ${HAPMAP}.md5 >> README
     cut -d " " -f 1 ${HAPMAP}.md5
+    echo "gunzip ${HAPMAP}" >> README
+    echo "gunzip ${HAPMAP}"
+    gunzip ${HAPMAP}
+    echo "bgzip ${HAPMAP::-3}" >> README
+    echo "bgzip ${HAPMAP::-3}"
+    bgzip ${HAPMAP::-3}
+    echo "tabix ${HAPMAP}" >> README
+    echo "tabix ${HAPMAP}"
+    tabix ${HAPMAP}
 fi
 echo >> README
 
@@ -110,6 +121,15 @@ else
     echo "cut -d " " -f 1 ${MILLS}.md5" >> README
     cut -d " " -f 1 ${MILLS}.md5 >> README
     cut -d " " -f 1 ${MILLS}.md5
+    echo "gunzip ${MILLS}" >> README
+    echo "gunzip ${MILLS}"
+    gunzip ${MILLS}
+    echo "bgzip ${MILLS::-3}" >> README
+    echo "bgzip ${MILLS::-3}"
+    bgzip ${MILLS::-3}
+    echo "tabix ${MILLS}" >> README
+    echo "tabix ${MILLS}"
+    tabix ${MILLS}
 fi
 echo >> README
 
@@ -130,8 +150,27 @@ else
     echo "cut -d " " -f 1 ${G1000}.md5" >> README
     cut -d " " -f 1 ${G1000}.md5 >> README
     cut -d " " -f 1 ${G1000}.md5
+    echo "gunzip ${G1000}" >> README
+    echo "gunzip ${G1000}"
+    gunzip ${G1000}
+    echo "bgzip ${G1000::-3}" >> README
+    echo "bgzip ${G1000::-3}"
+    bgzip ${G1000::-3}
+    echo "tabix ${G1000}" >> README
+    echo "tabix ${G1000}"
+    tabix ${G1000}
 fi
 echo >> README
 
 echo "wget ${BROAD_BUNDLE_1000Gphase3_DOWNLOAD_LINK}"
 wget ${BROAD_BUNDLE_1000Gphase3_DOWNLOAD_LINK}
+PHASE3=`basename ${BROAD_BUNDLE_1000Gphase3_DOWNLOAD_LINK}`
+echo "gunzip ${PHASE3}" >> README
+echo "gunzip ${PHASE3}"
+gunzip ${PHASE3}
+echo "bgzip ${PHASE3::-3}" >> README
+echo "bgzip ${PHASE3::-3}"
+bgzip ${PHASE3::-3}
+echo "tabix ${PHASE3}" >> README
+echo "tabix ${PHASE3}"
+tabix ${PHASE3}
