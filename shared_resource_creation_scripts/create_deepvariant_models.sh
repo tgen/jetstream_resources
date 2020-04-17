@@ -70,13 +70,13 @@ echo >> README
 
 # Download and cleanup deepvariant release zip
 echo "Create deepvariant model as follows:" >> README
-wget https://github.com/google/deepvariant/releases/download/${DEEPVARIANT_VERSION}/deepvariant.zip
+wget https://github.com/google/deepvariant/releases/download/v${DEEPVARIANT_VERSION}/deepvariant.zip
 fc -ln -1 >> README
 echo >> README
 unzip -qq deepvariant.zip
 fc -ln -1 >> README
 # Need to output to /dev/null because find likes to report the directories as missing after they have been moved already
-find . -name "${DEEPVARIANT_VERSION}+data" -exec mv {} . \; 2> /dev/null
+find . -name "*${DEEPVARIANT_VERSION}+data*" -exec mv {} . \; 2> /dev/null
 fc -ln -1 >> README
 echo >> README
 rm -rf deepvariant.zip deepvariant
