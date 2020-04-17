@@ -47,14 +47,14 @@ else
     cd tool_resources
 fi
 
-if [ -e "deepvariant_${DEEPVARIANT_VERSION}" ]
+if [ -e "deepvariant/${DEEPVARIANT_VERSION}" ]
 then
-    echo "The deepvariant directory exists, exiting to prevent overwriting existing index"
+    echo "The deepvariant directory exists, exiting to prevent overwriting existing files"
     exit 2
 else
     echo "The deepvariant directory was NOT found, creating and moving into it now"
-    mkdir deepvariant_${DEEPVARIANT_VERSION}
-    cd deepvariant_${DEEPVARIANT_VERSION}
+    mkdir -p deepvariant/${DEEPVARIANT_VERSION}
+    cd deepvariant/${DEEPVARIANT_VERSION}
 fi
 
 # Initialize a deepvariant model README
@@ -67,9 +67,6 @@ date >> README
 echo >> README
 echo "Deepvariant creation details:" >> README
 echo >> README
-
-# Create a symbolic link to the reference genome
-ln -s ../../genome_reference/${FASTA_FILENAME} ${FASTA_FILENAME}
 
 # Download and cleanup deepvariant release zip
 echo "Create deepvariant model as follows:" >> README
