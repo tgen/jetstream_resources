@@ -1,52 +1,50 @@
 #!/usr/bin/env bash
 
-# Usage: get_dbSNPvcf_contig_mappings.sh <INPUT.VCF> <VERSION>
+# Usage: get_dbSNPvcf_contig_mappings.sh <RESOURCE.ini> <INPUT.VCF> <VERSION>
 
 # Takes a dbSNP vcf with "NC_xxxxxx.x" contig headers to matching table
+
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
+# Read required variables from configuration file
+. ${1}
 
 ####################################
 ## Load Required Tools
 ###################################
-
-## bcftools
-module load samtools/1.9
-module load perl/5.24.1
-
-##### Additional Required Tools: NCBI eUtils, JSON.awk
-
-### NCBI eUtils
-## Install instructions: https://www.ncbi.nlm.nih.gov/books/NBK179288/
-## cd ~
-#  /bin/bash
-#  perl -MNet::FTP -e \
-#    '$ftp = new Net::FTP("ftp.ncbi.nlm.nih.gov", Passive => 1);
-#     $ftp->login; $ftp->binary;
-#     $ftp->get("/entrez/entrezdirect/edirect.tar.gz");'
-#  gunzip -c edirect.tar.gz | tar xf -
-#  rm edirect.tar.gz
-#  builtin exit
-#  export PATH=${PATH}:$HOME/edirect >& /dev/null || setenv PATH "${PATH}:$HOME/edirect"
-#  ./edirect/setup.sh
-
-## NCBI eUtils required Perl module
-EUTILS_PATH=/home/jkeats/downloads/edirect/
-
-### JSON.awk
-JSON_AWK=/home/jkeats/downloads/JSON.awk-1.3/JSON.awk
+if [ $ENVIRONMENT == "TGen"]
+then
+  ## NCBI eUtils required Perl module
+  module load perl/5.24.1
+  EUTILS_PATH=/home/jkeats/downloads/edirect/
+  module load BCFtools/1.10.1-foss-2019a
+  JSON_AWK=/home/jkeats/downloads/JSON.awk-1.3/JSON.awk
+else
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+fi
 
 #################################################
 ## Paramaterized Code
 
-# Get the list of contigs in the provided VCF file (this should work on b37 or b38 mapped dbSNP.vcf files)
-bcftools view -H ${1} | cut -f1 | sort | uniq > contig_list.txt
+# Get the list of contigs in the provided VCF file
+bcftools view -h ${2} | grep "##contig" | sed 's/##contig=<ID=//g' | sed 's/>//g' > contig_list.txt
 
 # Determine the number of contigs to process
 CONTIG_COUNT=`wc -l contig_list.txt | cut -f1`
-echo "Found ${CONTIG_COUNT} contigs in the ${1} file"
+echo "Found ${CONTIG_COUNT} contigs in the ${2} file"
 
 # Create table with header
-echo -e CONTIG"\t"GI"\t"SLEN"\t"GENOME_TYPE"\t"GENOME_SUBTYPE"\t"GENOME_SUBNAME"\t"ASSEMBLY_GI"\t"ASSEMBLY_ACC"\t"EXTRA_INFO > dbSNP_${2}_MetaData.txt
-# NT_113878.1
+echo -e CONTIG"\t"GI"\t"SLEN"\t"GENOME_TYPE"\t"GENOME_SUBTYPE"\t"GENOME_SUBNAME"\t"ASSEMBLY_GI"\t"ASSEMBLY_ACC"\t"EXTRA_INFO > dbSNP_${3}_MetaData.txt
+
 echo
 # Parse out matching information from NCBI nucleotide database
 for CONTIG in `cat contig_list.txt`
@@ -77,9 +75,10 @@ do
     EXTRA_INFO=`awk -f ${JSON_AWK} ${CONTIG}.json | grep "result" | grep -w "extra" | cut -f2 | sed 's/"//g'`
 
     ### Send extracted results to new table
-    echo -e ${CONTIG}"\t"${GI}"\t"${SLEN}"\t"${GENOME_TYPE}"\t"${GENOME_SUBTYPE}"\t"${GENOME_SUBNAME}"\t"${ASSEMBLY_GI}"\t"${ASSEMBLY_ACC}"\t"${EXTRA_INFO} >> dbSNP_${2}_MetaData.txt
+    echo -e ${CONTIG}"\t"${GI}"\t"${SLEN}"\t"${GENOME_TYPE}"\t"${GENOME_SUBTYPE}"\t"${GENOME_SUBNAME}"\t"${ASSEMBLY_GI}"\t"${ASSEMBLY_ACC}"\t"${EXTRA_INFO} >> dbSNP_${3}_MetaData.txt
 
     # Remove JSON record
     rm ${CONTIG}.json
 
 done
+
