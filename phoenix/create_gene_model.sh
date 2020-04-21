@@ -7,10 +7,17 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
-
-
 
 ####################################
 ## Navigate Directory Structure
@@ -76,7 +83,7 @@ fi
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
@@ -114,7 +121,7 @@ echo "Record the number of lines in original file" >> README
 wc -l ${GTF_FILE_FLAT} >> README
 fc -ln -1 >> README
 echo >> README
-# 2737564 Homo_sapiens.GRCh38.95.gtf
+
 # Set variable for testing
 INPUT_GTF_LINES=`cat ${GTF_FILE_FLAT} | wc -l`
 
@@ -204,7 +211,6 @@ echo "Check Final GTF file length" >> README
 wc -l ${GTF_FILE_BASE}.ucsc.gtf >> README
 fc -ln -1 >> README
 echo >> README
-# 2737564 Homo_sapiens.GRCh38.95.ucsc.gtf  ## Matches starting line count!!
 
 # Confirm the starting and final GTF have the same line count
 echo "Confirm the starting and final GTF have the same line count" >> README
@@ -267,6 +273,11 @@ grep -w "rRNA" ${GTF_FILE_BASE}.ucsc.gtf \
     | \
     cut -f1-5 > temp_RibosomalLocations.txt
 fc -ln -1 >> README
+
+# Determine the full path to the RNA_Genome.dict file
+REFERENCE_RNA_GENOME_BASENAME=`basename ${REFERENCE_RNA_GENOME_NAME} ".fa"`
+REFERENCE_RNA_GENOME_DICT=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_BASENAME}.dict
+
 cat ${REFERENCE_RNA_GENOME_DICT} temp_RibosomalLocations.txt > ${GTF_FILE_BASE}.ucsc.ribo.interval_list
 fc -ln -1 >> README
 echo >> README
@@ -288,11 +299,57 @@ rm temp_*
 mkdir downloads
 mv ${GTF_FILE_FLAT} downloads
 
+# Determine the full path to the reference RNA genome fasta
+REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
+
 # Create transcriptome fasta file derived from processed GTF
-# This submission records the jobID so the next step does not start until this is complete
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
-fc -ln -1 >> README
+if [ $ENVIRONMENT == "TGen"]
+then
+  # Submit index generation job to the slurm scheduler
+  sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
+  fc -ln -1 >> README
+elif [ $ENVIRONMENT == "LOCAL"]
+then
+  echo
+  echo "Transcriptome FASTA will be created on the local compute"
+
+  gffread ${GTF_FILE_BASE}.ucsc.gtf -g ${REFERENCE_RNA_GENOME_FASTA} -w ${GTF_FILE_BASE}.ucsc.transcriptome.fasta
+
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "PASSED_CREATE_TRANSCRIPTOME_FASTA" >> README
+  else
+      touch FAILED_CREATE_TRANSCRIPTOME_FASTA
+      echo "FAILED_CREATE_TRANSCRIPTOME_FASTA" >> README
+      exit 1
+  fi
+
+  # Check the number of unique transcripts produced to ensure entire GTF was converted
+  FASTA_TRANSCRIPTS=`grep "^>" ${GTF_FILE_BASE}.ucsc.transcriptome.fasta | cut -d" " -f1 | sort | uniq | wc -l`
+  GTF_TRANSCRIPTS=`cut -f9 ${GTF_FILE_BASE}.ucsc.gtf | grep "transcript_id" | sed 's/; transcript_id "/\'$'\t''/g' | sed 's/"; transcript_version/\'$'\t''/g' | cut -f2 | sort | uniq | wc -l`
+
+  if [ ${GTF_TRANSCRIPTS} -eq ${FASTA_TRANSCRIPTS} ]
+  then
+      echo "Output transcripts match as expected"
+      echo "Output transcripts match as expected" >> README
+      touch TRANSCRIPTOME_FASTA_GENERATION_COMPLETE
+      exit 0
+  else
+      echo "Output transcripts DO NOT match as expected"
+      echo "Output transcripts DO NOT match as expected" >> README
+      echo "INPUT GTF TRANSCRIPT COUNT = ${GTF_TRANSCRIPTS}" >> README
+      echo "OUTPUT FASTA TRANSCRIPT COUNT = ${FASTA_TRANSCRIPTS}" >> README
+      exit 1
+  fi
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_CREATE_TRANSCRIPTOME_FASTA
+  echo "FAILED_CREATE_TRANSCRIPTOME_FASTA" >> README
+  exit 1
+fi
+
 echo >> README
 echo "Specific script code as follows:" >> README
 echo >> README
