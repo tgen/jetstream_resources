@@ -49,6 +49,9 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
   * library(tidyverse) # requires dplyr
 * NCBI eUTILs
 * JSON.awk
+* gtfToGenePred ()
+* cufflinks (cufflinks itself is not used but one of the provided tools, gffread, is used to create the transcriptome fasta)
+  * gffread
 
 NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resourece.ini defines if tools are loaded into the path using a `module load` 
 process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime. 
