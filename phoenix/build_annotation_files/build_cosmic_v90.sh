@@ -21,16 +21,12 @@ fi
 # Read required variables from configuration file
 . ${1}
 
-
-
-if [ $ENVIRONMENT == "TGen"]
-then
-
 ####################################
 ## Load Required Tools
 ###################################
-module load BCFtools/1.10.1-foss-2019a
-
+if [ $ENVIRONMENT == "TGen"]
+then
+  module load BCFtools/1.10.1-foss-2019a
 else
   echo
   echo "Assuming required tools are available in $PATH"
