@@ -42,6 +42,7 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * star
 * salmon
 * samtools
-* bcftools
+* bcftools v1.10.1+
 
-NOTE: Loaded using module load at TGen, but if available in your path things will work fine
+NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resourece.ini defines if tools are loaded into the path using a `module load` 
+process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime. 
