@@ -43,7 +43,7 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * bwa
 * star
 * salmon
-* samtools
+* samtools v1.10.0+
 * bcftools v1.10.1+
 * R v3.6.1
   * library(tidyverse) # requires dplyr
