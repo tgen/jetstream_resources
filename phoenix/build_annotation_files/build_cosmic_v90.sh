@@ -73,10 +73,10 @@ fi
 # Make COSMIC release version folder if not available
 if [ -e ${COSMIC_VERSION} ]
 then
-    echo "dbSNP ${COSMIC_VERSION} folder exists, exiting to prevent overwrite"
+    echo "COSMIC ${COSMIC_VERSION} folder exists, exiting to prevent overwrite"
     exit 1
 else
-    echo "dbSNP ${COSMIC_VERSION} folder NOT fount, creating and moving into it now"
+    echo "COSMIC ${COSMIC_VERSION} folder NOT fount, creating and moving into it now"
     mkdir -p ${COSMIC_VERSION}
     cd ${COSMIC_VERSION}
 fi
