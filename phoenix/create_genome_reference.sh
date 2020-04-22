@@ -22,13 +22,18 @@ fi
 ####################################
 ## Load Required Tools
 ###################################
-if [ $ENVIRONMENT == "TGen"]
+if [ $ENVIRONMENT == "TGen" ]
 then
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
-else
+elif [ $ENVIRONMENT == "LOCAL" ]
+    then
   echo
   echo "Assuming required tools are available in $PATH"
   echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
 fi
 
 ####################################
