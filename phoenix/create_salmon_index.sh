@@ -7,6 +7,15 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
@@ -75,10 +84,6 @@ else
     cd tool_resources
 fi
 
-####################################
-## Generate Salmon Index
-####################################
-
 # Make salmon index directory if not available
 if [ -e "salmon_${SALMON_VERSION}" ]
 then
@@ -90,19 +95,54 @@ else
     cd salmon_${SALMON_VERSION}
 fi
 
+####################################
+## Generate Salmon Index
+####################################
+
 # Initialize a salmon specific README
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
+# Determine the fullpath to the transcriptome fasta file
+GENE_MODEL_BASENAME=`basename ${GENE_MODEL_FILENAME} ".gtf"`
+GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_BASENAME}.transcriptome.fasta
+
 # Create the Salmon index
+if [ $ENVIRONMENT == "TGen"]
+then
+  # Submit index generation job to the slurm scheduler
+  sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
+  fc -ln -1 >> README
+elif [ $ENVIRONMENT == "LOCAL"]
+then
+  echo
+  echo "SALMON Index will be created on the local compute"
+
+  # Generate BWA Index Files
+  salmon index -t ${GENE_MODEL_TRANSCRIPTOME_FASTA} -i salmon_quasi_75merPlus --type quasi -k 31
+
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "PASSED_SALMON_INDEX" >> README
+  else
+      touch FAILED_SALMON_INDEX
+      echo "FAILED_SALMON_INDEX" >> README
+      exit 1
+  fi
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_SALMON_INDEX
+  echo "FAILED_SALMON_INDEX" >> README
+  exit 1
+fi
+
 echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
-fc -ln -1 >> README
 echo >> README
 echo "Specific script code as follows:" >> README
 echo >> README
