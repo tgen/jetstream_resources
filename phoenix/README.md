@@ -46,8 +46,8 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * GATK v4.1.4.0
 * bwa v0.7.17+
 * bowtie v2.3.5.1+
-* star
-* salmon
+* star v2.7.3a+
+* salmon v0.14.1+
 * samtools v1.10.0+
 * bcftools v1.10.1+
 * R v3.6.1
