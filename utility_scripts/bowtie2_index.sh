@@ -18,9 +18,9 @@ bowtie2-build --threads 10 ${FASTA} ${BOWTIE_BASE}
 # Error Capture
 if [ "$?" = "0" ]
 then
-    echo "PASSED_BWA_INDEX" >> README
+    echo "PASSED_BOWTIE_INDEX" >> README
 else
-    touch FAILED_BWA_INDEX
-    echo "FAILED_BWA_INDEX" >> README
+    touch FAILED_BOWTIE_INDEX
+    echo "FAILED_BOWTIE_INDEX" >> README
     exit 1
 fi
