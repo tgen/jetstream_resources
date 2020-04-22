@@ -44,10 +44,6 @@ else
     exit 2
 fi
 
-####################################
-## Generate BWA index
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -68,6 +64,10 @@ else
     cd bowtie2_${BOWTIE2_VERSION}
 fi
 
+####################################
+## Generate BOWTIE index
+####################################
+
 # Initialize a bowtie2 index README
 touch README
 echo >> README
@@ -79,19 +79,43 @@ echo >> README
 echo "Bowtie2 Index creation details:" >> README
 echo >> README
 
-# Determine the expected FASTA sequence filename based on the download link
-FASTA_FILENAME=`basename ${REFERENCE_RNA_GENOME_FASTA}`
-
 # Determine the basename of the fasta to name the bowtie index outputs
-BOWTIE_BASE=`basename ${FASTA_FILENAME} ".fa"`
+BOWTIE_BASE=`basename ${REFERENCE_RNA_GENOME_NAME} ".fa"`
 
 # Create a symbolic link to the reference genome
-ln -s ../../genome_reference/${FASTA_FILENAME} ${FASTA_FILENAME}
+ln -s ../../genome_reference/${REFERENCE_RNA_GENOME_NAME} ${REFERENCE_RNA_GENOME_NAME}
 
-# Create bowtie2 index files using bowtie utility script
+# Create index files
 echo "Create bowtie index as follows:" >> README
-sbatch --export ALL,FASTA="${FASTA_FILENAME}",BOWTIE2_MODULE="${BOWTIE2_MODULE}",BOWTIE_BASE="${BOWTIE_BASE}" ${PATH_TO_REPO}/utility_scripts/bowtie2_index.sh
-fc -ln -1 >> README
+if [ $ENVIRONMENT == "TGen"]
+then
+  # Create bowtie2 index files using bowtie utility script
+  sbatch --export ALL,FASTA="${REFERENCE_RNA_GENOME_NAME}",BOWTIE2_MODULE="${BOWTIE2_MODULE}",BOWTIE_BASE="${BOWTIE_BASE}" ${PATH_TO_REPO}/utility_scripts/bowtie2_index.sh
+  fc -ln -1 >> README
+elif [ $ENVIRONMENT == "LOCAL"]
+then
+  echo
+  echo "Bowtie2 Index will be created on the local compute"
+
+  # Generate Bowtie Index Files
+  bowtie2-build --threads ${LOCAL_COMPUTE_CORES} ${REFERENCE_RNA_GENOME_NAME} ${BOWTIE_BASE}
+
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "PASSED_BOWTIE_INDEX" >> README
+  else
+      touch FAILED_BOWTIE_INDEX
+      echo "FAILED_BOWTIE_INDEX" >> README
+      exit 1
+  fi
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_BOWTIE_INDEX
+  echo "FAILED_BOWTIE_INDEX" >> README
+  exit 1
+fi
+
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/bowtie2_index.sh >> README
 echo >> README
