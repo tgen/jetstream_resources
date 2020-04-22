@@ -32,6 +32,25 @@ else
 fi
 
 ####################################
+## Load Required Tools
+###################################
+if [ $ENVIRONMENT == "TGen" ]
+then
+  module load GATK/4.1.4.0-GCCcore-8.2.0-Java-1.8
+  module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+  module load Python/3.7.2-foss-2019a
+elif [ $ENVIRONMENT == "LOCAL" ]
+    then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
+
+####################################
 ## Navigate Directory Structure
 ###################################
 
@@ -105,25 +124,6 @@ else
     echo "Capture Kits directory NOT found, creating and entering it now"
     mkdir capture_kits
     cd capture_kits
-fi
-
-####################################
-## Load Required Tools
-###################################
-if [ $ENVIRONMENT == "TGen" ]
-then
-  module load GATK/4.1.4.0-GCCcore-8.2.0-Java-1.8
-  module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
-  module load Python/3.7.2-foss-2019a
-elif [ $ENVIRONMENT == "LOCAL" ]
-    then
-  echo
-  echo "Assuming required tools are available in $PATH"
-  echo
-else
-  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
-  echo "Only TGen or LOCAL are supported"
-  exit 1
 fi
 
 ####################################
