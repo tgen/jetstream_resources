@@ -40,6 +40,10 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * curl
 * md5sum
 * zcat
+* python v3.7.2+
+  * which modules are needed? We have lots in this module.
+* bedtools v2.29.0
+* GATK v4.1.4.0
 * bwa v0.7.17+
 * bowtie v2.3.5.1+
 * star
@@ -56,3 +60,6 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 
 NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resourece.ini defines if tools are loaded into the path using a `module load` 
 process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime. 
+
+module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+module load Python/3.7.2-foss-2019a
