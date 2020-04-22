@@ -40,7 +40,8 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * curl
 * md5sum
 * zcat
-* bwa
+* bwa v0.7.17+
+* bowtie v2.3.5.1+
 * star
 * salmon
 * samtools v1.10.0+
