@@ -26,7 +26,7 @@ if [ $ENVIRONMENT == "TGen" ]
 then
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
 elif [ $ENVIRONMENT == "LOCAL" ]
-    then
+then
   echo
   echo "Assuming required tools are available in $PATH"
   echo
