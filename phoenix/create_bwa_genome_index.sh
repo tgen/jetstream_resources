@@ -94,12 +94,13 @@ ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_
 FASTA=GRCh38tgen_decoy_alts_hla.fa
 
 # Create bwa index files
-if [ ${ENVIRONMENT} == "TGen"]
+# shellcheck disable=SC1020
+if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
   sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
   fc -ln -1 >> README
-elif [ ${ENVIRONMENT} == "LOCAL"]
+elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
   echo "BWA Index will be created on the local compute"
