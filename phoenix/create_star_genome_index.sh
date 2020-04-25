@@ -119,13 +119,13 @@ do
     DIR=`echo ${line} | cut -d"," -f2`
 
     # Create reference index files via SLURM Cluster or LOCAL compute
-    if [ $ENVIRONMENT == "TGen"]
+    if [ $ENVIRONMENT == "TGen" ]
     then
       # Submit index generation job to the slurm scheduler
       echo "Create STAR index files for ${DIR}" >> README
       sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${GENE_MODEL_GTF}",FASTA="${REFERENCE_RNA_GENOME_FASTA}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
       fc -ln -1 >> README
-    elif [ $ENVIRONMENT == "LOCAL"]
+    elif [ $ENVIRONMENT == "LOCAL" ]
     then
       if [ -d "${DIR}" ]
       then
