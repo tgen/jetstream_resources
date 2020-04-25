@@ -90,13 +90,16 @@ echo >> README
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.fa
 
+# Set variable for genome fasta
+FASTA=GRCh38tgen_decoy_alts_hla.fa
+
 # Create bwa index files
-if [ $ENVIRONMENT == "TGen"]
+if [ ${ENVIRONMENT} == "TGen"]
 then
   # Submit index generation job to the slurm scheduler
   sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
   fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL"]
+elif [ ${ENVIRONMENT} == "LOCAL"]
 then
   echo
   echo "BWA Index will be created on the local compute"
