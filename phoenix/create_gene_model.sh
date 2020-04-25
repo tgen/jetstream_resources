@@ -304,12 +304,12 @@ REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENO
 
 # Create transcriptome fasta file derived from processed GTF
 echo "Create transcriptome fasta file from the processed GTF for tools like Salmon" >> README
-if [ $ENVIRONMENT == "TGen"]
+if [ $ENVIRONMENT == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
   sbatch --parsable --export ALL,GENOME="${REFERENCE_RNA_GENOME_FASTA}",GTF="${GTF_FILE_BASE}.ucsc.gtf",OUTPUT="${GTF_FILE_BASE}.ucsc.transcriptome.fasta" ${PATH_TO_REPO}/utility_scripts/create_transcript_fasta.sh
   fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL"]
+elif [ $ENVIRONMENT == "LOCAL" ]
 then
   echo
   echo "Transcriptome FASTA will be created on the local compute"
