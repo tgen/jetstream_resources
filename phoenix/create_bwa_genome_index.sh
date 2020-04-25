@@ -110,11 +110,11 @@ then
   # Error Capture
   if [ "$?" = "0" ]
   then
-      echo "PASSED_BWA_INDEX" >> README
+    echo "PASSED_BWA_INDEX" >> README
   else
-      touch FAILED_BWA_INDEX
-      echo "FAILED_BWA_INDEX" >> README
-      exit 1
+    touch FAILED_BWA_INDEX
+    echo "FAILED_BWA_INDEX" >> README
+    exit 1
   fi
 else
   echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
