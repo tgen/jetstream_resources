@@ -22,10 +22,11 @@ fi
 ####################################
 ## Load Required Tools
 ###################################
-if [ $ENVIRONMENT == "TGen" ]
+if [ ${ENVIRONMENT} == "TGen" ]
 then
+  echo "In TGen Section"
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
-elif [ $ENVIRONMENT == "LOCAL" ]
+elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
   echo "Assuming required tools are available in $PATH"
