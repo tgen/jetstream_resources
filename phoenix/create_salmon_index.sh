@@ -113,12 +113,12 @@ GENE_MODEL_BASENAME=`basename ${GENE_MODEL_FILENAME} ".gtf"`
 GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_BASENAME}.transcriptome.fasta
 
 # Create the Salmon index
-if [ $ENVIRONMENT == "TGen"]
+if [ $ENVIRONMENT == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
   sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
   fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL"]
+elif [ $ENVIRONMENT == "LOCAL" ]
 then
   echo
   echo "SALMON Index will be created on the local compute"
