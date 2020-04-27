@@ -4,42 +4,121 @@
 
 # Usage: ./build_clinvar_20190715.sh
 
-# Write this full document as a README
-cat $0 > README
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
+HISTFILE=~/.bash_history
+set -o history
+set -ue
+
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
+# Read required variables from configuration file
+. ${1}
+
+####################################
+## Load Required Tools
+###################################
+if [ $ENVIRONMENT == "TGen"]
+then
+  module load BCFtools/1.10.1-foss-2019a
+else
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+fi
+
+####################################
+## Create Expected Folder Structure
+###################################
+
+# Make top level directory if not available
+if [ -e ${PARENT_DIR} ]
+then
+    echo "Parent directory: ${PARENT_DIR} exists, moving into it"
+    cd ${PARENT_DIR}
+else
+    echo "Parent directory NOT fount, creating and moving into it now"
+    mkdir -p ${PARENT_DIR}
+    cd ${PARENT_DIR}
+fi
+
+# Make public_databases folder if not available
+if [ -e public_databases ]
+then
+    echo "Public Databases folder exists, moving into it"
+    cd public_databases
+else
+    echo "Public Databases folder NOT fount, creating and moving into it now"
+    mkdir -p public_databases
+    cd public_databases
+fi
+
+# Make clinvar folder if not available
+if [ -e clinvar ]
+then
+    echo "clinvar folder exists, moving into it"
+    cd clinvar
+else
+    echo "clinvar folder NOT fount, creating and moving into it now"
+    mkdir -p clinvar
+    cd clinvar
+fi
+
+# Make clinvar release version folder if not available
+if [ -e ${CLINVAR_VERSION} ]
+then
+    echo "clinvar ${CLINVAR_VERSION} folder exists, exiting to prevent overwrite"
+    exit 1
+else
+    echo "clinvar ${CLINVAR_VERSION} folder NOT fount, creating and moving into it now"
+    mkdir -p ${CLINVAR_VERSION}
+    cd ${CLINVAR_VERSION}
+fi
+
+####################################
+## Parameterized Code
+####################################
 
 # Added user information and timestamp to README
 USER=`whoami`
 DATE=`date`
-echo "Downloaded and Processed by:  ${USER}" >> README
+echo "Downloaded and Processed by:  ${USER}" > README
 echo ${DATE} >> README
-
-# Load required modules
-module load samtools/1.9
-
-# Define any needed variables
-FAI=/home/tgenref/homo_sapiens/grch38_hg38/hg38tgen/genome_reference/GRCh38tgen_decoy_alts_hla.fa.fai
-
-####################################
-##
-## Parameterized Code
-##
-####################################
 
 # Download the current clinvar files
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2019/clinvar_20190715.vcf.g*
-wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/2019/clinvar_20190715_papu.vcf.g*
 
-# Check MD5 checksums - All downloads pass
-md5sum clinvar_20190715_papu.vcf.gz
-cat clinvar_20190715_papu.vcf.gz.md5
-md5sum clinvar_20190715.vcf.gz
-cat clinvar_20190715.vcf.gz.md5
+# Remove local NIH path from MD5 file
+sed -i 's/\/panfs\/pan1\/clintest\/ftp_test_prod\/vcf\/vcf_GRCh38\///g' clinvar_20190715.vcf.gz.md5
 
-# Check contig seqeunces to determine if they match our hg38tgen reference genome with UCSC contif names
+# Check MD5 checksums
+CHECKSUM_STATUS=`md5sum --check clinvar_20190715.vcf.gz.md5 | cut -d" " -f2`
+
+if [ $CHECKSUM_STATUS == "OK" ]
+then
+  echo "Checksum Validation Passed"
+elif [ $CHECKSUM_STATUS == "FAILED" ]
+then
+  echo
+  md5sum clinvar_20190715.vcf.gz
+  cat clinvar_20190715.vcf.gz.md5
+  echo "Checksum Validation FAILED"
+  echo
+  exit 1
+else
+  echo "Unexpected Validation Event"
+  exit 1
+fi
+
+# Check contig sequences to determine if they match our hg38tgen reference genome with UCSC contif names
 zcat clinvar_20190715.vcf.gz | cut -f1 | grep -v "#" | sort | uniq
 # Found 1-22,X,Y,MT, and NW_009646201.1, which is a GRCh38.p13 patch for the ABO*A1.02 allele
-zcat clinvar_20190715_papu.vcf.gz | cut -f1 | grep -v "#" | sort | uniq
-# Found only Y
 
 ## Remove the NW_009646201.1 patch and convert the contig names in clinvar_20190715.vcf.gz
 bcftools filter \
@@ -53,15 +132,21 @@ bcftools index --threads 4 temp_droppedContigs.bcf
 ## Update the remaining contigs to the UCSC Naming convention
 bcftools annotate \
 	--threads 4 \
-	--rename-chrs /home/jkeats/git_repositories/GRCh38_CrossMapping/GRCh38_Cosmic89_2_UCSC_Contigs.txt \
+	--rename-chrs ${PATH_TO_REPO}/utility_files/GRCh38_Cosmic90_2_UCSC_Contigs.txt \
 	--output-type b \
 	--output temp_renamed.bcf \
 	temp_droppedContigs.bcf
 bcftools index --threads 4 temp_renamed.bcf
 
-## Update the contig header (need to use an unreleased version with this new feature) so lengths are included
-/home/jkeats/downloads/bcftools/bcftools reheader \
-	--fai ${FAI} \
+# Determine the full name and path of the DNA genome.fa.fai index file
+echo "Determine the full path filename of the DNA reference genome.fa.fai file" >> README
+echo "REFERENCE_DNA_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}.fai" >> README
+REFERENCE_DNA_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}.fai
+echo >> README
+
+## Update the contig header so lengths are included
+bcftools reheader \
+	--fai ${REFERENCE_DNA_GENOME_FAI} \
 	temp_renamed.bcf \
 	| \
 	bcftools view \
@@ -71,10 +156,3 @@ bcftools index --threads 4 clinvar_20190715_hg38tgen.bcf
 
 # Remove all the temp files
 rm temp_*
-
-############################
-###
-### Download and Processing Notes
-###
-############################
-
