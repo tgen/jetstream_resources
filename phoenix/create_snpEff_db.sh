@@ -192,8 +192,11 @@ then
   fc -ln -1 >> README_${SNPEFF_DB_NAME}
 elif [ $ENVIRONMENT == "LOCAL" ]
 then
-  bash ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh ${ENVIRONMENT} ${SNPEFF_VERSION} ${SNPEFF_DB_NAME} ${SNPEFF_CONFIG_PATH}
-  echo "Assuming required tools are available in $PATH"
+  echo "Assuming required tools are available in $PATH or defiend in the .ini file"
+  java -jar ${SNPEFF} build -gtf22 -v ${SNPEFF_DB_NAME} -c ${SNPEFF_CONFIG_PATH}
+
+  touch CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE
+  echo "CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE" >> README
   echo
 else
   echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
