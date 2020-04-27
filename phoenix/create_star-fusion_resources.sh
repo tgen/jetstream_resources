@@ -169,29 +169,28 @@ REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENO
 ln -s ${REFERENCE_RNA_GENOME_FASTA} ${REFERENCE_RNA_GENOME_NAME}
 
 # We will use the GTF provided in the bundle, see below
-'''
-Comparing the gtf downloaded in the "GRCh38_gencode_v32_CTAT_lib_Dec062019.source/gencode.v32.annotation.gtf" the GTF
-name (gencode.v32.annotation.gtf), number of lines, and diff matches the file downloaded via (ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_32/gencode.v32.annotation.gtf.gz)
-This file content is one of 3 in the Content = Comprehensive Gene Annotation
-Description= It contains the comprehensive gene annotations on the reference chromsomes only, This is the "Main Annotation File" for most users
-The star-fusion download includes a fasta "GRCh38.primary_assembly.genome.fa" with chr1-22, X,Y, M, and GL/KI supercontigs, total 194 contigs
-  - GL format --> GL000008.2
-  - KI format --> KI270302.1
-
-Our RNA reference genome is chr1-22, X, Y, M, GL/KI supercontigs, KN/JTFH decoys, and chrEBV, total xxx contigs. 2580 contigs
-  - GL format --> chrUn_GL000195v1, chr4_GL000008v2_random
-  - KI format --> chrUn_KI270302v1, chr1_KI270706v1_random
-  - KN format --> chrUn_KN707606v1_decoy
-  - JTFH format --> chrUn_JTFH01000001v1_decoy
-
-gencode.v32.annotation.gtf
-  - chr1-22, X, Y, M
-gencode.v32.primary_assembly.annotation.gtf
-  - chr1-22, X, Y, M, GL000009.2, KI270442.1
-
-Therefore, we can use the same file as Star-fusion recommends and provides in the source download with our geneome as
-all contigs match
-'''
+#
+# Comparing the gtf downloaded in the "GRCh38_gencode_v32_CTAT_lib_Dec062019.source/gencode.v32.annotation.gtf" to the public gencode GTF
+# name (gencode.v32.annotation.gtf), number of lines, and diff matches the file downloaded via (ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_32/gencode.v32.annotation.gtf.gz)
+# This file content is one of 3:
+# Content = Comprehensive Gene Annotation
+# Description = It contains the comprehensive gene annotations on the reference chromsomes only, This is the "Main Annotation File" for most users
+# The star-fusion download includes a fasta "GRCh38.primary_assembly.genome.fa" with chr1-22, X,Y, M, and GL/KI supercontigs, total 194 contigs
+#  - GL format --> GL000008.2
+#  - KI format --> KI270302.1
+#
+# Our RNA reference genome is chr1-22, X, Y, M, GL/KI supercontigs, KN/JTFH decoys, and chrEBV, total xxx contigs. 2580 contigs
+#  - GL format --> chrUn_GL000195v1, chr4_GL000008v2_random
+#  - KI format --> chrUn_KI270302v1, chr1_KI270706v1_random
+#  - KN format --> chrUn_KN707606v1_decoy
+#  - JTFH format --> chrUn_JTFH01000001v1_decoy
+#
+# gencode.v32.annotation.gtf
+#  - chr1-22, X, Y, M
+# gencode.v32.primary_assembly.annotation.gtf
+#  - chr1-22, X, Y, M, GL000009.2, KI270442.1
+#
+# Therefore, we can use the same file as Star-fusion recommends and provides in the source download with our geneome as all contigs match
 
 ####################################
 ## Build Annotations from Source
