@@ -166,7 +166,7 @@ cd ${BUNDLE_FOLDER}
 
 # Create symbolic link
 REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
-ln -s ${REFERENCE_RNA_GENOME_FASTA} /${REFERENCE_RNA_GENOME_NAME}
+ln -s ${REFERENCE_RNA_GENOME_FASTA} ${REFERENCE_RNA_GENOME_NAME}
 
 # We will use the GTF provided in the bundle, see below
 '''
@@ -192,19 +192,6 @@ gencode.v32.primary_assembly.annotation.gtf
 Therefore, we can use the same file as Star-fusion recommends and provides in the source download with our geneome as
 all contigs match
 '''
-
-module load STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2
-module load blast/2.7.1
-module load hmmer/3.2.1
-
-# Get dfamscan.pl
-wget https://www.dfam.org/releases/current/infrastructure/dfamscan.pl.gz
-gunzip dfamscan.pl.gz
-chmod +x dfamscan.pl
-
-# Add current DIR to path
-CURRENT_DIR=`pwd`
-export PATH=$PATH:$CURRENT_DIR
 
 ####################################
 ## Build Annotations from Source
