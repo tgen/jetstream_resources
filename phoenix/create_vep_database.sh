@@ -22,7 +22,9 @@ fi
 # Read required variables from configuration file
 . ${1}
 
-# navigate to parent directory
+####################################
+## Navigate Directory Structure
+###################################
 cd ${PARENT_DIR}
 
 # Check if tool specific resources directory exists
@@ -63,7 +65,7 @@ fi
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
@@ -79,8 +81,34 @@ fc -ln -1 >> README
 echo >> README
 
 echo "Compare checksums" >> README
-sum homo_sapiens_vep_${ENSEMBL_VERSION}_GRCh38.tar.gz
-fc -ln -1 >> README
+# extract checksum for the vep version as the file contains checksums for multiple species
+# Ensembl now uses "sum" for check sum validation
+# Extract the provided checksum and number of 512bit blocks
+PROVIDED_CHECKSUM=`grep "homo_sapiens_vep_${ENSEMBL_VERSION}_GRCh38.tar.gz" CHECKSUMS | cut -d" " -f1`
+PROVIDED_512bitBLOCKS=`grep "homo_sapiens_vep_${ENSEMBL_VERSION}_GRCh38.tar.gz" CHECKSUMS | cut -d" " -f2`
+# Calculate the checksum of the downlaoded file
+VALIDATION_SUM=`sum homo_sapiens_vep_${ENSEMBL_VERSION}_GRCh38.tar.gz`
+VALIDATION_CHECKSUM=`echo ${VALIDATION_SUM} | cut -d" " -f1`
+VALIDATION_512bitBLOCKS=`echo ${VALIDATION_SUM} | cut -d" " -f2`
+# Validate Checksum
+if [ ${PROVIDED_CHECKSUM} -eq ${VALIDATION_CHECKSUM} ]
+then
+  echo "Complete: checksum validation"
+else
+  echo "FAILED: checksum validation"
+  touch FAILED_CHECKSUM_VALIDATION
+  exit 1
+fi
+# Validate 512 bit blocks
+if [ ${PROVIDED_512bitBLOCKS} -eq ${VALIDATION_512bitBLOCKS} ]
+then
+  echo "Complete: checksum 512bit blocks validation"
+else
+  echo "FAILED: checksum 512bit blocks validation"
+  touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
+  exit 1
+fi
+
 echo >> README
 
 echo "Decompress Package for usage" >> README
