@@ -17,3 +17,7 @@ A JetStream workflow to support old human genome things...
     * create_samtools_stats_non_N_region_file.sh suncity_resources.ini
     * create_gatk_cnv_interval_list.sh suncity_resources.ini
     * create_deepvariant_models.sh suncity_resources.ini
+    
+    * build_annotation_files/build_dbSNP_b138_broadBundle.sh
+    * build_annotation_files/build_delly_annotations_e87.sh
+    * build_annotation_files/build_gnomAD_r2.1.1.sh
