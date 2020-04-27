@@ -43,10 +43,6 @@ else
     exit 2
 fi
 
-####################################
-## Generate BWA index
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -67,11 +63,13 @@ else
     cd gatk_cnv
 fi
 
-# Initialize a gatk_cnv README
+####################################
+## Initialize a gatk_cnv README
+####################################
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/tree/master/shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
@@ -81,12 +79,16 @@ echo "These intervals are grabbed from the SN and LN of the reference.dict and t
 echo -e "e.g. SN\t1\tLN\t+\tSN" >> README
 echo >> README
 
+# Determine the full path to the reference genome dictionary file
+GENOME_FASTA_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`
+GENOME_FASTA_DICT=${TOPLEVEL_DIR}/genome_reference/${GENOME_FASTA_BASENAME}.dict
+
 # Place the reference dictionary as the header to the interval list
-cat ${REFERENCE_DNA_GENOME_BASENAME}.dict > ${GENOME_BUILD}.contigs.interval_list_header
+cat ${GENOME_FASTA_DICT} > ${GENOME_BUILD}.contigs.interval_list_header
 
 # We only care about the sequence name and the length from the dictionary
 # Take these values and apply interval_list formatting
-cut -f2,3 ${REFERENCE_DNA_GENOME_BASENAME}.dict \
+cut -f2,3 ${GENOME_FASTA_DICT} \
   | \
   grep -v "VN" \
   | \
