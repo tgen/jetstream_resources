@@ -91,11 +91,14 @@ fi
 ## Download and Manipulate the dbSNP File
 ###################################
 
-# Added user information and timestamp to README
-USER=`whoami`
-DATE=`date`
-echo "Downloaded and Processed by:  ${USER}" >> README
-echo ${DATE} >> README
+# Initialize a bcftools index README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
 # Determine the full name and path of the original DNA reference genome download
 DOWNLOADED_FASTA_GZ_NAME=`basename ${REFERENCE_DNA_BASE_DOWNLOAD}`
@@ -196,3 +199,7 @@ bcftools index --threads 4 --stats dbSNP_b152_hg38tgen.bcf
 
 # Remove temp files
 rm temp_*
+
+echo
+echo "Process Complete"
+echo
