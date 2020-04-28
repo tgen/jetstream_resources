@@ -94,7 +94,7 @@ fc -ln -1 >> README
 echo >> README
 
 # Make a bed file of all of the Modeled_regions_for_GRCh38
-gawk -F'\t' 'NR > 1 { OFS = "\t" ; print "chr"$2,$3,$4,$5,$1}' Modeled_regions_for_GRCh38.tsv | sed -e "s///" > Modeled_regions_for_GRCh38.bed
+gawk -F'\t' 'NR > 1 { OFS = "\t" ; print "chr"$2,$3,$4,$5,$1}' Modeled_regions_for_GRCh38.tsv | sed -e "s/^M//" > Modeled_regions_for_GRCh38.bed
 fc -ln -1 >> README
 echo >> README
 
