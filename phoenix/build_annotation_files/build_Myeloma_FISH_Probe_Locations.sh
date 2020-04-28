@@ -4,8 +4,14 @@
 
 ## This file is created for usage in the build package process
 
-# Check if resources.ini was provided on the command line
-if [ -n "$1" ]; then
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
+HISTFILE=~/.bash_history
+set -o history
+set -ue
+
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
   echo "Required ini file detected"
 else
   echo "Input INI file not provided, exiting due to missing requirement"
@@ -15,22 +21,53 @@ fi
 # Read required variables from configuration file
 . ${1}
 
-# navigate to parent directory
-cd ${PARENT_DIR}
+####################################
+## Navigate Directory Structure
+###################################
 
-# make a folder for bcftools
-mkdir -p hg38tgen/tool_resources/seq_fish 
+# Check top level directory if not available
+if [ -e ${TOPLEVEL_DIR} ]
+then
+    echo "Top level directory: ${TOPLEVEL_DIR} exists, moving into it"
+    cd ${TOPLEVEL_DIR}
+else
+    echo "Top level directory NOT found, IT IS REQUIRED, EXITING"
+    exit 1
+fi
 
-# enter created directory
-cd hg38tgen/tool_resources/seq_fish
+# Create directory for tool resources
+if [ -e tool_resources ]
+then
+    echo "tool_resources directory exists, moving into it"
+    cd tool_resources
+else
+    echo "tool_resources directory NOT found, creating and moving into it now"
+    mkdir tool_resources
+    cd tool_resources
+fi
 
-module load liftOver
+# Create directory for tool
+if [ -e "seq_fish" ]
+then
+    echo "The seq_fish directory exists, exiting to prevent overwriting existing index"
+    exit 2
+else
+    echo "The seq_fish directory was NOT found, creating and moving into it now"
+    mkdir seq_fish
+    cd seq_fish
+fi
 
-wget -O GRCh37_Myeloma_FISH_Probe_Locations.bed https://raw.githubusercontent.com/tgen/MMRF_CoMMpass/master/myeloma_FISH_probe_locations/Myeloma_FISH_Probe_Locations.txt
+# Initialize a seq_fish index README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
-awk -F'\t' '{ $1 = "chr"$1 ; OFS = "\t" ; print $0}' GRCh37_Myeloma_FISH_Probe_Locations.bed | sort -k1,1V -k2,2n> GRCh37_Myeloma_FISH_Probe_Locations_with_chr.bed
+wget https://raw.githubusercontent.com/tgen/MMRF_CoMMpass/master/myeloma_FISH_probe_locations/GRCh38_Myeloma_FISH_Probe_Locations.bed
 
-liftOver -minMatch=0.5 GRCh37_Myeloma_FISH_Probe_Locations_with_chr.bed /home/tgenref/homo_sapiens/liftover_files/hg19ToHg38.over.chain.gz GRCh38_Myeloma_FISH_Probe_Locations.bed unMapped
-
-# Write this full document as a README
-cat $0 > README
+echo
+echo "Process Complete"
+echo
