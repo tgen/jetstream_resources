@@ -107,11 +107,11 @@ REFERENCE_DNA_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME
 echo >> README
 
 # Download the files
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/release_notes.txt
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.md5
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.tbi
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.tbi.md5
+wget ftp.ncbi.nih.gov/snp/archive/b152/release_notes.txt
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.md5
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.tbi
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.tbi.md5
 
 # Check MD5 checksums
 CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.bgz.md5 | cut -d" " -f2`
