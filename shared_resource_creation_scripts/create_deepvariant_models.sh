@@ -33,10 +33,6 @@ else
     exit 1
 fi
 
-####################################
-## Generate deepvariant models
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -56,6 +52,10 @@ else
     mkdir -p deepvariant/${DEEPVARIANT_VERSION}
     cd deepvariant/${DEEPVARIANT_VERSION}
 fi
+
+####################################
+## Download deepvariant models
+####################################
 
 # Initialize a deepvariant model README
 touch README
