@@ -77,7 +77,8 @@ echo >> README
 unzip -qq deepvariant.zip
 fc -ln -1 >> README
 # Need to output to /dev/null because find likes to report the directories as missing after they have been moved already
-find . -type d -name "*${DEEPVARIANT_VERSION}+data*" -exec mv {} . \; 2> /dev/null
+DEEPVARIANT_VERSION_NUMBERS=`echo ${DEEPVARIANT_VERSION} | cut -c2-`
+find . -type d -name "*${DEEPVARIANT_VERSION_NUMBERS}+data*" -exec mv {} . \; 2> /dev/null
 fc -ln -1 >> README
 echo >> README
 rm -rf deepvariant.zip deepvariant
