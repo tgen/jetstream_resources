@@ -4,6 +4,7 @@ GTF.py
 Kamil Slowikowski
 December 24, 2013
 
+
 Read GFF/GTF files. Works with gzip compressed files and pandas.
 
     http://useast.ensembl.org/info/website/upload/gff.html
