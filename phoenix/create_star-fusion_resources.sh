@@ -160,13 +160,21 @@ else
     exit 1
 fi
 
-# enter the decompressed folder
+# Determine the decompressed folder name
 BUNDLE_FOLDER=`basename ${BUNDLE_FILENAME} ".tar.gz"`
-cd ${BUNDLE_FOLDER}
+
+# Make a build folder
+mkdir starFusion_Resources
+cd starFusion_Resources
 
 # Create symbolic link
 REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
 ln -s ${REFERENCE_RNA_GENOME_FASTA} ${REFERENCE_RNA_GENOME_NAME}
+
+# Copy in required files from the downloaded source file
+cp ../${BUNDLE_FOLDER}/fusion_lib.*.dat.gz .
+cp ../${BUNDLE_FOLDER}/gencode.v32.annotation.gtf .
+cp ../${BUNDLE_FOLDER}/AnnotFilterRule.pm .
 
 # We will use the GTF provided in the bundle, see below
 #
