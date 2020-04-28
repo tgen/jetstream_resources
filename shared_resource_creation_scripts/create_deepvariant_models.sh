@@ -33,10 +33,6 @@ else
     exit 1
 fi
 
-####################################
-## Generate deepvariant models
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -57,6 +53,10 @@ else
     cd deepvariant_${DEEPVARIANT_VERSION}
 fi
 
+####################################
+## Download deepvariant models
+####################################
+
 # Initialize a deepvariant model README
 touch README
 echo >> README
@@ -67,9 +67,6 @@ date >> README
 echo >> README
 echo "Deepvariant creation details:" >> README
 echo >> README
-
-# Create a symbolic link to the reference genome
-ln -s ../../genome_reference/${FASTA_FILENAME} ${FASTA_FILENAME}
 
 # Download and cleanup deepvariant release zip
 echo "Create deepvariant model as follows:" >> README
