@@ -7,7 +7,7 @@
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
-set -eu pipefail
+set -eu
 
 # Check resources.ini was provided on the command line
 if [ -n "$1" ]
