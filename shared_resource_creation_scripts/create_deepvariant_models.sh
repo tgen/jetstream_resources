@@ -46,6 +46,7 @@ fi
 if [ -e "deepvariant_${DEEPVARIANT_VERSION}" ]
 then
     echo "The deepvariant directory exists, exiting to prevent overwriting existing index"
+    echo "This might exist for another existing pipeline as it is not genome version specific"
     exit 2
 else
     echo "The deepvariant directory was NOT found, creating and moving into it now"
@@ -76,7 +77,7 @@ echo >> README
 unzip -qq deepvariant.zip
 fc -ln -1 >> README
 # Need to output to /dev/null because find likes to report the directories as missing after they have been moved already
-find . -name "${DEEPVARIANT_VERSION}+data" -exec mv {} . \; 2> /dev/null
+find . -type d -name "*${DEEPVARIANT_VERSION}+data*" -exec mv {} . \; 2> /dev/null
 fc -ln -1 >> README
 echo >> README
 rm -rf deepvariant.zip deepvariant
