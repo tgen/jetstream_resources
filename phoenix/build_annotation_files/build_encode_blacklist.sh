@@ -76,5 +76,3 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
-# Write this full document as a README
-cat $0 >> README
