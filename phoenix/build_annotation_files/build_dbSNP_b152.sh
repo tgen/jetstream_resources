@@ -27,6 +27,7 @@ fi
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load BCFtools/1.10.1-foss-2019a
+  module load  R/3.6.1-phoenix
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
@@ -154,11 +155,11 @@ bcftools view -h GCF_000001405.38.bgz | cut -f1 | grep -v "#" | sort | uniq
 
 ## Need to build a rename key
 # Step 1 - get the meta-data for the contigs in the dbSNP VCF
-${PATH_TO_REPO}/utility_files/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.bgz b152
+${PATH_TO_REPO}/utility_scripts/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.bgz b152
 # Step 2 - Get the meta-data from the Reference Genome downloaded from NBCI
-${PATH_TO_REPO}/utility_files/extract_metadata_from_fasta.sh ${DOWNLOADED_FASTA_GZ_FULLPATH}
+${PATH_TO_REPO}/utility_scripts/extract_metadata_from_fasta.sh ${DOWNLOADED_FASTA_GZ_FULLPATH}
 # Step 3 - Merge output files and generate list of contigs to remove the dbSNP vcf as they are not in the assembly and the rename key
-Rscript ${PATH_TO_REPO}/utility_files/MergeMatch_dbSNP_GRCh38_Contigs.R
+Rscript ${PATH_TO_REPO}/utility_scripts/MergeMatch_dbSNP_GRCh38_Contigs.R
 
 # Now remove contigs that are not wanted in the dbSNP vcf as they don't exist in our refence genome (p1 versus p13 issues)
 bcftools filter \
