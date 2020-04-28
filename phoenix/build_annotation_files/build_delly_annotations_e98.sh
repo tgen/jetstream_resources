@@ -135,7 +135,6 @@ else
     cd delly
 fi
 
-
 ####################################
 ## Script Code
 ###################################
@@ -155,9 +154,8 @@ echo -e "Extracting lines from GTF with gene information only ..."
 cat ${EXPECTED_GTF_FILE} | awk -F"\t" ' $3=="gene" { OFS="\t" ; print} ' > ${INTERMEDIATE_GTF}
 if [[ $? -ne 0 ]] ;	then echo -e "ERROR: Subset GTF by GENE only FAILED; Aborting." ; exit 1 ; fi
 
-
 echo -e "parsing GTF ... and making all_biotype bed file ..."
-python $(dirname $(readlink -f $0))/../../utility_scripts/parse_gtf.py --gtf ${INTERMEDIATE_GTF} --out ${BED_ANNOFILE_ALL_BIOTYPES}
+python ${PATH_TO_REPO}/utility_scripts/parse_gtf.py --gtf ${INTERMEDIATE_GTF} --out ${BED_ANNOFILE_ALL_BIOTYPES}
 echo -e "subsetting by specific biotypes ..."
 cat ${BED_ANNOFILE_ALL_BIOTYPES} | grep -wf ${FILE_LIST_BIOTYPES}  > ${BED_ANNOFILE_KEPT_BIOTYPES}
 if [[ $? -ne 0 ]] ;	then echo -e "ERROR: grep FAILED ;Aborting ;" ; exit 1 ; fi
