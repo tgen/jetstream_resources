@@ -16,14 +16,46 @@ fi
 # Read required variables from configuration file
 . ${1}
 
-# navigate to parent directory
-cd ${PARENT_DIR}
+####################################
+## Create Expected Folder Structure
+###################################
 
-# make a folder for bcftools
-mkdir -p public_databases/encode
+# Make top level directory if not available
+if [ -e ${PARENT_DIR} ]
+then
+    echo "Parent directory: ${PARENT_DIR} exists, moving into it"
+    cd ${PARENT_DIR}
+else
+    echo "Parent directory NOT fount, creating and moving into it now"
+    mkdir -p ${PARENT_DIR}
+    cd ${PARENT_DIR}
+fi
 
-# enter created directory
-cd public_databases/encode
+# Make public_databases folder if not available
+if [ -e public_databases ]
+then
+    echo "Public Databases folder exists, moving into it"
+    cd public_databases
+else
+    echo "Public Databases folder NOT fount, creating and moving into it now"
+    mkdir -p public_databases
+    cd public_databases
+fi
+
+# Make encode folder if not available
+if [ -e encode ]
+then
+    echo "encode folder exists, moving into it"
+    cd encode
+else
+    echo "encode folder NOT fount, creating and moving into it now"
+    mkdir -p encode
+    cd encode
+fi
+
+####################################
+## Create resource file
+####################################
 
 # Download the V2 blacklist bundle
 wget https://github.com/Boyle-Lab/Blacklist/archive/v2.0.tar.gz
@@ -34,5 +66,15 @@ tar xvzf v2.0.tar.gz
 # enter unpacked directory
 cd Blacklist-2.0/
 
+# Initialize a reference_genome README
+touch README
+echo >> README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+
 # Write this full document as a README
-cat $0 > README
+cat $0 >> README
