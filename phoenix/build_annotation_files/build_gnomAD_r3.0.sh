@@ -28,6 +28,7 @@ fi
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load BCFtools/1.10.1-foss-2019a
+  module load Python/3.7.2-foss-2019a
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
