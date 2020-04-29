@@ -8,7 +8,6 @@ from sys import argv
 import GTF
 
 
-
 class UniqueStore(argparse.Action):
 	"""
 	class grabbed from stackOverflow (2018-11-08)

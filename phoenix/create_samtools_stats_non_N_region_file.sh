@@ -7,6 +7,15 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
@@ -34,10 +43,6 @@ else
     exit 2
 fi
 
-####################################
-## Generate BWA index
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -58,11 +63,14 @@ else
     cd samtools_stats
 fi
 
+####################################
+## Generate Required File
+####################################
 # Initialize a samtools_stats index README
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
@@ -74,11 +82,28 @@ echo "and is passed to the --target-regions option of samtools stats to ensure c
 echo "calculated based on non N genome space." >> README
 echo >> README
 
-# Create bwa index files using bwa utility script
+####################################
+## Build Required file
+###################################
 echo "Create samtools stats non N region file of primary contigs with chrX and chrY removed as follows:" >> README
-sbatch --export ALL ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk ${REFERENCE_DNA_GENOME_FASTA} GRCh38tgen_decoy_alts_hla_samstats_no_N_1based_primary_contigs_no_chrX_chrY.txt chr1CONTIG_SEPchr2CONTIG_SEPchr3CONTIG_SEPchr4CONTIG_SEPchr5CONTIG_SEPchr6CONTIG_SEPchr7CONTIG_SEPchr8CONTIG_SEPchr9CONTIG_SEPchr10CONTIG_SEPchr11CONTIG_SEPchr12CONTIG_SEPchr13CONTIG_SEPchr14CONTIG_SEPchr15CONTIG_SEPchr16CONTIG_SEPchr17CONTIG_SEPchr18CONTIG_SEPchr19CONTIG_SEPchr20CONTIG_SEPchr21CONTIG_SEPchr22
-fc -ln -1 >> README
-echo >> README
+if [ ${ENVIRONMENT} == "TGen" ]
+then
+  sbatch --export ALL ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk ${REFERENCE_DNA_GENOME_FASTA} GRCh38tgen_decoy_alts_hla_samstats_no_N_1based_primary_contigs_no_chrX_chrY.txt chr1CONTIG_SEPchr2CONTIG_SEPchr3CONTIG_SEPchr4CONTIG_SEPchr5CONTIG_SEPchr6CONTIG_SEPchr7CONTIG_SEPchr8CONTIG_SEPchr9CONTIG_SEPchr10CONTIG_SEPchr11CONTIG_SEPchr12CONTIG_SEPchr13CONTIG_SEPchr14CONTIG_SEPchr15CONTIG_SEPchr16CONTIG_SEPchr17CONTIG_SEPchr18CONTIG_SEPchr19CONTIG_SEPchr20CONTIG_SEPchr21CONTIG_SEPchr22
+  fc -ln -1 >> README
+  echo >> README
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  bash ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk ${REFERENCE_DNA_GENOME_FASTA} GRCh38tgen_decoy_alts_hla_samstats_no_N_1based_primary_contigs_no_chrX_chrY.txt chr1CONTIG_SEPchr2CONTIG_SEPchr3CONTIG_SEPchr4CONTIG_SEPchr5CONTIG_SEPchr6CONTIG_SEPchr7CONTIG_SEPchr8CONTIG_SEPchr9CONTIG_SEPchr10CONTIG_SEPchr11CONTIG_SEPchr12CONTIG_SEPchr13CONTIG_SEPchr14CONTIG_SEPchr15CONTIG_SEPchr16CONTIG_SEPchr17CONTIG_SEPchr18CONTIG_SEPchr19CONTIG_SEPchr20CONTIG_SEPchr21CONTIG_SEPchr22
+  fc -ln -1 >> README
+  echo >> README
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
+
 cat ${PATH_TO_REPO}/utility_scripts/make_samtools_stats_non_N_region_file_from_fasta.awk >> README
 echo >> README
 echo >> README

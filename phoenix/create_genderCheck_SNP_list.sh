@@ -7,12 +7,35 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check to resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
-# Load required modules
-module load samtools/1.9
-module load BEDTools/2.26.0
+####################################
+## Load Required Tools
+###################################
+if [ $ENVIRONMENT == "TGen" ]
+then
+  module load SAMtools/1.10-GCC-8.2.0-2.31.1
+  module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+elif [ $ENVIRONMENT == "LOCAL" ]
+    then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
 
 ####################################
 ## Navigate Directory Structure
@@ -28,11 +51,6 @@ else
     exit 1
 fi
 
-#ToDo: Fix needed checks like for dbSNP VCF and exon filter file
-## Needed inputs
-# 1) dbSNP list
-# 2) exon bed file
-
 # Check that the gene model GTF exists
 if [ -e ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/GENE_MODEL_GTF_GENERATION_COMPLETE ]
 then
@@ -42,10 +60,6 @@ else
     echo "Try again later as this is required"
     exit 2
 fi
-
-####################################
-## Generate Gender Check SNP list
-####################################
 
 if [ -e tool_resources ]
 then
@@ -67,16 +81,23 @@ else
     cd tgen_gender_check
 fi
 
+####################################
+## Generate Gender Check SNP list
+####################################
+
 # Initialize a tgen gender check README
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 echo "TGen Gender Check Resources creation details:" >> README
 echo >> README
+
+# Determine the fullpath to the dbSNP.bcf file
+DBSNP_BCF=${PARENT_DIR}/public_databases/dbsnp/${DBSNP_VERSION}/dbSNP_b152_hg38tgen.bcf
 
 # Filter the dbSNP vcf to get a set of variants on chrX for gender check process
 echo "Extract just the common SNV on chrX from the dbSNP vcf" >> README
@@ -88,15 +109,13 @@ bcftools filter \
     --include 'INFO/VC == "SNV" & INFO/COMMON == 1' \
     --output-type b \
     --output temp_chrx_common_snv.bcf \
-    /home/tgenref/homo_sapiens/grch38_hg38/public_databases/dbsnp/b152/dbSNP_b152_hg38tgen.bcf
+    ${DBSNP_BCF}
 fc -ln -1 >> README
 echo >> README
 
-# need to filter to snps --types snps \
-
 # Create a list of exon coordinates from the GTF file, and correct start to bed format
 echo "Create an BED file with the exons in GTF" >> README
-grep "exon" ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/Homo_sapiens.GRCh38.97.ucsc.gtf | cut -f1,4,5 | awk '{OFS="\t" ; print $1, $2-1, $3}' > temp_exons_all.bed
+grep "exon" ${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME} | cut -f1,4,5 | awk '{OFS="\t" ; print $1, $2-1, $3}' > temp_exons_all.bed
 fc -ln -1 >> README
 echo >> README
 
@@ -112,7 +131,7 @@ fc -ln -1 >> README
 echo >> README
 
 # Filter the list to known exon coordiantes so the list is useful for genomes, exomes, and likely even RNAseq
-echo "Filter the chrX snps to just those in the exon regions but gender determination in genomes and exomes" >> README
+echo "Filter the chrX snps to just those in the exon regions for gender determination in genomes and exomes" >> README
 bcftools filter \
     --targets-file temp_exons_collapsed.bed \
     --output-type z \
@@ -137,5 +156,6 @@ echo >> README
 
 rm temp_*
 
-echo >> README
-echo >> README
+echo
+echo "Process Complete"
+echo

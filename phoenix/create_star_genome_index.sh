@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 
-# Usage: create_REFERENCE_RNA_GENOME_FASTA_index.sh <Config.ini>
+# Usage: create_REFERENCE_RNA_GENOME_FASTA_index.sh <Config.ini> <star_index_lengths.csv>
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history
 set -ue
+
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
+# Check STAR Index Lengths CSV was provided on the command line
+if [ -n "$2" ]
+then
+  echo "Required csv file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
 
 # Read required variables from configuration file
 . ${1}
@@ -98,17 +116,65 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
+# Determine required input variable fullpaths
+GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
+REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
+
 # Create the STAR index files
-for line in `cat ${PATH_TO_REPO}/utility_files/star_index_lengths.csv`
+for line in `cat ${2}`
 do
 
     OVERHANG=`echo ${line} | cut -d"," -f1`
     DIR=`echo ${line} | cut -d"," -f2`
-    echo "Create STAR index files for ${DIR}" >> README
-    sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${GENE_MODEL_GTF}",FASTA="${REFERENCE_RNA_GENOME_FASTA}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
 
+    # Create reference index files via SLURM Cluster or LOCAL compute
+    if [ $ENVIRONMENT == "TGen" ]
+    then
+      # Submit index generation job to the slurm scheduler
+      echo "Create STAR index files for ${DIR}" >> README
+      sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${GENE_MODEL_GTF}",FASTA="${REFERENCE_RNA_GENOME_FASTA}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
+      fc -ln -1 >> README
+    elif [ $ENVIRONMENT == "LOCAL" ]
+    then
+      if [ -d "${DIR}" ]
+      then
+        echo
+        echo "Index already exists: ${DIR}"
+        echo "Index already exists: ${DIR}" >> README
+        echo
+      else
+        mkdir -p "${DIR}"
+        cd "${DIR}"
+
+        # Create STAR INDEX
+        STAR \
+          --runMode genomeGenerate \
+          --genomeDir "../${DIR}" \
+          --runThreadN ${LOCAL_COMPUTE_CORES} \
+          --sjdbOverhang "${OVERHANG}" \
+          --genomeFastaFiles "${REFERENCE_RNA_GENOME_FASTA}" \
+          --sjdbGTFfile "${GENE_MODEL_GTF}"
+
+        # Error Capture
+        if [ "$?" = "0" ]
+        then
+            cd ..
+            echo "PASSED_STAR_INDEX_SJDB-${OVERHANG}" >> README
+        else
+            cd ..
+            touch FAILED_STAR_INDEX_SJDB-${OVERHANG}
+            echo "FAILED_STAR_INDEX_SJDB-${OVERHANG}" >> README
+            exit 1
+        fi
+      fi
+    else
+      echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+      touch FAILED_STAR_INDEX_SJDB-${OVERHANG}
+      echo "FAILED_STAR_INDEX_SJDB-${OVERHANG}" >> README
+      exit 1
+    fi
 done
-fc -ln -1 >> README
+
 echo >> README
 echo "Index Generation Script: ${PATH_TO_REPO}/utility_scripts/star_index.sh" >> README
 

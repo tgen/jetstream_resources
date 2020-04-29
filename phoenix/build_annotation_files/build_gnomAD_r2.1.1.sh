@@ -2,20 +2,105 @@
 
 # Automated Script to download and build GnomAD release 2.1.1 VCF files for usage in Phoenix workflow
 
-# Usage: ./build_gnomAD_r2.1.1.sh
+# Usage: ./build_gnomAD_r2.1.1.sh <resources.ini>
+## Sbatch Usage: sbatch --nodes=1 --cpus-per-task=10 --time=0-72:00:00 build_gnomAD_r2.1.1.sh <resources.ini>
 
-# Write this full document as a README
-cat $0 > README
+### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
+HISTFILE=~/.bash_history
+set -o history
+set -ue
 
-# Added user information and timestamp to README
-USER=`whoami`
-DATE=`date`
-echo "Downloaded and Processed by:  ${USER}" >> README
-echo ${DATE} >> README
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
 
-# Load required modules
-module load samtools/1.9
-module load gatk/4.1.3.0
+# Read required variables from configuration file
+. ${1}
+
+####################################
+## Load Required Tools
+###################################
+if [ ${ENVIRONMENT} == "TGen" ]
+then
+  module load BCFtools/1.10.1-foss-2019a
+  module load Python/3.7.2-foss-2019a
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
+
+####################################
+## Create Expected Folder Structure
+###################################
+
+# Make top level directory if not available
+if [ -e ${PARENT_DIR} ]
+then
+    echo "Parent directory: ${PARENT_DIR} exists, moving into it"
+    cd ${PARENT_DIR}
+else
+    echo "Parent directory NOT fount, creating and moving into it now"
+    mkdir -p ${PARENT_DIR}
+    cd ${PARENT_DIR}
+fi
+
+# Make public_databases folder if not available
+if [ -e public_databases ]
+then
+    echo "Public Databases folder exists, moving into it"
+    cd public_databases
+else
+    echo "Public Databases folder NOT fount, creating and moving into it now"
+    mkdir -p public_databases
+    cd public_databases
+fi
+
+# Make dbSNP folder if not available
+if [ -e gnomad ]
+then
+    echo "gnomad folder exists, moving into it"
+    cd gnomad
+else
+    echo "gnomad folder NOT fount, creating and moving into it now"
+    mkdir -p gnomad
+    cd gnomad
+fi
+
+# Make r2.1.1 release version folder if not available
+if [ -e r2.1.1 ]
+then
+    echo "r2.1.1 folder exists, exiting to prevent overwrite"
+    exit 1
+else
+    echo "r2.1.1 folder NOT fount, creating and moving into it now"
+    mkdir -p r2.1.1
+    cd r2.1.1
+fi
+
+####################################
+## Download and Manipulate the gnomAD file
+###################################
+
+# Initialize a gnomeAD r2.1.1 index README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+
 
 ############################
 ###

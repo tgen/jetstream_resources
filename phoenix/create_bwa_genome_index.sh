@@ -7,6 +7,15 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
@@ -34,10 +43,7 @@ else
     exit 2
 fi
 
-####################################
-## Generate BWA index
-####################################
-
+# Create directory for tool resources
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -48,6 +54,7 @@ else
     cd tool_resources
 fi
 
+# Create directory for BWA version
 if [ -e "bwa_${BWA_VERSION}" ]
 then
     echo "The BWA directory exists, exiting to prevent overwriting existing index"
@@ -58,18 +65,20 @@ else
     cd bwa_${BWA_VERSION}
 fi
 
+####################################
+## Generate BWA index
+####################################
+
 # Initialize a bwa index README
 touch README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 echo "BWA Index creation details:" >> README
-echo >> README
-echo "There are no details on how the alt-aware required .alt file is created" >> README
-echo "Because of this we are copying and renaming the file from BWAKIT" >> README
+
 echo >> README
 
 # Copy in the .alt file from bwa.kit
@@ -81,10 +90,41 @@ echo >> README
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.fa
 
-# Create bwa index files using bwa utility script
+# Set variable for genome fasta
+FASTA=GRCh38tgen_decoy_alts_hla.fa
+
+# Create bwa index files
+# shellcheck disable=SC1020
+if [ ${ENVIRONMENT} == "TGen" ]
+then
+  # Submit index generation job to the slurm scheduler
+  sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
+  fc -ln -1 >> README
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
+  echo
+  echo "BWA Index will be created on the local compute"
+
+  # Generate BWA Index Files
+  bwa index ${FASTA}
+
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+    echo "PASSED_BWA_INDEX" >> README
+  else
+    touch FAILED_BWA_INDEX
+    echo "FAILED_BWA_INDEX" >> README
+    exit 1
+  fi
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_BWA_INDEX
+  echo "FAILED_BWA_INDEX" >> README
+  exit 1
+fi
+
 echo "Create bwa index as follows:" >> README
-sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
-fc -ln -1 >> README
 echo >> README
 cat ${PATH_TO_REPO}/utility_scripts/bwa_index.sh >> README
 echo >> README

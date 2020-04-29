@@ -33,10 +33,6 @@ else
     exit 1
 fi
 
-####################################
-## Generate deepvariant models
-####################################
-
 if [ -e tool_resources ]
 then
     echo "tool_resources directory exists, moving into it"
@@ -50,12 +46,17 @@ fi
 if [ -e "deepvariant_${DEEPVARIANT_VERSION}" ]
 then
     echo "The deepvariant directory exists, exiting to prevent overwriting existing index"
+    echo "This might exist for another existing pipeline as it is not genome version specific"
     exit 2
 else
     echo "The deepvariant directory was NOT found, creating and moving into it now"
     mkdir deepvariant_${DEEPVARIANT_VERSION}
     cd deepvariant_${DEEPVARIANT_VERSION}
 fi
+
+####################################
+## Download deepvariant models
+####################################
 
 # Initialize a deepvariant model README
 touch README
@@ -68,9 +69,6 @@ echo >> README
 echo "Deepvariant creation details:" >> README
 echo >> README
 
-# Create a symbolic link to the reference genome
-ln -s ../../genome_reference/${FASTA_FILENAME} ${FASTA_FILENAME}
-
 # Download and cleanup deepvariant release zip
 echo "Create deepvariant model as follows:" >> README
 wget https://github.com/google/deepvariant/releases/download/${DEEPVARIANT_VERSION}/deepvariant.zip
@@ -79,7 +77,8 @@ echo >> README
 unzip -qq deepvariant.zip
 fc -ln -1 >> README
 # Need to output to /dev/null because find likes to report the directories as missing after they have been moved already
-find . -name "${DEEPVARIANT_VERSION}+data" -exec mv {} . \; 2> /dev/null
+DEEPVARIANT_VERSION_NUMBERS=`echo ${DEEPVARIANT_VERSION} | cut -c2-`
+find . -type d -name "*${DEEPVARIANT_VERSION_NUMBERS}+data*" -exec mv {} . \; 2> /dev/null
 fc -ln -1 >> README
 echo >> README
 rm -rf deepvariant.zip deepvariant

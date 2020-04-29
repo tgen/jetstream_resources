@@ -7,11 +7,34 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
-## Load required modules to ensure needed tools are in your path
-module load samtools/${SAMTOOLS_VERSION}
+####################################
+## Load Required Tools
+###################################
+if [ ${ENVIRONMENT} == "TGen" ]
+then
+  module load SAMtools/1.10-GCC-8.2.0-2.31.1
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
 
 ####################################
 ## Configure and make Directory Structure
@@ -31,10 +54,10 @@ fi
 # Initialize a top level README
 touch README
 echo >> README
-echo "Reference Genome and related files required for JetStream Phoenix Workflow" >> README
+echo "Reference Genome and related files required for JetStream ${WORKFLOW_NAME} Workflow" >> README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 echo >> README
 echo "
@@ -70,7 +93,7 @@ touch README
 echo >> README
 echo >> README
 echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
@@ -211,6 +234,12 @@ samtools dict --assembly GRCh38 \
     --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
     --output GRCh38tgen_decoy.dict \
     GRCh38tgen_decoy.fa
+fc -ln -1 >> README
+echo >> README
+
+echo "Create 2bit genome reference for CHIPseq tools" >> README
+echo >> README
+${FATOTWOBIT} GRCh38tgen_decoy.fa GRCh38tgen_decoy.2bit
 fc -ln -1 >> README
 echo >> README
 

@@ -80,7 +80,7 @@ echo -e "e.g. SN\t1\tLN\t+\tSN" >> README
 echo >> README
 
 # Determine the full path to the reference genome dictionary file
-GENOME_FASTA_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`
+GENOME_FASTA_BASENAME=`basename ${REFERENCE_DNA_GENOME_NAME} ".fa"`
 GENOME_FASTA_DICT=${TOPLEVEL_DIR}/genome_reference/${GENOME_FASTA_BASENAME}.dict
 
 # Place the reference dictionary as the header to the interval list
