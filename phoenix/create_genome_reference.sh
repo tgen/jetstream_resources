@@ -181,12 +181,6 @@ samtools dict --assembly GRCh38 \
 fc -ln -1 >> README
 echo >> README
 
-echo "Create 2bit genome reference" >> README
-echo >> README
-${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit
-fc -ln -1 >> README
-echo >> README
-
 # Clean up the directory to store the downloads
 mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
 mv bwa.kit downloads
@@ -240,6 +234,12 @@ samtools dict --assembly GRCh38 \
     --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
     --output GRCh38tgen_decoy.dict \
     GRCh38tgen_decoy.fa
+fc -ln -1 >> README
+echo >> README
+
+echo "Create 2bit genome reference for CHIPseq tools" >> README
+echo >> README
+${FATOTWOBIT} GRCh38tgen_decoy.fa GRCh38tgen_decoy.2bit
 fc -ln -1 >> README
 echo >> README
 
