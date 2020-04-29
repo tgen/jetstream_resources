@@ -85,5 +85,8 @@ do
     # Remove JSON record
     rm ${CONTIG}.json
 
+    # Trying to limit NCBI error adding a sleep slow down the queries
+    sleep 3
+
 done
 
