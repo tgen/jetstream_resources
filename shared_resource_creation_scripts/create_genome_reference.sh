@@ -234,6 +234,19 @@ else
 fi
 echo >> README
 
+echo "Create 2bit genome reference for CHIP analysis steps" >> README
+echo "    ${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit" >> README
+${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: faToTwoBit file creation"
+else
+    touch FAILED_faToTwoBit_FILE
+    echo "FAILED: faToTwoBit file" >> README
+    exit 1
+fi
+echo >> README
 
 # Create chunk/scatter intervals
 
