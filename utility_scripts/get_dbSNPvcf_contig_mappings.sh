@@ -19,17 +19,22 @@ fi
 ####################################
 ## Load Required Tools
 ###################################
-if [ $ENVIRONMENT == "TGen"]
+if [ $ENVIRONMENT == "TGen" ]
 then
   ## NCBI eUtils required Perl module
   module load perl/5.24.1
   EUTILS_PATH=/home/jkeats/downloads/edirect/
   module load BCFtools/1.10.1-foss-2019a
   JSON_AWK=/home/jkeats/downloads/JSON.awk-1.3/JSON.awk
-else
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
   echo
   echo "Assuming required tools are available in $PATH"
   echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
 fi
 
 #################################################
@@ -79,6 +84,9 @@ do
 
     # Remove JSON record
     rm ${CONTIG}.json
+
+    # Trying to limit NCBI error adding a sleep slow down the queries
+    sleep 3
 
 done
 

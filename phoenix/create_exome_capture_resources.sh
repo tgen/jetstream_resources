@@ -32,6 +32,25 @@ else
 fi
 
 ####################################
+## Load Required Tools
+###################################
+if [ $ENVIRONMENT == "TGen" ]
+then
+  module load GATK/4.1.4.0-GCCcore-8.2.0-Java-1.8
+  module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+  module load Python/3.7.2-foss-2019a
+elif [ $ENVIRONMENT == "LOCAL" ]
+    then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
+
+####################################
 ## Navigate Directory Structure
 ###################################
 
@@ -111,11 +130,6 @@ fi
 ## Generate Required Capture Kit Resoureces
 ####################################
 
-# load required tools
-module load GATK/4.1.4.0-GCCcore-8.2.0-Java-1.8
-module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
-module load Python/3.7.2-foss-2019a
-
 # Initialize a capture kit specific README
 echo >> README
 echo "------------------------------------------------------" >> README
@@ -124,6 +138,11 @@ echo "https://github.com/tgen/jetstream_resources/phoenix" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
+
+# Determine the reference genome basename
+REFERENCE_DNA_GENOME_BASENAME=`basename ${REFERENCE_DNA_GENOME_NAME} ".fa"`
+# Determine the full path to the gene model GTF
+GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
 
 # Create the capture kit files
 for line in `cat ${2}`

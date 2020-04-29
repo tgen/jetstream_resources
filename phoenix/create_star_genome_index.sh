@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: create_REFERENCE_RNA_GENOME_FASTA_index.sh <Config.ini>
+# Usage: create_REFERENCE_RNA_GENOME_FASTA_index.sh <Config.ini> <star_index_lengths.csv>
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
@@ -11,6 +11,15 @@ set -ue
 if [ -n "$1" ]
 then
   echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
+# Check STAR Index Lengths CSV was provided on the command line
+if [ -n "$2" ]
+then
+  echo "Required csv file detected"
 else
   echo "Input INI file not provided, exiting due to missing requirement"
   exit 1
@@ -112,20 +121,20 @@ GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENA
 REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
 
 # Create the STAR index files
-for line in `cat ${PATH_TO_REPO}/utility_files/star_index_lengths.csv`
+for line in `cat ${2}`
 do
 
     OVERHANG=`echo ${line} | cut -d"," -f1`
     DIR=`echo ${line} | cut -d"," -f2`
 
     # Create reference index files via SLURM Cluster or LOCAL compute
-    if [ $ENVIRONMENT == "TGen"]
+    if [ $ENVIRONMENT == "TGen" ]
     then
       # Submit index generation job to the slurm scheduler
       echo "Create STAR index files for ${DIR}" >> README
       sbatch --export ALL,STAR_VERSION="${STAR_VERSION}",GTF="${GENE_MODEL_GTF}",FASTA="${REFERENCE_RNA_GENOME_FASTA}",SJDB_OVERHANG="${OVERHANG}",INDEX_DIR="${DIR}" ${PATH_TO_REPO}/utility_scripts/star_index.sh
       fc -ln -1 >> README
-    elif [ $ENVIRONMENT == "LOCAL"]
+    elif [ $ENVIRONMENT == "LOCAL" ]
     then
       if [ -d "${DIR}" ]
       then

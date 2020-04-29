@@ -8,6 +8,15 @@ HISTFILE=~/.bash_history
 set -o history
 set -ue
 
+# Check resources.ini was provided on the command line
+if [ -n "$1" ]
+then
+  echo "Required ini file detected"
+else
+  echo "Input INI file not provided, exiting due to missing requirement"
+  exit 1
+fi
+
 # Read required variables from configuration file
 . ${1}
 
@@ -75,10 +84,6 @@ else
     cd tool_resources
 fi
 
-####################################
-## Generate Custom snpEff Database
-####################################
-
 # Make snpEff directory if not available
 if [ -e "snpEff_${SNPEFF_VERSION}" ]
 then
@@ -90,10 +95,14 @@ else
     cd snpEff_${SNPEFF_VERSION}
 fi
 
+####################################
+## Generate Custom snpEff Database
+####################################
+
 # Initialize a snpEff specific README
 echo >> README_${SNPEFF_DB_NAME}
 echo "For details on file creation see the associated github repository:" >> README_${SNPEFF_DB_NAME}
-echo "https://github.com/tgen/jetstream_resources/phoenix" >> README_${SNPEFF_DB_NAME}
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README_${SNPEFF_DB_NAME}
 echo "Created and downloaded by ${CREATOR}" >> README_${SNPEFF_DB_NAME}
 date >> README_${SNPEFF_DB_NAME}
 echo >> README_${SNPEFF_DB_NAME}
@@ -132,6 +141,9 @@ else
     cd ${SNPEFF_DB_NAME}
 fi
 
+# Determine the full path to the gene model GTF
+GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
+
 # Copy GTF to new location, update name, and compress
 echo "Copy GTF to snpEff folder" >> ../../README_${SNPEFF_DB_NAME}
 cp ${GENE_MODEL_GTF} genes.gtf
@@ -153,6 +165,9 @@ else
     cd genomes
 fi
 
+# Determine the full path of the reference DNA fasta
+REFERENCE_DNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}
+
 # Check that the planned reference fasta does not exist
 if [ -e ${SNPEFF_DB_NAME}.fa.gz ]
 then
@@ -169,6 +184,23 @@ fi
 
 # Navigate to main snpEff folder and launch creation script
 cd ../..
-sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
-fc -ln -1 >> README_${SNPEFF_DB_NAME}
-echo >> README_${SNPEFF_DB_NAME}
+
+# Create snpEff database
+if [ $ENVIRONMENT == "TGen" ]
+then
+  sbatch --export ALL,ENVIRONMENT="${ENVIRONMENT}",SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
+  fc -ln -1 >> README_${SNPEFF_DB_NAME}
+elif [ $ENVIRONMENT == "LOCAL" ]
+then
+  echo "Assuming required tools are available in $PATH or defiend in the .ini file"
+  java -jar ${SNPEFF} build -gtf22 -v ${SNPEFF_DB_NAME} -c ${SNPEFF_CONFIG_PATH}
+
+  touch CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE
+  echo "CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE" >> README
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
+

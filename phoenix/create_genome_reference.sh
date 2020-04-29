@@ -22,13 +22,18 @@ fi
 ####################################
 ## Load Required Tools
 ###################################
-if [ $ENVIRONMENT == "TGen"]
+if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
-else
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
   echo
   echo "Assuming required tools are available in $PATH"
   echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
 fi
 
 ####################################
@@ -229,6 +234,12 @@ samtools dict --assembly GRCh38 \
     --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
     --output GRCh38tgen_decoy.dict \
     GRCh38tgen_decoy.fa
+fc -ln -1 >> README
+echo >> README
+
+echo "Create 2bit genome reference for CHIPseq tools" >> README
+echo >> README
+${FATOTWOBIT} GRCh38tgen_decoy.fa GRCh38tgen_decoy.2bit
 fc -ln -1 >> README
 echo >> README
 

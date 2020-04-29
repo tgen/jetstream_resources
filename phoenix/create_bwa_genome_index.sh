@@ -90,21 +90,17 @@ echo >> README
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.fa
 
-# Create bwa index files using bwa utility script
-echo "Create bwa index as follows:" >> README
-sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
-fc -ln -1 >> README
-echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/bwa_index.sh >> README
-echo >> README
-echo >> README
+# Set variable for genome fasta
+FASTA=GRCh38tgen_decoy_alts_hla.fa
 
-if [ $ENVIRONMENT == "TGen"]
+# Create bwa index files
+# shellcheck disable=SC1020
+if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
   sbatch --export ALL,FASTA="GRCh38tgen_decoy_alts_hla.fa",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
   fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL"]
+elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
   echo "BWA Index will be created on the local compute"
@@ -115,11 +111,11 @@ then
   # Error Capture
   if [ "$?" = "0" ]
   then
-      echo "PASSED_BWA_INDEX" >> README
+    echo "PASSED_BWA_INDEX" >> README
   else
-      touch FAILED_BWA_INDEX
-      echo "FAILED_BWA_INDEX" >> README
-      exit 1
+    touch FAILED_BWA_INDEX
+    echo "FAILED_BWA_INDEX" >> README
+    exit 1
   fi
 else
   echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
@@ -127,3 +123,9 @@ else
   echo "FAILED_BWA_INDEX" >> README
   exit 1
 fi
+
+echo "Create bwa index as follows:" >> README
+echo >> README
+cat ${PATH_TO_REPO}/utility_scripts/bwa_index.sh >> README
+echo >> README
+echo >> README

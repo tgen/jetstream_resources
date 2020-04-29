@@ -24,14 +24,19 @@ fi
 ####################################
 ## Load Required Tools
 ###################################
-if [ $ENVIRONMENT == "TGen"]
+if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load BCFtools/1.10.1-foss-2019a
   module load R/3.6.1-phoenix
-else
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
   echo
   echo "Assuming required tools are available in $PATH"
   echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
 fi
 
 ####################################
@@ -86,11 +91,14 @@ fi
 ## Download and Manipulate the dbSNP File
 ###################################
 
-# Added user information and timestamp to README
-USER=`whoami`
-DATE=`date`
-echo "Downloaded and Processed by:  ${USER}" >> README
-echo ${DATE} >> README
+# Initialize a bcftools index README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
 # Determine the full name and path of the original DNA reference genome download
 DOWNLOADED_FASTA_GZ_NAME=`basename ${REFERENCE_DNA_BASE_DOWNLOAD}`
@@ -103,11 +111,11 @@ REFERENCE_DNA_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME
 echo >> README
 
 # Download the files
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/release_notes.txt
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.md5
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.tbi
-wget ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.38.bgz.tbi.md5
+wget ftp.ncbi.nih.gov/snp/archive/b152/release_notes.txt
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.md5
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.tbi
+wget ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz.tbi.md5
 
 # Check MD5 checksums
 CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.bgz.md5 | cut -d" " -f2`
@@ -150,11 +158,11 @@ bcftools view -h GCF_000001405.38.bgz | cut -f1 | grep -v "#" | sort | uniq
 
 ## Need to build a rename key
 # Step 1 - get the meta-data for the contigs in the dbSNP VCF
-${PATH_TO_REPO}/utility_files/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.bgz b152
+${PATH_TO_REPO}/utility_scripts/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.bgz b152
 # Step 2 - Get the meta-data from the Reference Genome downloaded from NBCI
-${PATH_TO_REPO}/utility_files/extract_metadata_from_fasta.sh ${DOWNLOADED_FASTA_GZ_FULLPATH}
+${PATH_TO_REPO}/utility_scripts/extract_metadata_from_fasta.sh ${DOWNLOADED_FASTA_GZ_FULLPATH}
 # Step 3 - Merge output files and generate list of contigs to remove the dbSNP vcf as they are not in the assembly and the rename key
-Rscript ${PATH_TO_REPO}/utility_files/MergeMatch_dbSNP_GRCh38_Contigs.R
+Rscript ${PATH_TO_REPO}/utility_scripts/MergeMatch_dbSNP_GRCh38_Contigs.R
 
 # Now remove contigs that are not wanted in the dbSNP vcf as they don't exist in our refence genome (p1 versus p13 issues)
 bcftools filter \
@@ -191,3 +199,7 @@ bcftools index --threads 4 --stats dbSNP_b152_hg38tgen.bcf
 
 # Remove temp files
 rm temp_*
+
+echo
+echo "Process Complete"
+echo
