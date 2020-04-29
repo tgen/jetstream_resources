@@ -24,7 +24,6 @@ fi
 ###################################
 if [ ${ENVIRONMENT} == "TGen" ]
 then
-  echo "In TGen Section"
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
@@ -179,6 +178,12 @@ samtools dict --assembly GRCh38 \
     --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
     --output GRCh38tgen_decoy_alts_hla.dict \
     GRCh38tgen_decoy_alts_hla.fa
+fc -ln -1 >> README
+echo >> README
+
+echo "Create 2bit genome reference" >> README
+echo >> README
+${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit
 fc -ln -1 >> README
 echo >> README
 
