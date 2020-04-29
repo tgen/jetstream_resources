@@ -156,5 +156,6 @@ echo >> README
 
 rm temp_*
 
-echo >> README
-echo >> README
+echo
+echo "Process Complete"
+echo
