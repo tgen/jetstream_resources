@@ -86,6 +86,7 @@ wget ${SNPSNIFFER_POSITION_TABLE}
 fc -ln -1 >> README
 echo >> README
 
+
 wget ${SNPSNIFFER_DATABASE}
 fc -ln -1 >> README
 echo >> README
