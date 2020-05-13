@@ -24,6 +24,7 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
     * create_exome_capture_resources.sh phoenix_resources.ini
       * NOTE: This is dependent on existing bed files, some of which are not freely available and must be downloaded in advance.
 * ../shared_resource_creation_scripts/create_deepvariant_models.sh phoenix_resources.ini  - Pass/Pass
+* ../shared_resource_creation_scripts/create_snpSniffer_references.sh phoenix_resources.ini 
 * build_clinivar_20190715.sh  - Pass/Pass
 * build_cosmic_v90.sh  - Pass/Pass
 * build_dbSNP_b152.sh - Pass/Pass
@@ -35,6 +36,7 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 * build_lymphocyte_count_windows.sh  - Pass/Pass
 * build_UCSC2ensembl_crossmapping.sh  - Pass/Pass
 * build_Myeloma_FISH_Probe_Locations.sh  - Pass/Pass
+
 
 ## Required Software
 NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resource.ini defines if tools are loaded into the path using a `module load` 
