@@ -55,25 +55,28 @@ sub examine_fusion_prediction {
 
     if ($fusion_annot) {
 
-        foreach my $free_pass_annot (@FREE_PASS) {
-            if ($fusion_annot =~ /$free_pass_annot/) {
-                return(0); # retain fusion.
-            }
-        }
-
-
+        my $fusion_in_filterlist = 0;
         my @removal_flags_found;
 
         foreach my $removal_flag (@FILTER_FLAGS) {
 
             if ($fusion_annot =~ /$removal_flag/) {
                 push (@removal_flags_found, $removal_flag);
+		        $fusion_in_filterlist = 1;
             }
         }
 
         if (@removal_flags_found) {
             push (@filter_reasons, "possible red herring as found in: " . join(",", @removal_flags_found));
         }
+
+	    foreach my $free_pass_annot (@FREE_PASS) {
+            if ($fusion_annot =~ /$free_pass_annot/) {
+		        if(!$fusion_in_filterlist) {
+                    return(0); # retain fusion.
+                }
+            }
+	    }
     }
 
     if ($fusion_result_row->{'LeftBreakpoint'} =~ /chrM:/i
@@ -118,7 +121,9 @@ sub fusion_has_junction_reads_exception {
     # these are fusions that are known to  have complex breakpoints, so we make an exception for them.
 
     if ($fusion =~ /^IGH.*--CRLF2$/ ||
-        $fusion =~ /^CRLF2--IGH/
+        $fusion =~ /^CRLF2--IGH/ ||
+        $fusion =~ /MAP3K14/ ||
+        $fusion =~ /NSD2/
 
         ) {
         return(1);
