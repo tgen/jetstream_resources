@@ -85,9 +85,8 @@ def seg_extend(file):
 # ==============================================================================
 if __name__ == '__main__':
     centromeres = {}
-    seg_file = sys.argv[1]
 
-    with open(seg_file) as centro:
+    with open(sys.argv[1]) as centro:
         for interval in centro:
             (key, start, stop) = interval.rstrip().split('\t')
             centromeres[key] = [int(start), int(stop)]
