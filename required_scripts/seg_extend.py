@@ -9,7 +9,6 @@ Seg Stitch
 @author: dpenaherrera
 """
 import sys
-import os
 
 # ==============================================================================
 # WHERE ALL THE MAGIC HAPPENS
@@ -27,20 +26,34 @@ def seg_extend(file):
         all_lines.append(line.rstrip().split('\t'))
 
     del seglist
+    header = all_lines.pop(0)
 
-    for idx in range(1, len(all_lines)):
-        all_lines[idx][2:4] = [int(x) for x in all_lines[idx][2:4]]
+    # Set these to integer
+    #       STARTEND
+    #       NUM_POINTS_COPY_RATIO
+    #       NUM_POINTS_ALLELE_FRACTION
+    #   and these to float
+    #       LOG2_COPY_RATIO_POSTERIOR_10
+    #       LOG2_COPY_RATIO_POSTERIOR_50
+    #       LOG2_COPY_RATIO_POSTERIOR_90
+    #       MINOR_ALLELE_FRACTION_POSTERIOR_10
+    #       MINOR_ALLELE_FRACTION_POSTERIOR_50
+    #       MINOR_ALLELE_FRACTION_POSTERIOR_90
+    for idx in range(len(all_lines)):
+        all_lines[idx][1:5] = [int(x) for x in all_lines[idx][1:5]]
+        all_lines[idx][5:] = [float(x) for x in all_lines[idx][5:]]
 
 # -------FINDING SEGMENTS THAT CROSS THE CENTROMERE-----------------------------
     for chrom in chromes:
         i = 1
-        while i in range(1, len(all_lines)):
+        while i in range(len(all_lines)):
             line = all_lines[i]
-            if line[1] == chrom:
-                if (line[2] < centromeres[chrom][0]) and (line[3] > centromeres[chrom][1]):
-                    newline = [line[0], line[1], centromeres[chrom][1], line[3], line[4], line[5]]
+            if line[0] == chrom:
+                if (int(line[1]) < centromeres[chrom][0]) and (int(line[2]) > centromeres[chrom][1]):
+                    newline = [line[0], int(centromeres[chrom][1]), line[2], line[3], line[4], line[5],
+                               line[6], line[7], line[8], line[9], line[10]]
                     all_lines.insert(i+1, newline)
-                    all_lines[i][3] = centromeres[chrom][0]
+                    all_lines[i][2] = centromeres[chrom][0]
                     del newline
                     i += 1
                 else:
@@ -49,27 +62,22 @@ def seg_extend(file):
                 i += 1
 
 # ---STITCHING SEMGENTS---------------------------------------------------------
-    for k in range(1, len(all_lines)-1):
+    for k in range(len(all_lines)-1):
         for chrom in chromes:
-            if (all_lines[k][1] == chrom) and (all_lines[k+1][1] == chrom):
-                if (all_lines[k][3] != centromeres[chrom][0]) and (all_lines[k+1][2] != centromeres[chrom][1]):
-                    all_lines[k][3] = (all_lines[k][3]+all_lines[k+1][2])/2
-                    all_lines[k+1][2] = all_lines[k][3]
-                elif (all_lines[k][3] == centromeres[chrom][0]) and (all_lines[k+1][2] == centromeres[chrom][1]):
+            if (all_lines[k][0] == chrom) and (all_lines[k+1][0] == chrom):
+                if (all_lines[k][2] != centromeres[chrom][0]) and (all_lines[k+1][1] != centromeres[chrom][1]):
+                    all_lines[k][2] = round((int(all_lines[k][2])+int(all_lines[k+1][1]))/2)
+                    all_lines[k+1][1] = all_lines[k][2]
+                elif (all_lines[k][2] == centromeres[chrom][0]) and (all_lines[k+1][1] == centromeres[chrom][1]):
                     continue
 
 # ---WRITE THE OUTPUTS TO FILE--------------------------------------------------
-    for idx in range(1, len(all_lines)):
-        all_lines[idx][2:4] = [str(x) for x in all_lines[idx][2:4]]
+    for idx in range(len(all_lines)):
+        all_lines[idx][:] = [str(x) for x in all_lines[idx][:]]
 
-    for n in range(1, len(all_lines)):
-        all_lines[n] = [all_lines[n][1], all_lines[n][2], all_lines[n][3], all_lines[n][4], all_lines[n][5]]
+    with open(file, 'w') as f:
+        f.write("\t".join(elem for elem in header) + "\n")
 
-    del(all_lines[0])
-
-    bedfile = os.path.splitext(file)[0]+".bed"
-
-    with open(bedfile, 'w') as f:
         for line in all_lines:
             f.write("\t".join(elem for elem in line)+"\n")
 
@@ -77,7 +85,9 @@ def seg_extend(file):
 # ==============================================================================
 if __name__ == '__main__':
     centromeres = {}
-    with open(sys.argv[1]) as centro:
+    seg_file = sys.argv[1]
+
+    with open(seg_file) as centro:
         for interval in centro:
             (key, start, stop) = interval.rstrip().split('\t')
             centromeres[key] = [int(start), int(stop)]
