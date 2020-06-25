@@ -116,7 +116,7 @@ GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${G
 if [ $ENVIRONMENT == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
-  sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
+  sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}",SALMON_TYPE="${SALMON_TYPE}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
   fc -ln -1 >> README
 elif [ $ENVIRONMENT == "LOCAL" ]
 then
@@ -124,7 +124,7 @@ then
   echo "SALMON Index will be created on the local compute"
 
   # Generate BWA Index Files
-  salmon index -t ${GENE_MODEL_TRANSCRIPTOME_FASTA} -i salmon_quasi_75merPlus --type quasi -k 31
+  salmon index -t ${GENE_MODEL_TRANSCRIPTOME_FASTA} -i salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} -k 31
 
   # Error Capture
   if [ "$?" = "0" ]
