@@ -14,6 +14,7 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
   * create_gatk_cnv_interval_list.sh phoenix_resources.ini  - Pass/Pass
   * create_samtools_stats_non_N_region_file.sh phoenix_resources.ini  - Pass/Pass
   * create_gene_model.sh phoenix_resources.ini  - Pass/Pass
+    * create_disease_specific_resources.sh  - Testing/...
     * create_salmon_index.sh  - Pass/Pass
     * create_star_genome_index.sh  - Pass/Pass
     * create_star-fusion_resource.sh - Testing/... (hit walltime.. argh)
