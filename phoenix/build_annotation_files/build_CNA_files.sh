@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: ./build_centromere_and_heterochromatin_bed_files.sh  <resources.ini>
+# Usage: ./build_CNA_files.sh  <resources.ini>
 
 ## This file is created for usage in jetstream_build_package
 
@@ -27,6 +27,7 @@ fi
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
+  module load GATK/4.1.7.0-GCCcore-8.3.0-Java-1.8
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
@@ -121,6 +122,61 @@ cat Modeled_regions_for_GRCh38_centromere.bed Modeled_regions_for_GRCh38_centrom
 	cut -f1-4 | \
 	sort -k1,1V -k2,2n -k3,3n | \
 	bedtools merge > Modeled_regions_for_GRCh38_centromere_blacklist_merged.bed
+fc -ln -1 >> README
+echo >> README
+
+# Merge the centromere and Encode deny list together
+zcat ${PARENT_DIR}/public_databases/encode/Blacklist-2.0/lists/hg38-blacklist.v2.bed.gz > hg38-blacklist.v2.bed
+fc -ln -1 >> README
+echo >> README
+
+cat hg38-blacklist.v2.bed Modeled_regions_for_GRCh38_centromere_blacklist_merged.bed | cut -f1-3 | sort -k1,1V -k2,2n > Encode_deny_list_with_ncbi_centromere.bed
+fc -ln -1 >> README
+echo >> README
+
+bedtools merge -i Encode_deny_list_with_ncbi_centromere.bed > Encode_deny_list_with_ncbi_centromere.merged.bed
+fc -ln -1 >> README
+echo >> README
+
+####################################
+## Download and Manipulate the Bismap mappability file
+###################################
+
+cd ${PARENT_DIR}/public_databases
+
+# Make ncbi folder if not available
+if [ -e bismap ]
+then
+    echo "bismap folder exists, moving into it"
+    cd bismap
+else
+    echo "bismap folder NOT fount, creating and moving into it now"
+    mkdir -p bismap
+    cd bismap
+fi
+
+# Initialize a bismap README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
+
+# Download the Umap k100 hg38 Single-read mappability file
+wget https://bismap.hoffmanlab.org/raw/hg38/k100.umap.bed.gz
+fc -ln -1 >> README
+echo >> README
+
+# Unzip the bed file and remove the header
+zcat k100.umap.bed.gz | awk 'NR >1' > k100.umap.no_header.bed
+fc -ln -1 >> README
+echo >> README
+
+# Index the mappability file
+gatk IndexFeatureFile \
+     --input k100.umap.no_header.bed
 fc -ln -1 >> README
 echo >> README
 
