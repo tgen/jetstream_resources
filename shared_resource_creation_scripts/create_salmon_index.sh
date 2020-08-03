@@ -34,11 +34,11 @@ else
 fi
 
 # Check that the reference genome for RNA was created successfully
-if [ -e RNA_FASTA_GENERATION_COMPLETE ]
+if [ -e genome_reference ]
 then
-    echo "RNA fasta exists, moving forward"
+    echo "Genome reference exists, moving on"
 else
-    echo "RNA fasta generation complete flag NOT found"
+    echo "Genome reference directory NOT found"
     echo "Try again later as this is required"
     exit 2
 fi
