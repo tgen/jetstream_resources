@@ -108,12 +108,17 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
-# Determine the fullpath to the transcriptome fasta file
-GENE_MODEL_BASENAME=`basename ${GENE_MODEL_FILENAME} ".gtf"`
-GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_BASENAME}.transcriptome.fasta
+####################################
+## Determine required variables
+####################################
 
-# Determine the fullpath to the RNA reference fasta
-REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
+# Determine the reference genome fasta full path
+echo "Determine the full path filename of the transcriptome fasta" >> README
+echo "GTF_BASENAME=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gtf.gz"`" >> README
+GTF_BASENAME=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gtf.gz"`
+echo "GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta" >> README
+GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta
+echo >> README
 
 # Create the Salmon index
 if [ $ENVIRONMENT == "TGen" ]
