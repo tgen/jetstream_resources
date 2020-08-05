@@ -120,6 +120,9 @@ echo "GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAM
 GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta
 echo >> README
 
+# Determine the fullpath to the RNA reference fasta
+REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
+
 # Create the Salmon index
 if [ $ENVIRONMENT == "TGen" ]
 then
@@ -137,8 +140,18 @@ else
   exit 1
 fi
 
+# Prepare meta-data needed for salmon index with whole genome decoy
+grep "^>" ${REFERENCE_RNA_GENOME_FASTA} | cut -d " " -f 1 > decoys.txt
+fc -ln -1 >> README
+sed -i.bak -e 's/>//g' decoys.txt
+fc -ln -1 >> README
+
+# Create contatenated transcriptome and reference file for indexing
+cat ${GENE_MODEL_TRANSCRIPTOME_FASTA} ${REFERENCE_RNA_GENOME_FASTA} > transcriptome_genome_index.fa
+fc -ln -1 >> README
+
 # Generate Salmon Index Files
-salmon index --threads 4 --transcripts ${GENE_MODEL_TRANSCRIPTOME_FASTA} --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31
+salmon index --threads 4 --transcripts transcriptome_genome_index.fa --decoys decoys.txt --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31
 
 # Error Capture
 if [ "$?" = "0" ]
