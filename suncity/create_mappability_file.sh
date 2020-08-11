@@ -17,7 +17,7 @@ fi
 
 ## Get executables in PATH
 module load ${GATK_MODULE}
-TOPLEVEL_DIR=~/
+
 ### make target directories:
 if [[ -d ${TOPLEVEL_DIR} && -w ${TOPLEVEL_DIR} ]] ;
 then
