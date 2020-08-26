@@ -139,8 +139,6 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
-# Determine the reference genome basename
-REFERENCE_DNA_GENOME_DICT="${REFERENCE_DNA_GENOME_BASENAME}.dict"
 # Determine the full path to the gene model GTF
 GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
 
@@ -170,7 +168,7 @@ do
         python3 ${PATH_TO_REPO}/utility_scripts/make_exome_refpack.py \
             -t ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${TARGETS_BED} \
             -b ${PARENT_DIR}/capture_kits/${KIT_CODE}/source_files_ucsc/${BAITS_BED} \
-            -r ${REFERENCE_DNA_GENOME_DICT} \
+            -r ${REFERENCE_DNA_GENOME_BASENAME} \
             -g ${GENE_MODEL_GTF} \
             -o ${KIT_CODE}_${GENOME_SUBVERSION_NAME}_${GENE_MODEL_NAME}
 
