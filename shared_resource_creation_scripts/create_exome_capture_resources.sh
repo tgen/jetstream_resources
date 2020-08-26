@@ -140,7 +140,7 @@ date >> README
 echo >> README
 
 # Determine the reference genome basename
-REFERENCE_DNA_GENOME_BASENAME=`basename ${REFERENCE_DNA_GENOME_NAME} ".fa"`
+REFERENCE_DNA_GENOME_DICT="${REFERENCE_DNA_GENOME_BASENAME}.dict"
 # Determine the full path to the gene model GTF
 GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
 
