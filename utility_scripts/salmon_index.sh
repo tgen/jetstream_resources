@@ -11,7 +11,7 @@
 ##
 ##
 
-module load salmon/${SALMON_VERSION}
+module load Salmon/${SALMON_VERSION}
 
 # NOTES: This will build the quasi-mapping-based index, using an auxiliary k-mer hash over k-mers of length 31.
 # While quasi-mapping will make used of arbitrarily long matches between the query and reference, the k size selected
@@ -19,7 +19,7 @@ module load salmon/${SALMON_VERSION}
 # sensitivty. We find that a k of 31 seems to work well for reads of 75bp or longer, but you might consider a smaller
 # k if you plan to deal with shorter reads.
 
-salmon index -t ${TRANSCRIPTOME_FASTA} -i salmon_quasi_75merPlus --type quasi -k 31
+salmon index -t ${TRANSCRIPTOME_FASTA} -i salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} -k 31
 
 # Error Capture
 if [ "$?" = "0" ]

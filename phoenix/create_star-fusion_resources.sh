@@ -139,7 +139,7 @@ else
     exit 1
 fi
 
-# Capture the buncle tar filename
+# Capture the bundle tar filename
 echo "Capture the md5sum filename" >> README
 BUNDLE_FILENAME=`basename ${STAR_FUSION_SOURCE}`
 fc -ln -1 >> README
@@ -249,7 +249,12 @@ then
   --human_gencode_filter
   echo
 else
-  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Environment Variable"
   echo "Only TGen or LOCAL are supported"
   exit 1
 fi
+
+echo "Copying AnnotFilterRule.pm from `dirname "$0"`" >> README
+cp `dirname "$0"`/star_resource_files/AnnotFilterRule.pm ctat_genome_lib_build_dir/
+fc -ln -1 >> README
+echo >> README
