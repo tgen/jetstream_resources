@@ -100,8 +100,7 @@ GENE_MODEL_PATH=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILEN
 
 # Since this is a custom build we need the entire Dfam.hmm database file
 if [ ! -e Dfam.hmm ]; then
-  wget --no-check-certificate https://dfam.org/releases/current/families/Dfam.hmm.gz
-  gunzip Dfam.hmm.gz
+  wget -nd -r -l1 --no-parent -A "Dfam.hmm*" --no-check-certificate https://dfam.org/releases/Dfam_3.1/infrastructure/dfamscan/
 fi
 
 wget --no-check-certificate https://www.dfam.org/releases/Dfam_3.1/infrastructure/dfamscan.pl.gz
@@ -118,11 +117,6 @@ then
   module load STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2
   module load blast/2.7.1
   module load hmmer/3.2.1
-
-  # We need to hmmpress the Dfam.hmm for quicker operation
-  if [ ! -e Dfam.hmm.h3m ]; then
-    hmmpress Dfam.hmm
-  fi
 
   # Use provided starFusion build script
   /packages/easybuild/software/STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2/ctat-genome-lib-builder/prep_genome_lib.pl \
