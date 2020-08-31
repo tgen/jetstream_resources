@@ -104,6 +104,10 @@ if [ ! -e Dfam.hmm ]; then
   gunzip Dfam.hmm.gz
 fi
 
+wget --no-check-certificate https://www.dfam.org/releases/Dfam_3.1/infrastructure/dfamscan.pl.gz
+gunzip dfamscan.pl.gz
+chmod +x dfamscan.pl
+
 # Add current DIR to path
 CURRENT_DIR=`pwd`
 export PATH=$PATH:$CURRENT_DIR
