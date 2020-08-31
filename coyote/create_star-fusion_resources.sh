@@ -76,14 +76,14 @@ else
 fi
 
 # Make star-fusion directory if not available
-if [ -e "starFusion" ]
+if [ -e "starFusion_${GENE_MODEL_NAME}" ]
 then
     echo "starFusion directory exists, moving into it"
-    cd starFusion
+    cd starFusion_${GENE_MODEL_NAME}
 else
     echo "starFusion directory NOT found, creating and moving into it now"
-    mkdir starFusion
-    cd starFusion
+    mkdir starFusion_${GENE_MODEL_NAME}
+    cd starFusion_${GENE_MODEL_NAME}
 fi
 
 # Make a build folder
@@ -131,11 +131,6 @@ then
   echo
   echo "Assuming required tools are available in $PATH"
   # Ensure the starFusion repository is available on your system and the subfolder "ctat-genome-lib-builder" is available in the $PATH
-
-  # We need to hmmpress the Dfam.hmm for quicker operation
-  if [ ! -e Dfam.hmm.h3m ]; then
-    hmmpress Dfam.hmm
-  fi
 
   prep_genome_lib.pl \
   --CPU 20 \
