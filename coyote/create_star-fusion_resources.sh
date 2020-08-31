@@ -119,6 +119,11 @@ then
   module load blast/2.7.1
   module load hmmer/3.2.1
 
+  # We need to hmmpress the Dfam.hmm for quicker operation
+  if [ ! -e Dfam.hmm.h3m ]; then
+    hmmpress Dfam.hmm
+  fi
+
   # Use provided starFusion build script
   /packages/easybuild/software/STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2/ctat-genome-lib-builder/prep_genome_lib.pl \
   --CPU 20 \
@@ -132,6 +137,12 @@ then
   echo
   echo "Assuming required tools are available in $PATH"
   # Ensure the starFusion repository is available on your system and the subfolder "ctat-genome-lib-builder" is available in the $PATH
+
+  # We need to hmmpress the Dfam.hmm for quicker operation
+  if [ ! -e Dfam.hmm.h3m ]; then
+    hmmpress Dfam.hmm
+  fi
+
   prep_genome_lib.pl \
   --CPU 20 \
   --max_readlength 150 \
