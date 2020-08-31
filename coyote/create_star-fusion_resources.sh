@@ -99,12 +99,12 @@ GENE_MODEL_PATH=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILEN
 ###################################
 
 # Since this is a custom build we need the entire Dfam.hmm database file
-wget https://dfam.org/releases/current/families/Dfam.hmm.gz
+wget --no-check-certificate https://dfam.org/releases/current/families/Dfam.hmm.gz
 gunzip Dfam.hmm.gz
 
 # A specific dfamscan perl script is needed for the build and needs to be added to the $PATH
 # Get dfamscan.pl
-wget https://www.dfam.org/releases/current/infrastructure/dfamscan.pl.gz
+wget --no-check-certificate https://www.dfam.org/releases/current/infrastructure/dfamscan.pl.gz
 gunzip dfamscan.pl.gz
 chmod +x dfamscan.pl
 
