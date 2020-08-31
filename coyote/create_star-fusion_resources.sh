@@ -87,7 +87,7 @@ else
 fi
 
 # Make a build folder
-mkdir starFusion_Resources
+mkdir -p starFusion_Resources
 cd starFusion_Resources
 
 # Create symbolic link
