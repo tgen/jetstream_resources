@@ -103,9 +103,11 @@ if [ ! -e homo_sapiens_dfam.hmm ]; then
   wget -nd -r -l1 --no-parent -A "homo_sapiens_dfam.hmm*" --no-check-certificate https://dfam.org/releases/Dfam_3.1/infrastructure/dfamscan/
 fi
 
-wget --no-check-certificate https://www.dfam.org/releases/Dfam_3.1/infrastructure/dfamscan.pl.gz
-gunzip dfamscan.pl.gz
-chmod +x dfamscan.pl
+if [ ! -e dfamscan.pl ]; then
+  wget --no-check-certificate https://www.dfam.org/releases/Dfam_3.1/infrastructure/dfamscan.pl.gz
+  gunzip dfamscan.pl.gz
+  chmod +x dfamscan.pl
+fi
 
 # Add current DIR to path
 CURRENT_DIR=`pwd`
@@ -113,7 +115,7 @@ export PATH=$PATH:$CURRENT_DIR
 
 # Prepping AnnotFilterRule.pm file
 echo "Copying AnnotFilterRule.pm from `dirname "$0"`" >> README
-cp `dirname "$0"`/star_resource_files/AnnotFilterRule.pm .
+cp ~/git_repositories/jetstream_resources/suncity/star_resource_files/AnnotFilterRule.pm .
 fc -ln -1 >> README
 echo >> README
 
