@@ -76,14 +76,14 @@ else
 fi
 
 # Make star-fusion directory if not available
-if [ -e "starFusion_${STAR_FUSION_SOURCE_VERSION}" ]
+if [ -e "starFusion" ]
 then
     echo "starFusion directory exists, moving into it"
-    cd starFusion_${STAR_FUSION_SOURCE_VERSION}
+    cd starFusion
 else
     echo "starFusion directory NOT found, creating and moving into it now"
-    mkdir starFusion_${STAR_FUSION_SOURCE_VERSION}
-    cd starFusion_${STAR_FUSION_SOURCE_VERSION}
+    mkdir starFusion
+    cd starFusion
 fi
 
 # Make a build folder
