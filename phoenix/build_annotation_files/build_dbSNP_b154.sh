@@ -112,22 +112,22 @@ echo >> README
 
 # Download the files
 wget ftp.ncbi.nih.gov/snp/archive/b154/release_notes.txt
-wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.bgz
-wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.bgz.md5
-wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.bgz.tbi
-wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.bgz.tbi.md5
+wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.gz
+wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.gz.md5
+wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.gz.tbi
+wget ftp.ncbi.nih.gov/snp/archive/b154/VCF/GCF_000001405.38.gz.tbi.md5
 
 # Check MD5 checksums
-CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.bgz.md5 | cut -d" " -f2`
+CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.gz.md5 | cut -d" " -f2`
 
 if [ $CHECKSUM_STATUS == "OK" ]
 then
-  echo "GCF_000001405.38.bgz.md5 Checksum Validation Passed"
+  echo "GCF_000001405.38.gz.md5 Checksum Validation Passed"
 elif [ $CHECKSUM_STATUS == "FAILED" ]
 then
   echo
-  cat GCF_000001405.38.bgz.md5
-  echo "GCF_000001405.38.bgz.md5 Checksum Validation FAILED"
+  cat GCF_000001405.38.gz.md5
+  echo "GCF_000001405.38.gz.md5 Checksum Validation FAILED"
   echo
   exit 1
 else
@@ -135,16 +135,16 @@ else
   exit 1
 fi
 
-CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.bgz.tbi.md5 | cut -d" " -f2`
+CHECKSUM_STATUS=`md5sum --check GCF_000001405.38.gz.tbi.md5 | cut -d" " -f2`
 
 if [ $CHECKSUM_STATUS == "OK" ]
 then
-  echo "GCF_000001405.38.bgz.tbi.md5 Checksum Validation Passed"
+  echo "GCF_000001405.38.gz.tbi.md5 Checksum Validation Passed"
 elif [ $CHECKSUM_STATUS == "FAILED" ]
 then
   echo
-  cat GCF_000001405.38.bgz.tbi.md5
-  echo "GCF_000001405.38.bgz.tbi.md5 Checksum Validation FAILED"
+  cat GCF_000001405.38.gz.tbi.md5
+  echo "GCF_000001405.38.gz.tbi.md5 Checksum Validation FAILED"
   echo
   exit 1
 else
@@ -153,12 +153,12 @@ else
 fi
 
 # Check contig seqeunces to determine if they match our hg38tgen reference genome with UCSC contif names
-bcftools view -h GCF_000001405.38.bgz | cut -f1 | grep -v "#" | sort | uniq
+bcftools view -h GCF_000001405.38.gz | cut -f1 | grep -v "#" | sort | uniq
 # This showed the file uses standard NCBI nucleotide contigs like NC_000001.11 versus CM000663.2 versus chr1
 
 ## Need to build a rename key
 # Step 1 - get the meta-data for the contigs in the dbSNP VCF
-${PATH_TO_REPO}/utility_scripts/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.bgz b154
+${PATH_TO_REPO}/utility_scripts/get_dbSNPvcf_contig_mappings.sh ${1} GCF_000001405.38.gz b154
 # Step 2 - Get the meta-data from the Reference Genome downloaded from NBCI
 ${PATH_TO_REPO}/utility_scripts/extract_metadata_from_fasta.sh ${DOWNLOADED_FASTA_GZ_FULLPATH}
 # Step 3 - Merge output files and generate list of contigs to remove the dbSNP vcf as they are not in the assembly and the rename key
@@ -170,7 +170,7 @@ bcftools filter \
 	--targets-file ^contigs_2_remove_from_dbSNP154.bed \
 	--output-type b \
 	--output temp_droppedContigs.bcf \
-	GCF_000001405.38.bgz
+	GCF_000001405.38.gz
 bcftools index --threads 8 temp_droppedContigs.bcf
 
 # Now rename the contigs in the processed BCF file
