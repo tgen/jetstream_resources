@@ -55,14 +55,14 @@ else
 fi
 
 # Create directory for MSIsensor-pro version
-if [ -e "msisensor_pro_${MSISENSOR_PRO_VERSION}" ]
+if [ -e "msisensor_pro_v${MSISENSOR_PRO_VERSION}" ]
 then
     echo "The MSIsensor-pro directory exists, exiting to prevent overwriting existing microsatellites list"
     exit 2
 else
     echo "The MSIsensor-pro directory was NOT found, creating and moving into it now"
-    mkdir msisensor_pro_${MSISENSOR_PRO_VERSION}
-    cd msisensor_pro_${MSISENSOR_PRO_VERSION}
+    mkdir msisensor_pro_v${MSISENSOR_PRO_VERSION}
+    cd msisensor_pro_v${MSISENSOR_PRO_VERSION}
 fi
 
 ####################################
@@ -89,7 +89,7 @@ REFERENCE_DNA_GENOME_MICROSATELLITES_LIST="${REFERENCE_DNA_GENOME_NAME/.fa/.micr
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
-  sbatch --export ALL,FASTA="{$REFERENCE_DNA_GENOME_FASTA}",MICROSATELLITES_LIST="${REFERENCE_DNA_GENOME_MICROSATELLITES_LIST}",MSISENSOR_PRO_VERSION="${MSISENSOR_PRO_VERSION}" ${PATH_TO_REPO}/utility_scripts/create_msisensor-pro_ref_microsatellites_list.sh
+  sbatch --export ALL,FASTA="${REFERENCE_DNA_GENOME_FASTA}",MICROSATELLITES_LIST="${REFERENCE_DNA_GENOME_MICROSATELLITES_LIST}",MSISENSOR_PRO_MODULE="${MSISENSOR_PRO_MODULE}" ${PATH_TO_REPO}/utility_scripts/create_msisensor-pro_ref_microsatellites_list.sh
   fc -ln -1 >> README
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
