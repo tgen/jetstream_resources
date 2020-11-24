@@ -9,9 +9,9 @@
 ## Script to create list of homopolymers and miscrosatelites from reference genome
 
 ## Usage:
-## sbatch --export ALL,FASTA="genome.fa",MICROSATELLITES_LIST="GRCh38tgen_decoy_alts_hla.microsatellites.list",MSISENSOR_PRO_VERSION="1.1.a" create_msisensor-pro_ref_microsatellites_list.sh 
+## sbatch --export ALL,FASTA="genome.fa",MICROSATELLITES_LIST="GRCh38tgen_decoy_alts_hla.microsatellites.list",MSISENSOR_PRO_MODULE="MSIsensor/1.1.a-GCCcore-8.2.0" create_msisensor-pro_ref_microsatellites_list.sh 
 
-module load msisensor/${MSISENSOR_PRO_VERSION}
+module load ${MSISENSOR_PRO_MODULE}
 
 msisensor-pro scan -d "$FASTA" -o "$MICROSATELLITES_LIST"
 
