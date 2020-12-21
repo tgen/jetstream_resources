@@ -4,7 +4,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task 8
-#SBATCH --partition defq,overflow
+#SBATCH --partition defq
 
 ## Script to create bwa index files
 
