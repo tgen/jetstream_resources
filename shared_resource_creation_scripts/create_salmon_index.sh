@@ -34,11 +34,11 @@ else
 fi
 
 # Check that the reference genome for RNA was created successfully
-if [ -e GENOME_FASTA_GENERATION_COMPLETE ]
+if [ -e genome_reference ]
 then
-    echo "Genome fasta exists, moving forward"
+    echo "Genome reference exists, moving on"
 else
-    echo "Genome fasta generation complete flag NOT found"
+    echo "Genome reference directory NOT found"
     echo "Try again later as this is required"
     exit 2
 fi
@@ -84,10 +84,6 @@ else
     cd tool_resources
 fi
 
-####################################
-## Generate Salmon Index
-####################################
-
 # Make salmon index directory if not available
 if [ -e "salmon_${SALMON_VERSION}" ]
 then
@@ -98,6 +94,10 @@ else
     mkdir salmon_${SALMON_VERSION}
     cd salmon_${SALMON_VERSION}
 fi
+
+####################################
+## Generate Salmon Index
+####################################
 
 # Initialize a salmon specific README
 touch README
@@ -120,14 +120,49 @@ echo "GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAM
 GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta
 echo >> README
 
+# Determine the fullpath to the RNA reference fasta
+REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
+
 # Create the Salmon index
-echo "Create salmon index to support typical paired-end seqeuncing with read lengths >=75bp" >> README
-sbatch --export ALL,SALMON_VERSION="${SALMON_VERSION}",TRANSCRIPTOME_FASTA="${GENE_MODEL_TRANSCRIPTOME_FASTA}" ${PATH_TO_REPO}/utility_scripts/salmon_index.sh
+if [ $ENVIRONMENT == "TGen" ]
+then
+  # Load the expected salmon module
+  module load Salmon/${SALMON_VERSION}
+  fc -ln -1 >> README
+elif [ $ENVIRONMENT == "LOCAL" ]
+then
+  echo
+  echo "SALMON Index will be created on the local compute"
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_SALMON_INDEX
+  echo "FAILED_SALMON_INDEX" >> README
+  exit 1
+fi
+
+# Prepare meta-data needed for salmon index with whole genome decoy
+grep "^>" ${REFERENCE_RNA_GENOME_FASTA} | cut -d " " -f 1 > decoys.txt
 fc -ln -1 >> README
+sed -i.bak -e 's/>//g' decoys.txt
+fc -ln -1 >> README
+
+# Create contatenated transcriptome and reference file for indexing
+cat ${GENE_MODEL_TRANSCRIPTOME_FASTA} ${REFERENCE_RNA_GENOME_FASTA} > transcriptome_genome_index.fa
+fc -ln -1 >> README
+
+# Generate Salmon Index Files
+salmon index --threads 4 --transcripts transcriptome_genome_index.fa --decoys decoys.txt --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31
+
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "PASSED_SALMON_INDEX" >> README
+else
+    touch FAILED_SALMON_INDEX
+    echo "FAILED_SALMON_INDEX" >> README
+    exit 1
+fi
+
 echo >> README
-echo "---------------------------------------------------------" >> README
-echo >> README
-echo "Specific script code as follows:" >> README
-echo >> README
-cat ${PATH_TO_REPO}/utility_scripts/salmon_index.sh >> README
+cat ${PATH_TO_REPO}/shared_resource_creation_scripts/create_salmon_index.sh >> README
 echo >> README

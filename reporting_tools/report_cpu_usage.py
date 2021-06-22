@@ -32,10 +32,12 @@ def summarize_task_cpuhs(t):
     raw_elapsed = t.state.get('slurm_sacct', {}).get('Elapsed', '00:00:00')
     dt = {k: int(v or 0) for k, v in ELAPSED_PAT.match(raw_elapsed).groupdict().items()}
     elapsed = timedelta(**dt)
-    seconds = elapsed.total_seconds()
-    hours = seconds / 3600
-    cpuh = cpus * hours
-    return cpus, elapsed, cpuh
+    total_seconds = int(elapsed.total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    fElapsed = f'{hours:02d}:{minutes:02d}:{seconds:02d}'
+    cpuh = cpus * elapsed.total_seconds() / 3600
+    return cpus, fElapsed, cpuh
 
 
 def report(project):

@@ -254,7 +254,8 @@ else
   exit 1
 fi
 
-echo "Copying AnnotFilterRule.pm from `dirname "$0"`" >> README
+echo "Copying AnnotFilterRule.pm and tgen_fusion_list.txt from `dirname "$0"`" >> README
 cp `dirname "$0"`/star_resource_files/AnnotFilterRule.pm ctat_genome_lib_build_dir/
+cp `dirname "$0"`/star_resource_files/tgen_fusion_list.txt ctat_genome_lib_build_dir/
 fc -ln -1 >> README
 echo >> README
