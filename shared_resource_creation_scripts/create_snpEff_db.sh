@@ -34,13 +34,13 @@ else
 fi
 
 # Check that the reference genome for RNA was created successfully
-if [ -e GENOME_FASTA_GENERATION_COMPLETE ]
+if [ -e RNA_FASTA_GENERATION_COMPLETE ]
 then
-    echo "Genome fasta exists, moving forward"
+    echo "RNA fasta exists, moving forward"
 else
-    echo "Genome fasta generation complete flag NOT found"
+    echo "RNA fasta generation complete flag NOT found"
     echo "Try again later as this is required"
-    exit 1
+    exit 2
 fi
 
 # Check gene_model directory if not available
@@ -83,20 +83,20 @@ else
     cd tool_resources
 fi
 
-####################################
-## Generate Custom snpEff Database
-####################################
-
 # Make snpEff directory if not available
 if [ -e "snpEff_${SNPEFF_VERSION}" ]
 then
-    echo "snpEff directory exists, exiting to prevent overwrite"
-    exit 1
+    echo "snpEff directory exists, moving into it"
+    cd snpEff_${SNPEFF_VERSION}
 else
     echo "snpEff directory NOT found, creating and moving into it now"
     mkdir snpEff_${SNPEFF_VERSION}
     cd snpEff_${SNPEFF_VERSION}
 fi
+
+####################################
+## Generate Custom snpEff Database
+####################################
 
 # Initialize a snpEff specific README
 echo >> README
@@ -119,27 +119,37 @@ fc -ln -1 >> README
 echo >> README
 
 # Make snpEff data directory if not available
-mkdir data
-cd data
+if [ -e data ]
+then
+    echo "snpEff data directory exists, moving into it"
+    cd data
+else
+    echo "snpEff data directory NOT found, creating and moving into it now"
+    mkdir data
+    cd data
+fi
 
 # Create directoy for this new annotation set
-mkdir ${SNPEFF_DB_NAME}
-cd ${SNPEFF_DB_NAME}
+if [ -e ${SNPEFF_DB_NAME} ]
+then
+    echo "snpEff ${SNPEFF_DB_NAME} directory exists, exiting to prevent errors"
+    exit 2
+else
+    echo "snpEff ${SNPEFF_DB_NAME} directory NOT found, creating and moving into it now"
+    mkdir ${SNPEFF_DB_NAME}
+    cd ${SNPEFF_DB_NAME}
+fi
 
 # Determine the reference genome fasta full path
 echo "Determine the full path filename of the reference genome fasta" >> ../../README
-echo "REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`" >> ../../README
-REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`
-echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}" >> ../../README
-REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}
+echo "REFERENCE_DNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}" >> ../../README
+REFERENCE_DNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}
 echo >> ../../README
 
 # Determine the GTF file full path
 echo "Determine the full path filename of the GTF file" >> ../..README
-echo "GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`" >> ../..README
-GTF_FILE=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gz"`
-echo "GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_FILE}" >> ../..README
-GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_FILE}
+echo "GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}" >> ../..README
+GENE_MODEL_GTF=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_FILENAME}
 echo >> ../../README
 
 # Copy GTF to new location, update name, and compress
@@ -169,7 +179,7 @@ then
     echo "Expected reference already exists in genomes directory"
 else
     echo "Genome reference fasta DOES NOT exits in genomes directory"
-    cp ${REFERENCE_GENOME_FASTA} ${SNPEFF_DB_NAME}.fa
+    cp ${REFERENCE_DNA_GENOME_FASTA} ${SNPEFF_DB_NAME}.fa
     fc -ln -1 >> ../../README
     echo >> ../../README
     gzip ${SNPEFF_DB_NAME}.fa
@@ -179,6 +189,22 @@ fi
 
 # Navigate to main snpEff folder and launch creation script
 cd ../..
-sbatch --export ALL,SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
-fc -ln -1 >> README
-echo >> README
+
+# Create snpEff database
+if [ $ENVIRONMENT == "TGen" ]
+then
+  sbatch --export ALL,ENVIRONMENT="${ENVIRONMENT}",SNPEFF_VERSION="${SNPEFF_VERSION}",SNPEFF_DB_NAME="${SNPEFF_DB_NAME}",SNPEFF_CONFIG_PATH="${SNPEFF_CONFIG_PATH}" ${PATH_TO_REPO}/utility_scripts/build_snpEff_db.sh
+  fc -ln -1 >> README
+elif [ $ENVIRONMENT == "LOCAL" ]
+then
+  echo "Assuming required tools are available in $PATH or defiend in the .ini file"
+  java -jar ${SNPEFF} build -gtf22 -v ${SNPEFF_DB_NAME} -c ${SNPEFF_CONFIG_PATH}
+
+  touch CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE
+  echo "CREATED_SNPEFF_${SNPEFF_DB_NAME}_DATABASE" >> README
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi

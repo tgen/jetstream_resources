@@ -34,11 +34,11 @@ else
 fi
 
 # Check that the reference genome for RNA was created successfully
-if [ -e genome_reference ]
+if [ -e RNA_FASTA_GENERATION_COMPLETE ]
 then
-    echo "Genome reference exists, moving on"
+    echo "RNA fasta exists, moving forward"
 else
-    echo "Genome reference directory NOT found"
+    echo "RNA fasta generation complete flag NOT found"
     echo "Try again later as this is required"
     exit 2
 fi
@@ -108,17 +108,9 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 
-####################################
-## Determine required variables
-####################################
-
-# Determine the reference genome fasta full path
-echo "Determine the full path filename of the transcriptome fasta" >> README
-echo "GTF_BASENAME=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gtf.gz"`" >> README
-GTF_BASENAME=`basename ${GENE_MODEL_DOWNLOAD_LINK} ".gtf.gz"`
-echo "GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta" >> README
-GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GTF_BASENAME}.transcriptome.fasta
-echo >> README
+# Determine the fullpath to the transcriptome fasta file
+GENE_MODEL_BASENAME=`basename ${GENE_MODEL_FILENAME} ".gtf"`
+GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${GENE_MODEL_BASENAME}.transcriptome.fasta
 
 # Determine the fullpath to the RNA reference fasta
 REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
@@ -162,7 +154,3 @@ else
     echo "FAILED_SALMON_INDEX" >> README
     exit 1
 fi
-
-echo >> README
-cat ${PATH_TO_REPO}/shared_resource_creation_scripts/create_salmon_index.sh >> README
-echo >> README

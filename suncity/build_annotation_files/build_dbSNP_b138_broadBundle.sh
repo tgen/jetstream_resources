@@ -4,6 +4,17 @@
 
 # Usage: ./build_dbSNP_b138_broadBundle.sh <config.ini>
 
+###########################################
+##  dbSNP Database Variables
+###########################################
+
+DBSNP_RELEASE_VERSION=b138
+BROAD_BUNDLE_DBSNP_DOWNLOAD_LINK=ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/dbsnp_138.b37.vcf.gz
+BROAD_BUNDLE_DBSNP_DOWNLOAD_MD5SUM_LINK=ftp://gsapubftp-anonymous@ftp.broadinstitute.org/bundle/b37/dbsnp_138.b37.vcf.gz.md5
+
+DBSNP_DOWNLOAD_LINK=ftp://ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.25.gz
+DBSNP_DOWNLOAD_MD5SUM_LINK=ftp://ftp.ncbi.nih.gov/snp/redesign/latest_release/VCF/GCF_000001405.25.gz.md5
+
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history

@@ -78,7 +78,6 @@ echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
 echo "BWA Index creation details:" >> README
-
 echo >> README
 
 # Copy in the .alt file from bwa.kit

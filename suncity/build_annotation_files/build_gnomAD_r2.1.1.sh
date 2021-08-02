@@ -4,6 +4,18 @@
 
 # Usage: ./build_gnomAD_r2.1.1.sh <config.ini>
 
+###########################################
+##  gnomAD Database Variables
+###########################################
+
+GNOMAD_RELEASE_VERSION=r2.1.1
+
+GNOMAD_EXOME_DOWNLOAD_LINK=https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/exomes/gnomad.exomes.r2.1.1.sites.vcf.bgz
+GNOMAD_EXOME_DOWNLOAD_MD5SUM=f034173bf6e57fbb5e8ce680e95134f2
+
+GNOMAD_GENOME_DOWNLOAD_LINK=https://storage.googleapis.com/gnomad-public/release/2.1.1/vcf/genomes/gnomad.genomes.r2.1.1.sites.vcf.bgz
+GNOMAD_GENOME_DOWNLOAD_MD5SUM=e6eadf5ac7b2821b40f350da6e1279a2
+
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
 set -o history

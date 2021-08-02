@@ -1,11 +1,11 @@
 # Phoenix Analysis Pipeline (GRCh38)
 
-These scripts are designed to create the full reference dataset needed for the Phoenix workflow. 
-There is an expected order of script usage and each one checks that required steps are complete 
+These scripts are designed to create the full reference dataset needed for the Phoenix workflow.
+There is an expected order of script usage and each one checks that required steps are complete
 before they will start.
 
-Because of difference between BWA for DNA alignment and STAR for RNA alignment this workflow leverages 
-two different but related reference genomes for DNA, has ALT-contigs as BWA is ALT-aware and HLA contigs, 
+Because of difference between BWA for DNA alignment and STAR for RNA alignment this workflow leverages
+two different but related reference genomes for DNA, has ALT-contigs as BWA is ALT-aware and HLA contigs,
 while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aware.
 
 ### Script Usage Order
@@ -21,11 +21,11 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
     * create_snpEff_db.sh  - Pass/Pass
       * **NOTE**: make sure you update the snpEff.config in the utility_files directory BEFORE RUNNING
     * create_vep_database.sh phoenix_resources.ini  - Pass/Pass
-    * build_delly_annotations_e98.sh   - Pass/Pass
     * create_exome_capture_resources.sh phoenix_resources.ini
       * NOTE: This is dependent on existing bed files, some of which are not freely available and must be downloaded in advance.
 * ../shared_resource_creation_scripts/create_deepvariant_models.sh phoenix_resources.ini  - Pass/Pass
-* ../shared_resource_creation_scripts/create_snpSniffer_references.sh phoenix_resources.ini 
+* ../shared_resource_creation_scripts/create_snpSniffer_references.sh phoenix_resources.ini
+* build_delly_annotations_e98.sh   - Pass/Pass
 * build_clinivar_20190715.sh  - Pass/Pass
 * build_cosmic_v90.sh  - Pass/Pass
 * build_dbSNP_b152.sh - Pass/Pass
@@ -40,8 +40,8 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 
 
 ## Required Software
-NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resource.ini defines if tools are loaded into the path using a `module load` 
-process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime. 
+NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resource.ini defines if tools are loaded into the path using a `module load`
+process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime.
 
 ### Required Binaries that MUST be available in your $PATH
 * module load SAMtools/1.10-GCC-8.2.0-2.31.1
