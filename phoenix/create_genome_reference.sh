@@ -126,6 +126,12 @@ fi
 echo "Download primary assembly with decoy sequences:" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
 fc -ln -1 >> README
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/md5checksums.txt
+fc -ln -1 >> README
+if [ `md5sum GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz | cut -d " " -f 1` != `grep -m 1 GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz md5checksums.txt | cut -d " " -f 1` ]; then
+    echo "The md5s do not match for GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz, please run the script to again."
+    exit 1
+fi
 # Archive a copy of the download file
 echo "Archive a copy of the download file" >> README
 cp GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz downloads/

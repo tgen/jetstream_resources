@@ -115,23 +115,6 @@ GENE_MODEL_TRANSCRIPTOME_FASTA=${TOPLEVEL_DIR}/gene_model/${GENE_MODEL_NAME}/${G
 # Determine the fullpath to the RNA reference fasta
 REFERENCE_RNA_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_RNA_GENOME_NAME}
 
-# Create the Salmon index
-if [ $ENVIRONMENT == "TGen" ]
-then
-  # Load the expected salmon module
-  module load Salmon/${SALMON_VERSION}
-  fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL" ]
-then
-  echo
-  echo "SALMON Index will be created on the local compute"
-else
-  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
-  touch FAILED_SALMON_INDEX
-  echo "FAILED_SALMON_INDEX" >> README
-  exit 1
-fi
-
 # Prepare meta-data needed for salmon index with whole genome decoy
 grep "^>" ${REFERENCE_RNA_GENOME_FASTA} | cut -d " " -f 1 > decoys.txt
 fc -ln -1 >> README
@@ -142,15 +125,37 @@ fc -ln -1 >> README
 cat ${GENE_MODEL_TRANSCRIPTOME_FASTA} ${REFERENCE_RNA_GENOME_FASTA} > transcriptome_genome_index.fa
 fc -ln -1 >> README
 
-# Generate Salmon Index Files
-salmon index --threads 4 --transcripts transcriptome_genome_index.fa --decoys decoys.txt --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31
-
-# Error Capture
-if [ "$?" = "0" ]
+# Create the Salmon index
+if [ $ENVIRONMENT == "TGen" ]
 then
-    echo "PASSED_SALMON_INDEX" >> README
+  sbatch -c 4 --wait -J salmon_index --wrap="module load Salmon/${SALMON_VERSION} ; salmon index --threads 4 --transcripts transcriptome_genome_index.fa --decoys decoys.txt --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31"
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "PASSED_SALMON_INDEX" >> README
+  else
+      touch FAILED_SALMON_INDEX
+      echo "FAILED_SALMON_INDEX" >> README
+      exit 1
+  fi
+elif [ $ENVIRONMENT == "LOCAL" ]
+then
+  echo
+  echo "SALMON Index will be created on the local compute"
+  # Generate Salmon Index Files
+  salmon index --threads 4 --transcripts transcriptome_genome_index.fa --decoys decoys.txt --index salmon_${SALMON_TYPE}_75merPlus --type ${SALMON_TYPE} --kmerLen 31
+  # Error Capture
+  if [ "$?" = "0" ]
+  then
+      echo "PASSED_SALMON_INDEX" >> README
+  else
+      touch FAILED_SALMON_INDEX
+      echo "FAILED_SALMON_INDEX" >> README
+      exit 1
+  fi
 else
-    touch FAILED_SALMON_INDEX
-    echo "FAILED_SALMON_INDEX" >> README
-    exit 1
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  touch FAILED_SALMON_INDEX
+  echo "FAILED_SALMON_INDEX" >> README
+  exit 1
 fi
