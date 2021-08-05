@@ -115,7 +115,7 @@ export PATH=$PATH:$CURRENT_DIR
 
 # Prepping AnnotFilterRule.pm file
 echo "Copying AnnotFilterRule.pm from `dirname "$0"`" >> README
-cp ~/git_repositories/jetstream_resources/suncity/star_resource_files/AnnotFilterRule.pm .
+cp ${PATH_TO_REPO}/star_resource_files/AnnotFilterRule.pm .
 fc -ln -1 >> README
 echo >> README
 
@@ -127,6 +127,7 @@ then
   module load hmmer/3.2.1
 
   # Use provided starFusion build script
+  sbatch -c 20 -t 7-00:00:00 -J starFusion_build --wrap="
   /packages/easybuild/software/STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2/ctat-genome-lib-builder/prep_genome_lib.pl \
   --CPU 20 \
   --max_readlength 150 \
@@ -135,6 +136,7 @@ then
   --annot_filter_rule ${CURRENT_DIR}/AnnotFilterRule.pm \
   --pfam_db current \
   --dfam_db ${CURRENT_DIR}/homo_sapiens_dfam.hmm
+  "
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo

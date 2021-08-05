@@ -51,42 +51,44 @@ else
     cd ${TOPLEVEL_DIR}
 fi
 
-# Initialize a top level README
-touch README
-echo >> README
-echo "Reference Genome and related files required for JetStream ${WORKFLOW_NAME} Workflow" >> README
-echo >> README
-echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
-echo "Created and downloaded by ${CREATOR}" >> README
-echo >> README
-echo "
-## The GRCh38 reference genome is represented in different public locations and not all have defined source information
-## This file tracks the source and generation of the reference and annotation files used in the Jetstream phoenix workflow
-
-## NOTE:
-### - Because BWA is alt aware and STAR does not support alternative contigs we are creating two versions
-### - Because BWAKIT and the Broad bundle lack sufficient source information we are creating references independently
-### ---- However, the BWAKIT version is identical to the broad bundle version, albeit with different base file names
-### - Also, review of what is used by GDC showed they use an identical base genome (1-22, X, Y, M, supercontigs, decoys, EBV) but with out alternative contigs
-### ---- To this they added a series of HPV and other viral genomes
-### ---- They use the same reference for BWA and STAR alignments
-"  >> README
-
-####################################
-## Create reference genomes from known sources
-####################################
-
 # Make reference_genome directory if not available
 if [ -e genome_reference ]
 then
-    echo "Genome Reference directory exists, moving into it"
-    cd genome_reference
+    echo "Genome Reference directory exists, exiting to prevent overwrite"
+    echo "----WARNING----"
+    exit 1
 else
+    # Initialize a top level README
+    touch README
+    echo >> README
+    echo "Reference Genome and related files required for JetStream ${WORKFLOW_NAME} Workflow" >> README
+    echo >> README
+    echo "For details on file creation see the associated github repository:" >> README
+    echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+    echo "Created and downloaded by ${CREATOR}" >> README
+    echo >> README
+    echo "
+    ## The GRCh38 reference genome is represented in different public locations and not all have defined source information
+    ## This file tracks the source and generation of the reference and annotation files used in the Jetstream phoenix workflow
+
+    ## NOTE:
+    ### - Because BWA is alt aware and STAR does not support alternative contigs we are creating two versions
+    ### - Because BWAKIT and the Broad bundle lack sufficient source information we are creating references independently
+    ### ---- However, the BWAKIT version is identical to the broad bundle version, albeit with different base file names
+    ### - Also, review of what is used by GDC showed they use an identical base genome (1-22, X, Y, M, supercontigs, decoys, EBV) but with out alternative contigs
+    ### ---- To this they added a series of HPV and other viral genomes
+    ### ---- They use the same reference for BWA and STAR alignments
+    "  >> README
+
     echo "Genome Reference directory NOT found, creating and moving into it now"
     mkdir genome_reference
     cd genome_reference
 fi
+
+
+####################################
+## Create reference genomes from known sources
+####################################
 
 # Initialize a reference_genome README
 touch README
@@ -124,6 +126,12 @@ fi
 echo "Download primary assembly with decoy sequences:" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz
 fc -ln -1 >> README
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/md5checksums.txt
+fc -ln -1 >> README
+if [ `md5sum GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz | cut -d " " -f 1` != `grep -m 1 GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz md5checksums.txt | cut -d " " -f 1` ]; then
+    echo "The md5s do not match for GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz, please run the script to again."
+    exit 1
+fi
 # Archive a copy of the download file
 echo "Archive a copy of the download file" >> README
 cp GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz downloads/

@@ -241,12 +241,12 @@ awk -F '[\t"]' '$1 !~ /^#/ { if (a[$10] == "" ) { a[$10] = $1 ; b[$10] = $4 ; c[
         if ($5 > c[$10]) { c[$10] = $5 }
 } END {
 for (i in a) {
-        OFS = "\t" ; print a[i], b[i], c[i], i 
+        OFS = "\t" ; print a[i], b[i], c[i], i
 }
 }' ${GTF_FILE_BASE}.ucsc.gtf | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.ucsc.gene.bed
 
 # Create a bed file for the start and stop of each exon for each gene
-awk -F '[\t"]' '$1 !~ /^#/ { if ($3 == "exon") { OFS = "\t" ; print $1, $4, $5, $10 }}' ${GTF_FILE_BASE}.ucsc.gtf | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.ucsc.exon.bed 
+awk -F '[\t"]' '$1 !~ /^#/ { if ($3 == "exon") { OFS = "\t" ; print $1, $4, $5, $10 }}' ${GTF_FILE_BASE}.ucsc.gtf | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.ucsc.exon.bed
 
 # Create reflat file from GTF for Picard RNAseqMetrics
 # Uses gtfToGenePred from UCSC
@@ -357,12 +357,3 @@ echo >> README
 
 # Indicate GTF was created successfully
 touch GENE_MODEL_GTF_GENERATION_COMPLETE
-
-
-
-
-
-
-
-
-
