@@ -84,13 +84,14 @@ FASTA=$REFERENCE_DNA_GENOME_NAME
 
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/${FASTA} ${FASTA}
+ln -s ../../genome_reference/${FASTA}.fai ${FASTA}.fai
 
 # Create bwa index files
 # shellcheck disable=SC1020
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
-  sbatch --export ALL,FASTA="${FASTA}",BWA_MEM2_VERSION="${BWA_MEM2_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
+  sbatch --export ALL,FASTA="${FASTA}",BWA_MEM2_VERSION="${BWA_MEM2_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_mem2_index.sh
   fc -ln -1 >> README
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
@@ -98,7 +99,7 @@ then
   echo "BWA Index will be created on the local compute"
 
   # Generate BWA Index Files
-  bwa index ${FASTA}
+  bwa-mem2 index ${FASTA}
 
   # Error Capture
   if [ "$?" = "0" ]
