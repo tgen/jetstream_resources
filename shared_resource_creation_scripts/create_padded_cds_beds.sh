@@ -143,7 +143,7 @@ bash ${BASH_SCRIPT_CDS_PADDING} \
 TOOLNAME="vep"
 echo -e "running mySQL ... "
 module load DBD-mysql/4.050-foss-2019a-Perl-5.28.1 ;
-mysql -u anonymous -h ensembldb.ensembl.org -P 3306 -e "SELECT transcript.stable_id FROM ${ENSEMBL_DATABASE}.transcript JOIN ${ENSEMBL_DATABASE}.gene ON ${ENSEMBL_DATABASE}.transcript.transcript_id=${ENSEMBL_DATABASE}.gene.canonical_transcript_id WHERE transcript.stable_id LIKE 'ENS%'" > ${GENOME_VERSION}_canonical_transcript_ids_from_mysql_command.txt;
+mysql -u anonymous -h ensembldb.ensembl.org -P ${ENSEMBL_PORT} -e "SELECT transcript.stable_id FROM ${ENSEMBL_DATABASE}.transcript JOIN ${ENSEMBL_DATABASE}.gene ON ${ENSEMBL_DATABASE}.transcript.transcript_id=${ENSEMBL_DATABASE}.gene.canonical_transcript_id WHERE transcript.stable_id LIKE 'ENS%'" > ${GENOME_VERSION}_canonical_transcript_ids_from_mysql_command.txt;
 
 echo -e "removing header ..."
 awk 'NR>1' ${GENOME_VERSION}_canonical_transcript_ids_from_mysql_command.txt > ${GENOME_VERSION}_canonical_transcript_ids_from_mysql_command.noHeader.txt
