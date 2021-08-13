@@ -244,6 +244,18 @@ done
 ####################################
 ## Create required files produced from the GTF
 ####################################
+# Create a bed file for the start and stop for each gene
+awk -F '[\t"]' '$1 !~ /^#/ { if (a[$10] == "" ) { a[$10] = $1 ; b[$10] = $4 ; c[$10] = $5 ; next } ;
+        if ($4 < b[$10]) { b[$10] = $4 } ;
+        if ($5 > c[$10]) { c[$10] = $5 }
+} END {
+for (i in a) {
+        OFS = "\t" ; print a[i], b[i], c[i], i
+}
+}' ${GTF_FILE} | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.gene.bed
+
+# Create a bed file for the start and stop of each exon for each gene
+awk -F '[\t"]' '$1 !~ /^#/ { if ($3 == "exon") { OFS = "\t" ; print $1, $4, $5, $10 }}' ${GTF_FILE} | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.exon.bed
 
 # Create reflat file from GTF for Picard RNAseqMetrics
 # Uses gtfToGenePred from UCSC
