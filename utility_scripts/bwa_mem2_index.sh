@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name="bwa_index"
+#SBATCH --job-name="bwa_mem2_index"
 #SBATCH --time=0-24:00:00
 #SBATCH -n 1
 #SBATCH -N 1
@@ -9,11 +9,11 @@
 ## Script to create bwa index files
 
 ## Usage:
-## sbatch --export ALL,FASTA="genome.fa",BWA_VERSION="0.17.1" bwa_index.sh
+## sbatch --export ALL,FASTA="genome.fa",BWA_MEM2_VERSION="2.2.1" bwa_index.sh
 
-module load bwa/${BWA_VERSION}
+module load bwa-mem2/${BWA_MEM2_VERSION}
 
-bwa index ${FASTA}
+bwa-mem2 index ${FASTA}
 
 # Error Capture
 if [ "$?" = "0" ]

@@ -3,21 +3,21 @@
 A JetStream workflow to support old human genome things...
 
 ### Script Usage Order
-* ../shared_resource_creation_scripts/create_genome_reference.sh suncity_resources.ini
-  * ../shared_resource_creation_scripts/create_bwa_genome_index.sh suncity_resources.ini
-  * ../shared_resource_creation_scripts/create_gene_model.sh suncity_resources.ini
-    * ../shared_resource_creation_scripts/create_star_genome_index.sh suncity_resources.ini star_index_lengths.csv 
-    * ../shared_resource_creation_scripts/create_salmon_index.sh suncity_resources.ini 
-    * ../shared_resource_creation_scripts/create_snpEff_db.sh suncity_resources.ini 
-    * ../shared_resource_creation_scripts/create_vep_database.sh suncity_resources.ini 
-    * create_sexCheck_SNP_list.sh suncity_resources.ini
-  * ../shared_resource_creation_scripts/create_snpSniffer_references.sh suncity_resources.ini    
-    * create_exome_capture_resources.sh
-    * create_star-fusion_resource.sh
-    * create_samtools_stats_non_N_region_file.sh suncity_resources.ini
-    * create_gatk_cnv_interval_list.sh suncity_resources.ini
-    * create_deepvariant_models.sh suncity_resources.ini
-    
-    * build_annotation_files/build_dbSNP_b138_broadBundle.sh
-    * build_annotation_files/build_delly_annotations_e87.sh
-    * build_annotation_files/build_gnomAD_r2.1.1.sh
+* shared_resource_creation_scripts/create_genome_reference.sh suncity/suncity_resources.ini
+  * shared_resource_creation_scripts/create_bwa_genome_index.sh suncity/suncity_resources.ini
+  * shared_resource_creation_scripts/create_gene_model.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_star_genome_index.sh suncity/suncity_resources.ini suncity/star_index_lengths.csv
+    * shared_resource_creation_scripts/create_salmon_index.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_snpEff_db.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_vep_database.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_sexCheck_SNP_list.sh suncity/suncity_resources.ini
+  * shared_resource_creation_scripts/create_snpSniffer_references.sh suncity/suncity_resources.ini    
+    * shared_resource_creation_scripts/create_exome_capture_resources.sh suncity/suncity_resources.ini suncity/capture_kits.csv
+    * suncity/create_star-fusion_resource.sh suncity/suncity_resources.ini
+    * suncity/create_samtools_stats_non_N_region_file.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh suncity/suncity_resources.ini
+    * shared_resource_creation_scripts/create_deepvariant_models.sh suncity/suncity_resources.ini
+
+    * suncity/build_annotation_files/build_dbSNP_b138_broadBundle.sh suncity/suncity_resources.ini
+    * suncity/build_annotation_files/build_delly_annotations_e87.sh suncity/suncity_resources.ini
+    * suncity/build_annotation_files/build_gnomAD_r2.1.1.sh suncity/suncity_resources.ini
