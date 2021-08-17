@@ -105,7 +105,7 @@ GTF_FILE_GZ=`basename ${GENE_MODEL_DOWNLOAD_LINK}`
 # Determine if GTF checksum was provided and if so download it
 if [ ${GENE_MODEL_MD5_DOWNLOAD_LINK} != "NA" ]
 then
-  echo "## Download GTF checksum from ${GENEMODEL_SOURCE}" >> README
+  echo "## Download GTF checksum from ${GENE_MODEL_SOURCE}" >> README
   echo "    wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}" >> README
   wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}
   # Error Capture
@@ -122,7 +122,7 @@ fi
 
 
 # Check MD5SUM
-if [ ${GENEMODEL_SOURCE} == "ensembl" ]
+if [ ${GENE_MODEL_SOURCE} == "ensembl" ]
 then
   echo "ENSEMBL is supported"
   # Ensembl now uses "sum" for check sum validation
@@ -196,22 +196,20 @@ echo >> README
 
 # Determine the reference genome fasta full path
 echo "Determine the full path filename of the reference genome fasta" >> README
-echo "REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`" >> README
-REFERENCE_GENOME_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".gz"`
-echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}" >> README
-REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}
+echo "REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}" >> README
+REFERENCE_GENOME_FASTA=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}
 echo >> README
 
 # Determine the full path to the reference fasta.fa.fai file
 echo "Determine full path filename of the reference genome fasta.fa.fai index file" >> README
-echo "REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}.fai" >> README
-REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_FILENAME}.fai
+echo "REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}.fai" >> README
+REFERENCE_GENOME_FAI=${TOPLEVEL_DIR}/genome_reference/${REFERENCE_DNA_GENOME_NAME}.fai
 echo >> README
 
 # Determine the full path to the reference dict file
 echo "Determine the basename of the reference genome fasta to infer the .dict filename" >> README
-echo "REFERENCE_GENOME_DICT_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`" >> README
-REFERENCE_GENOME_DICT_BASENAME=`basename ${GENOME_FASTA_DOWNLOAD_LINK} ".fa.gz"`
+echo "REFERENCE_GENOME_DICT_BASENAME=${REFERENCE_DNA_GENOME_NAME%.fa}" >> README
+REFERENCE_GENOME_DICT_BASENAME=${REFERENCE_DNA_GENOME_NAME%.fa}
 echo >> README
 
 ####################################
@@ -246,6 +244,18 @@ done
 ####################################
 ## Create required files produced from the GTF
 ####################################
+# Create a bed file for the start and stop for each gene
+awk -F '[\t"]' '$1 !~ /^#/ { if (a[$10] == "" ) { a[$10] = $1 ; b[$10] = $4 ; c[$10] = $5 ; next } ;
+        if ($4 < b[$10]) { b[$10] = $4 } ;
+        if ($5 > c[$10]) { c[$10] = $5 }
+} END {
+for (i in a) {
+        OFS = "\t" ; print a[i], b[i], c[i], i
+}
+}' ${GTF_FILE} | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.gene.bed
+
+# Create a bed file for the start and stop of each exon for each gene
+awk -F '[\t"]' '$1 !~ /^#/ { if ($3 == "exon") { OFS = "\t" ; print $1, $4, $5, $10 }}' ${GTF_FILE} | sort -k1,1V -k2,2n -k3,3n > ${GTF_FILE_BASE}.exon.bed
 
 # Create reflat file from GTF for Picard RNAseqMetrics
 # Uses gtfToGenePred from UCSC

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-
-# Usage: create_snpEff_db_index.sh <Config.ini>
+# Usage: create_star-fusion_resources.sh <Config.ini>
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
@@ -222,6 +221,7 @@ then
   module load hmmer/3.2.1
 
   # Use provided starFusion build script
+  sbatch -c 20 -t 7-00:00:00 -J starFusion_build --wrap="
   /packages/easybuild/software/STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2/ctat-genome-lib-builder/prep_genome_lib.pl \
   --CPU 20 \
   --max_readlength 150 \
@@ -232,6 +232,7 @@ then
   --pfam_db current \
   --dfam_db human \
   --human_gencode_filter
+  "
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
@@ -254,7 +255,8 @@ else
   exit 1
 fi
 
-echo "Copying AnnotFilterRule.pm from `dirname "$0"`" >> README
-cp `dirname "$0"`/star_resource_files/AnnotFilterRule.pm ctat_genome_lib_build_dir/
+echo "Copying AnnotFilterRule.pm and tgen_fusion_list.txt from ${PATH_TO_REPO}" >> README
+cp ${PATH_TO_REPO}/star_resource_files/AnnotFilterRule.pm ctat_genome_lib_build_dir/
+cp ${PATH_TO_REPO}/star_resource_files/tgen_fusion_list.txt ctat_genome_lib_build_dir/
 fc -ln -1 >> README
 echo >> README

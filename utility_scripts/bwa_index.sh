@@ -3,8 +3,8 @@
 #SBATCH --time=0-24:00:00
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH --cpus-per-task 8
-#SBATCH --partition defq,overflow
+#SBATCH --cpus-per-task 2
+#SBATCH --partition defq
 
 ## Script to create bwa index files
 

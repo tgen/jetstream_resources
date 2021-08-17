@@ -19,9 +19,23 @@ fi
 # Read required variables from configuration file
 . ${1}
 
-## Load required modules to ensure needed tools are in your path
-module load ${SAMTOOLS_VERSION}
-module load ${GATK_MODULE}
+####################################
+## Load Required Tools
+###################################
+if [ ${ENVIRONMENT} == "TGen" ]
+then
+  module load ${SAMTOOLS_VERSION}
+  module load ${GATK_MODULE}
+elif [ ${ENVIRONMENT} == "LOCAL" ]
+then
+  echo
+  echo "Assuming required tools are available in $PATH"
+  echo
+else
+  echo "Unexpected Entry in ${WORKFLOW_NAME}_resources.ini Enviroment Variable"
+  echo "Only TGen or LOCAL are supported"
+  exit 1
+fi
 
 ####################################
 ## Configure and make Directory Structure
@@ -59,27 +73,14 @@ else
     echo >> README
     echo "
     Genome downloaded from ${GENOME_SOURCE}
-    Gene models downloaded from ${GENEMODEL_SOURCE}
+    Gene models downloaded from ${GENE_MODEL_SOURCE}
     "  >> README
 
     echo "Genome Reference directory NOT found, creating and moving into it now"
     mkdir genome_reference
     cd genome_reference
 fi
-# Initialize a top level README
-touch README
-echo >> README
-echo "Reference Genome and related files required for JetStream ${WORKFLOW_NAME} Workflow" >> README
-echo >> README
-echo "For details on file creation see the associated github repository:" >> README
-echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
-echo "Created and downloaded by ${CREATOR}" >> README
-date >> README
-echo >> README
-echo "
-Genome downloaded from ${GENOME_SOURCE}
-Gene models downloaded from ${GENEMODEL_SOURCE}
-"  >> README
+
 
 ####################################
 ## Create reference genomes from known sources
@@ -178,8 +179,8 @@ fi
 
 # Determine the expected decompressed fasta filename
 echo "## Determine the decompressed FASTA filename" >> README
-echo "    GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`" >> README
-GENOME_FASTA_DECOMPRESSED_FILENAME=`basename ${GENOME_FASTA_DOWNLOAD_FILENAME} ".gz"`
+echo "    GENOME_FASTA_DECOMPRESSED_FILENAME=${REFERENCE_DNA_GENOME_NAME}" >> README
+GENOME_FASTA_DECOMPRESSED_FILENAME=${REFERENCE_DNA_GENOME_NAME}
 echo >> README
 
 # Decompressed the downloaded reference fasta
@@ -235,8 +236,8 @@ fi
 echo >> README
 
 echo "Create 2bit genome reference for CHIP analysis steps" >> README
-echo "    ${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit" >> README
-${FATOTWOBIT} GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.2bit
+echo "    ${FATOTWOBIT} ${REFERENCE_DNA_GENOME_NAME} ${REFERENCE_DNA_GENOME_NAME%.fa}.2bit" >> README
+${FATOTWOBIT} ${REFERENCE_DNA_GENOME_NAME} ${REFERENCE_DNA_GENOME_NAME%.fa}.2bit
 # Error Capture
 if [ "$?" = "0" ]
 then
@@ -330,3 +331,8 @@ echo "## Add process completion flag to top level direcory" >> README
 echo "    touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE" >> README
 touch ${TOPLEVEL_DIR}/GENOME_FASTA_GENERATION_COMPLETE
 
+# If the fastas are the same for DNA and RNA, RNA FASTA GENERATION is also complete
+if [[ "${REFERENCE_DNA_GENOME_NAME}" == "${REFERENCE_RNA_GENOME_NAME}" ]]
+then
+  touch ${TOPLEVEL_DIR}/RNA_FASTA_GENERATION_COMPLETE
+fi

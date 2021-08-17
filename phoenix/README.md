@@ -1,47 +1,47 @@
 # Phoenix Analysis Pipeline (GRCh38)
 
-These scripts are designed to create the full reference dataset needed for the Phoenix workflow. 
-There is an expected order of script usage and each one checks that required steps are complete 
+These scripts are designed to create the full reference dataset needed for the Phoenix workflow.
+There is an expected order of script usage and each one checks that required steps are complete
 before they will start.
 
-Because of difference between BWA for DNA alignment and STAR for RNA alignment this workflow leverages 
-two different but related reference genomes for DNA, has ALT-contigs as BWA is ALT-aware and HLA contigs, 
+Because of difference between BWA for DNA alignment and STAR for RNA alignment this workflow leverages
+two different but related reference genomes for DNA, has ALT-contigs as BWA is ALT-aware and HLA contigs,
 while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aware.
 
 ### Script Usage Order
-* create_genome_reference.sh phoenix_resources.ini  - RETEST-UPDATED/Pass
-  * create_bwa_genome_index.sh phoenix_resources.ini  - Pass/Pass
-  * create_gatk_cnv_interval_list.sh phoenix_resources.ini  - Pass/Pass
-  * create_samtools_stats_non_N_region_file.sh phoenix_resources.ini  - Pass/Pass
-  * create_gene_model.sh phoenix_resources.ini  - Pass/Pass
-    * create_disease_specific_resources.sh  - Testing/...
-    * create_salmon_index.sh  - Pass/Pass
-    * create_star_genome_index.sh  - Pass/Pass
-    * create_star-fusion_resource.sh - Testing/... (hit walltime.. argh)
-    * create_snpEff_db.sh  - Pass/Pass
+* phoenix/create_genome_reference.sh phoenix/phoenix_resources.ini
+  * phoenix/create_bwa_genome_index.sh phoenix_resources.ini
+  * shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh phoenix/phoenix_resources.ini
+  * phoenix/create_samtools_stats_non_N_region_file.sh phoenix/phoenix_resources.ini
+  * phoenix/create_gene_model.sh phoenix/phoenix_resources.ini
+    * phoenix/create_disease_specific_resources.sh phoenix/phoenix_resources.ini
+    * shared_resource_creation_scripts/create_salmon_index.sh phoenix/phoenix_resources.ini
+    * shared_resource_creation_scripts/create_star_genome_index.sh phoenix/phoenix_resources.ini phoenix/star_index_lengths.csv
+    * phoenix/create_star-fusion_resource.sh phoenix/phoenix_resources.ini
+    * shared_resource_creation_scripts/create_snpEff_db.sh phoenix/phoenix_resources.ini
       * **NOTE**: make sure you update the snpEff.config in the utility_files directory BEFORE RUNNING
-    * create_vep_database.sh phoenix_resources.ini  - Pass/Pass
-    * build_delly_annotations_e98.sh   - Pass/Pass
-    * create_exome_capture_resources.sh phoenix_resources.ini
+    * phoenix/create_vep_database.sh phoenix/phoenix_resources.ini
+    * shared_resource_creation_scripts/create_exome_capture_resources.sh phoenix/phoenix_resources.ini phoenix/capture_kits.csv
       * NOTE: This is dependent on existing bed files, some of which are not freely available and must be downloaded in advance.
-* ../shared_resource_creation_scripts/create_deepvariant_models.sh phoenix_resources.ini  - Pass/Pass
-* ../shared_resource_creation_scripts/create_snpSniffer_references.sh phoenix_resources.ini 
-* build_clinivar_20190715.sh  - Pass/Pass
-* build_cosmic_v90.sh  - Pass/Pass
-* build_dbSNP_b152.sh - Pass/Pass
-  * create_genderCheck_SNP_list.sh - Pass/Pass
-* build_gnomeAD_r2.1.1.sh  - Testing/...
-* build_gnomeAD_r3.0.sh  - Testing/...
-* build_encode_blacklist.sh  - Pass/Pass
-  * build_centromere_and_heterochromatin_bed_files.sh  - Pass/Pass
-* build_lymphocyte_count_windows.sh  - Pass/Pass
-* build_UCSC2ensembl_crossmapping.sh  - Pass/Pass
-* build_Myeloma_FISH_Probe_Locations.sh  - Pass/Pass
+* shared_resource_creation_scripts/create_deepvariant_models.sh phoenix/phoenix_resources.ini
+* shared_resource_creation_scripts/create_snpSniffer_references.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_delly_annotations_e98.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_clinivar_20190715.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_cosmic_v90.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_dbSNP_b152.sh phoenix/phoenix_resources.ini
+  * phoenix/create_genderCheck_SNP_list.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_gnomeAD_r2.1.1.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_gnomeAD_r3.0.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_encode_blacklist.sh phoenix/phoenix_resources.ini
+  * phoenix/build_centromere_and_heterochromatin_bed_files.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_lymphocyte_count_windows.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_UCSC2ensembl_crossmapping.sh phoenix/phoenix_resources.ini
+* phoenix/build_annotation_files/build_Myeloma_FISH_Probe_Locations.sh phoenix/phoenix_resources.ini
 
 
 ## Required Software
-NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resource.ini defines if tools are loaded into the path using a `module load` 
-process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime. 
+NOTE: The "ENVIRONMENT" variable (TGen/LOCAL) in the phoenix_resource.ini defines if tools are loaded into the path using a `module load`
+process, standard procedure at TGen, or if they are expected to be available in your $PATH at runtime.
 
 ### Required Binaries that MUST be available in your $PATH
 * module load SAMtools/1.10-GCC-8.2.0-2.31.1

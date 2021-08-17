@@ -2,6 +2,7 @@ package AnnotFilterRule;
 
 use strict;
 use warnings;
+use File::Basename;
 
 
 my @FREE_PASS = qw(Mitelman chimerdb_omim chimerdb_pubmed ChimerKB ChimerPub
@@ -97,6 +98,17 @@ sub examine_fusion_prediction {
     if ($geneA =~ /^IG[HKVL]/ && $geneB =~ /^IG[HKVL]/) {
         push (@filter_reasons, "immunoglobulin gene rearrangement");
     }
+
+    my $filename = "tgen_fusion_list.txt";
+    my $dirname = dirname(__FILE__);
+    my $filepath = "${dirname}/${filename}";
+    open(my $file,  "<",  $filepath)  or die $!;
+    while (<$file>) {
+      if (/$fusion_name/) {
+        return(0);
+      }
+    }
+    close($file);
 
     ## return(0) if the prediction is acceptable.
 
