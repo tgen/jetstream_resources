@@ -34,6 +34,9 @@ def parse_arguments():
     parser.add_argument('-t', '--threads', default=-1, type=int,
                         help='Set number of threads, default will use all threads')
 
+    parser.add_argument('-m', '--matrix_only', default=False, action="store_true",
+                        help='Stop after mutational matrix generation')
+
     # prints help message when 0 arguments are entered
     if len(sys.argv) == 1:
         parser.print_help(sys.stderr)
@@ -75,6 +78,10 @@ def main():
     args = parse_arguments()
 
     matrices = matGen.SigProfilerMatrixGeneratorFunc(args.project, args.genome, args.vcfpath, plot=True, exome=args.exome, bed_file=None, chrom_based=False, tsb_stat=False, seqInfo=False, cushion=100)
+
+    if args.matrix_only:
+        print("User requested matrix generation only, exiting before submitting to SigProfilerExtractor...\n")
+        sys.exit(0)
 
     num_tasks = 0
     sig_list = []
