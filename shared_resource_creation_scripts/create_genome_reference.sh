@@ -172,12 +172,20 @@ elif [ ${GENOME_SOURCE} == "NCBI" ]
 then
   echo "NCBI is supported"
   #NCBI provides a single file with the MD5 checksums for each file in the directory
-  echo "Ending test process now"
-  exit 1
-  echo "WARNING - No checksum provided the file CANNOT be validated"
-else
-  echo "Current Genome Source is NOT SUPPORTED"
-  exit 1
+  grep $GENOME_FASTA_DOWNLOAD_FILENAME md5checksums.txt > ${GENOME_FASTA_DOWNLOAD_FILENAME}.md5
+  # Calculate the checksum of the downloaded file
+  VALIDATION_SUM=`md5sum --check ${GENOME_FASTA_DOWNLOAD_FILENAME}.md5`
+  # Extract the result, expect "OK"
+  VALIDATION_SUM_RESULT=`echo $VALIDATION_SUM | cut -d" " -f2`
+  # Validate Checksum
+  if [ ${VALIDATION_SUM_RESULT} == "OK" ]
+  then
+    echo "Complete: checksum validation"
+  else
+    echo "FAILED: checksum validation"
+    touch FAILED_CHECKSUM_VALIDATION
+    exit 1
+  fi
 elif [ ${GENOME_SOURCE} == "1000G" ]
 then
   echo "1000G is supported"
