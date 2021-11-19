@@ -168,6 +168,16 @@ then
     touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
     exit 1
   fi
+elif [ ${GENOME_SOURCE} == "NCBI" ]
+then
+  echo "NCBI is supported"
+  #NCBI provides a single file with the MD5 checksums for each file in the directory
+  echo "Ending test process now"
+  exit 1
+  echo "WARNING - No checksum provided the file CANNOT be validated"
+else
+  echo "Current Genome Source is NOT SUPPORTED"
+  exit 1
 elif [ ${GENOME_SOURCE} == "1000G" ]
 then
   echo "1000G is supported"
