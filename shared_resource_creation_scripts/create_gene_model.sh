@@ -151,7 +151,24 @@ then
     touch FAILED_CHECKSUM_512bitBLOCK_VALIDATION
     exit 1
   fi
-elif [ ${GENOME_SOURCE} == "OTHER" ]
+elif [ ${GENE_MODEL_SOURCE} == "T2T" ]
+then
+  echo "T2T is supported"
+  #T2T consortium provides the MD5 checksums as a string on the website
+  # Calculate the checksum of the downloaded file
+  VALIDATION_SUM=`md5sum $GENOME_FASTA_DOWNLOAD_FILENAME`
+  # Extract the resulting hash
+  VALIDATION_SUM_RESULT=`echo $VALIDATION_SUM | cut -d" " -f1`
+  # Validate Checksum
+  if [ ${VALIDATION_SUM_RESULT} == ${GENOME_FASTA_MD5} ]
+  then
+    echo "Complete: checksum validation"
+  else
+    echo "FAILED: checksum validation"
+    touch FAILED_CHECKSUM_VALIDATION
+    exit 1
+  fi
+elif [ ${GENE_MODEL_SOURCE} == "OTHER" ]
 then
   echo "OTHER is supported"
   echo "WARNING - No checksum provided the file CANNOT be validated"
