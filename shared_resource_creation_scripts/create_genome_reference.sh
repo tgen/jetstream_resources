@@ -186,6 +186,23 @@ then
     touch FAILED_CHECKSUM_VALIDATION
     exit 1
   fi
+elif [ ${GENOME_SOURCE} == "T2T" ]
+then
+  echo "T2T is supported"
+  #T2T consortium provides the MD5 checksums as a string on the website
+  # Calculate the checksum of the downloaded file
+  VALIDATION_SUM=`md5sum $GENOME_FASTA_DOWNLOAD_FILENAME`
+  # Extract the resulting hash
+  VALIDATION_SUM_RESULT=`echo $VALIDATION_SUM | cut -d" " -f1`
+  # Validate Checksum
+  if [ ${VALIDATION_SUM_RESULT} == ${GENOME_FASTA_MD5} ]
+  then
+    echo "Complete: checksum validation"
+  else
+    echo "FAILED: checksum validation"
+    touch FAILED_CHECKSUM_VALIDATION
+    exit 1
+  fi
 elif [ ${GENOME_SOURCE} == "1000G" ]
 then
   echo "1000G is supported"
@@ -236,7 +253,7 @@ echo "    GENOME_FASTA_DECOMPRESSED_BASENAME=`basename ${GENOME_FASTA_DECOMPRESS
 GENOME_FASTA_DECOMPRESSED_BASENAME=`basename ${GENOME_FASTA_DECOMPRESSED_FILENAME} ".fa"`
 echo >> README
 
-echo "## Create BWA dictionary file using samtools" >> README
+echo "## Create dictionary file using samtools" >> README
 echo "    samtools dict --assembly ${GENOME_ASSEMBLY_NAME} --species "${SPECIES}" --output ${GENOME_FASTA_DECOMPRESSED_BASENAME}.dict ${GENOME_FASTA_DECOMPRESSED_FILENAME}" >> README
 samtools dict --assembly ${GENOME_ASSEMBLY_NAME} \
     --species "${SPECIES}" \
