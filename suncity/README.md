@@ -5,6 +5,7 @@ A JetStream workflow to support old human genome things...
 ### Script Usage Order
 * shared_resource_creation_scripts/create_genome_reference.sh suncity/suncity_resources.ini
   * shared_resource_creation_scripts/create_bwa_genome_index.sh suncity/suncity_resources.ini
+  * shared_resource_creation_scripts/create_bwa_mem2_genome_index.sh suncity/suncity_resources.ini
   * shared_resource_creation_scripts/create_gene_model.sh suncity/suncity_resources.ini
     * shared_resource_creation_scripts/create_star_genome_index.sh suncity/suncity_resources.ini suncity/star_index_lengths.csv
     * shared_resource_creation_scripts/create_salmon_index.sh suncity/suncity_resources.ini
