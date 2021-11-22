@@ -156,11 +156,11 @@ then
   echo "T2T is supported"
   #T2T consortium provides the MD5 checksums as a string on the website
   # Calculate the checksum of the downloaded file
-  VALIDATION_SUM=`md5sum $GENOME_FASTA_DOWNLOAD_FILENAME`
+  VALIDATION_SUM=`md5sum ${GTF_FILE_GZ}`
   # Extract the resulting hash
-  VALIDATION_SUM_RESULT=`echo $VALIDATION_SUM | cut -d" " -f1`
+  VALIDATION_SUM_RESULT=`echo ${VALIDATION_SUM}| cut -d" " -f1`
   # Validate Checksum
-  if [ ${VALIDATION_SUM_RESULT} == ${GENOME_FASTA_MD5} ]
+  if [ ${VALIDATION_SUM_RESULT} == ${GENE_MODEL_MD5} ]
   then
     echo "Complete: checksum validation"
   else
