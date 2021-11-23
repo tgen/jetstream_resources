@@ -86,12 +86,12 @@ ln -s ../../genome_reference/${REFERENCE_DNA_GENOME_NAME} ${REFERENCE_DNA_GENOME
 
 # Create bowtie2 index files using bowtie utility script
 echo "Create bowtie index as follows:" >> README
-if [ $ENVIRONMENT == "TGen"]
+if [ $ENVIRONMENT == "TGen" ]
 then
   # Create bowtie2 index files using bowtie utility script
   sbatch --export ALL,FASTA="${REFERENCE_DNA_GENOME_NAME}",BOWTIE2_MODULE="${BOWTIE2_MODULE}",BOWTIE_BASE="${BOWTIE_BASE}" ${PATH_TO_REPO}/utility_scripts/bowtie2_index.sh
   fc -ln -1 >> README
-elif [ $ENVIRONMENT == "LOCAL"]
+elif [ $ENVIRONMENT == "LOCAL" ]
 then
   echo
   echo "Bowtie2 Index will be created on the local compute"
