@@ -77,8 +77,6 @@ echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
 echo "Created and downloaded by ${CREATOR}" >> README
 date >> README
 echo >> README
-echo "BWA Index creation details:" >> README
-echo >> README
 
 # Download snpSniffer files
 echo "Downloading snpSniffer files as follows:" >> README
