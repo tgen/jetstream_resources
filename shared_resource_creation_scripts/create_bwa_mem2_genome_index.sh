@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: create_bwa_genome_index.sh <Config.ini>
+# Usage: create_bwa_mem2_genome_index.sh <Config.ini>
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
