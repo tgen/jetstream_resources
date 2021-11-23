@@ -7,7 +7,7 @@ A JetStream workflow to support the T2T human reference genome (WARNING: No chrY
   * shared_resource_creation_scripts/create_bwa_genome_index.sh grandCanyon/grandcanyon_resources.ini
   * shared_resource_creation_scripts/create_bwa_mem2_genome_index.sh grandCanyon/grandcanyon_resources.ini
   * shared_resource_creation_scripts/create_bowtie2_genome_index.sh grandCanyon/grandcanyon_resources.ini
-  * shared_resource_creation_scripts/create_snpSniffer_references.sh suncity/suncity_resources.ini
+  * shared_resource_creation_scripts/create_snpSniffer_references.sh suncity/grandcanyon_resources.ini
   * grandCanyon/create_gene_model.sh grandCanyon/grandcanyon_resources.ini
   
 
