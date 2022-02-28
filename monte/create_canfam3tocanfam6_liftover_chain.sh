@@ -24,7 +24,7 @@ fi
 ###################################
 
 # Check liftover directory if not available
-LIFTOVER_DIR=$(dirname ${PARENT_DIR})/lifover_files
+LIFTOVER_DIR=$(dirname ${PARENT_DIR})/liftover_files
 if [ -e ${LIFTOVER_DIR} ]
 then
     echo "Liftover directory: ${LIFTOVER_DIR} exists, moving into it"
