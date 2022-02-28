@@ -62,7 +62,9 @@ CANFAM3_TO_CANFAM6_CHAIN=`basename ${CANFAM3_TO_CANFAM6_CHAIN_DOWNLOAD_LINK}`
 gunzip -c ${CANFAM3_TO_CANFAM6_CHAIN} > canFam3To${GENOME_ASSEMBLY_NAME}.chain
 
 # Fixing the canFam3 source name to match our expections - no chr and chrUn_* contigs have .1 at the end
-sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' > ${FINAL_CHAIN_NAME}
+sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' > ${FINAL_CHAIN_NAME::-3}
+
+gzip ${FINAL_CHAIN_NAME::-3}
 
 # Remove temp files
 rm canFam3To${GENOME_ASSEMBLY_NAME}.chain 
