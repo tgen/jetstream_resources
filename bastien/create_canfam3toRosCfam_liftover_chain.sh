@@ -77,12 +77,12 @@ while read line; do
   name=$(echo ${line} | cut -d' ' -f1)
   alias=$(echo ${line} | cut -d' ' -f2)
   sed -i "s/${name}/${alias}/g" canFam3To${GENOME_ASSEMBLY_NAME}.chain
-done < ${ROS_CHAIN_ALIASES}_fixed.txt
+done < ${ROS_CHAIN_ALIASES}
 
 # Fixing the canFam3 source name to match our expections - no chr and chrUn_* contigs have .1 at the end
 sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' > ${FINAL_CHAIN_NAME::-3}
 
-gzip ${FINAL_CHAIN_NAME}
+gzip ${FINAL_CHAIN_NAME::-3}
 
 # Remove temp files
 rm canFam3To${GENOME_ASSEMBLY_NAME}.chain 
