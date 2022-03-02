@@ -97,7 +97,7 @@ echo "TGen Gender Check Resources creation details:" >> README
 echo >> README
 
 # Determine the fullpath to the dbSNP.bcf file
-EVA_VCF=${TOPLEVEL_DIR}/public_databases/eva/GCA_000002285.2_current_ids_renamed.ros_cfam_1.0.vcf.gz
+EVA_VCF=${TOPLEVEL_DIR}/public_databases/eva/${evaSNP::-8}.${GENOME_SUBVERSION_NAME}.vcf.gz
 
 # Filter the eva vcf to get a set of variants on chrX for gender check process
 echo "Extract just the common SNV on X from the eva vcf" >> README

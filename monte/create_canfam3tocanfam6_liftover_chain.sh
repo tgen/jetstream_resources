@@ -56,10 +56,28 @@ wget --no-check-certificate ${CANFAM3_TO_CANFAM6_CHAIN_DOWNLOAD_LINK}
 fc -ln -1 >> README
 echo >> README
 
+# Download aliases so that we can fix the chain file
+echo "Downloading ${CANFAM6_CHAIN_ALIASES_DOWNLOAD_LINK}" >> README
+wget --no-check-certificate ${CANFAM6_CHAIN_ALIASES_DOWNLOAD_LINK}
+fc -ln -1 >> README
+echo >> README
+
 CANFAM3_TO_CANFAM6_CHAIN=`basename ${CANFAM3_TO_CANFAM6_CHAIN_DOWNLOAD_LINK}`
+CANFAM6_CHAIN_ALIASES=`basename ${CANFAM6_CHAIN_ALIASES_DOWNLOAD_LINK}`
 
 # The chain file is labelled for the assembly, not genome reference. Changing that and uncompressing to make parsing easier
 gunzip -c ${CANFAM3_TO_CANFAM6_CHAIN} > canFam3To${GENOME_ASSEMBLY_NAME}.chain
+
+# Prepping chrUn_NW contig aliases to be renamed under AAEX...
+awk -v OFS='\t' '{ if(NR>41) print $3, "chrUn_"substr($2, 1, length($2)-2) }' ${CANFAM6_CHAIN_ALIASES} > ${CANFAM6_CHAIN_ALIASES}_fixed.txt
+mv ${CANFAM6_CHAIN_ALIASES}_fixed.txt ${CANFAM6_CHAIN_ALIASES}
+
+# Update the chain file based on the aliases
+while read line; do 
+  name=$(echo ${line} | cut -d' ' -f1)
+  alias=$(echo ${line} | cut -d' ' -f2)
+  sed -i "s/${name}/${alias}/g" canFam3To${GENOME_ASSEMBLY_NAME}.chain
+done < ${CANFAM6_CHAIN_ALIASES}
 
 # Fixing the canFam3 source name to match our expections - no chr and chrUn_* contigs have .1 at the end
 sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' > ${FINAL_CHAIN_NAME::-3}

@@ -113,7 +113,7 @@ echo >> README
 bzip2 -d ${dogSNP}
 
 # We need to rename the contigs to match chain file
-for contig in $(bcftools view -h ${dogSNP} | grep contig | cut -d'=' -f3 | cut -d',' -f1); do 
+for contig in $(bcftools view -h ${dogSNP::-4} | grep contig | cut -d'=' -f3 | cut -d',' -f1); do 
   new_contig=$(echo ${contig} | sed 's/chr//g' | sed 's/Un_//g' | awk '{ if ($1 ~ /(^JH|^A)/) $1 = $1 ".1" }1')
   echo "${contig} ${new_contig}" >> chr_rename.txt
 done
