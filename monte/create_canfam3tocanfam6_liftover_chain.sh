@@ -80,7 +80,7 @@ while read line; do
 done < ${CANFAM6_CHAIN_ALIASES}
 
 # Fixing the canFam3 source name to match our expections - no chr and chrUn_* contigs have .1 at the end
-sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' > ${FINAL_CHAIN_NAME::-3}
+sed 's/chr//g' canFam3To${GENOME_ASSEMBLY_NAME}.chain | sed 's/Un_//g' | awk '{ if ($3 ~ /(^JH|^A)/) $3 = $3 ".1" }1' | awk '{ if ($8 ~ /(^JH|^A)/) $8 = $8 ".1" }1' > ${FINAL_CHAIN_NAME::-3}
 
 gzip ${FINAL_CHAIN_NAME::-3}
 
@@ -90,3 +90,4 @@ rm canFam3To${GENOME_ASSEMBLY_NAME}.chain
 echo
 echo "Process Complete"
 echo
+

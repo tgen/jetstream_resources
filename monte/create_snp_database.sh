@@ -59,18 +59,17 @@ CHAIN_PATH=$(dirname ${PARENT_DIR})/liftover_files/${FINAL_CHAIN_NAME}
 module load BCFtools/1.10.1-foss-2019a
 module load GATK/4.1.8.0-GCCcore-8.3.0-Java-1.8
 
-
 ####################################
 ## Download dogSD files
 ####################################
 
 if [ -e "dog_sd" ]
 then
-    echo "The dog_sd directory exists, exiting to prevent overwriting existing index"
-    exit 2
+    echo "The dog_sd directory exists, moving into it"
+    cd dog_sd
 else
     echo "The dog_sd directory was NOT found, creating and moving into it now"
-    mkdir dog_sd
+    mkdir dog_sd ; chmod 777 dog_sd
     cd dog_sd
 fi
 
@@ -86,11 +85,17 @@ echo >> README
 echo "wget ${SNP_FILE_DOWNLOAD_LINK}" >> README
 echo "wget ${SNP_FILE_MD5SUM_DOWNLOAD_LINK}" >> README
 echo >> README
-wget ${SNP_FILE_DOWNLOAD_LINK}
-wget ${SNP_FILE_MD5SUM_DOWNLOAD_LINK}
 
 dogSNP=`basename ${SNP_FILE_DOWNLOAD_LINK}`
 dogMD5=`basename ${SNP_FILE_MD5SUM_DOWNLOAD_LINK}`
+
+if [ -e ${dogSNP} ] || [ -e ${dogSNP::-4} ]
+then
+    echo "${dogSNP} or ${dogSNP::-4} exists, moving on"
+else
+    wget ${SNP_FILE_DOWNLOAD_LINK}
+    wget ${SNP_FILE_MD5SUM_DOWNLOAD_LINK}
+
 if [ `md5sum ${dogSNP} | cut -d " " -f 1` != `grep -m 1 ${dogSNP} ${dogMD5} | cut -d " " -f 1` ]; then
     echo "The md5s do not match for ${dogSNP}, please run the script to again."
     exit 1
@@ -102,6 +107,7 @@ else
     grep -m 1 ${dogSNP} ${dogMD5} | cut -d " " -f 1 >> README
     grep -m 1 ${dogSNP} ${dogMD5} | cut -d " " -f 1
 fi
+fi
 echo >> README
 
 ############################
@@ -110,7 +116,13 @@ echo >> README
 ###
 ############################
 
-bzip2 -d ${dogSNP}
+
+if [ -e ${dogSNP::-4} ]
+then
+    echo "${dogSNP::-4} exists, moving on"
+else
+    bzip2 -d ${dogSNP}
+fi
 
 # We need to rename the contigs to match chain file
 for contig in $(bcftools view -h ${dogSNP::-4} | grep contig | cut -d'=' -f3 | cut -d',' -f1); do 
@@ -165,7 +177,8 @@ gatk LiftoverVcf \
   --REFERENCE_SEQUENCE ${REF_PATH} \
   --REJECT ${TOPLEVEL_DIR}/public_databases/dog_sd/${dogSNP::-8}.${GENOME_SUBVERSION_NAME}.failed.vcf.gz\
   --LIFTOVER_MIN_MATCH 0.9 \
-  --RECOVER_SWAPPED_REF_ALT
+  --RECOVER_SWAPPED_REF_ALT \
+  --WARN_ON_MISSING_CONTIG
 
 cd ${TOPLEVEL_DIR}/public_databases
 
@@ -240,4 +253,5 @@ gatk LiftoverVcf \
   --REFERENCE_SEQUENCE ${REF_PATH} \
   --REJECT ${TOPLEVEL_DIR}/public_databases/eva/${evaSNP::-8}.${GENOME_SUBVERSION_NAME}.failed.vcf.gz\
   --LIFTOVER_MIN_MATCH 0.9 \
-  --RECOVER_SWAPPED_REF_ALT
+  --RECOVER_SWAPPED_REF_ALT \
+  --WARN_ON_MISSING_CONTIG
