@@ -84,7 +84,7 @@ echo >> README
 echo "Download the gene model gtf"
 echo "Download the gene model gtf" >> README
 echo "wget ${GENE_MODEL_DOWNLOAD_LINK}" >> README
-wget ${GENE_MODEL_DOWNLOAD_LINK}
+wget --no-check-certificate ${GENE_MODEL_DOWNLOAD_LINK}
 # Error Capture
 if [ "$?" = "0" ]
 then
@@ -107,7 +107,7 @@ if [ ${GENE_MODEL_MD5_DOWNLOAD_LINK} != "NA" ]
 then
   echo "## Download GTF checksum from ${GENE_MODEL_SOURCE}" >> README
   echo "    wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}" >> README
-  wget ${GENE_MODEL_MD5_DOWNLOAD_LINK}
+  wget --no-check-certificate ${GENE_MODEL_MD5_DOWNLOAD_LINK}
   # Error Capture
   if [ "$?" = "0" ]
   then

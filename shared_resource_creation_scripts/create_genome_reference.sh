@@ -103,7 +103,7 @@ echo >> README
 
 echo "## Download reference fasta from ${GENOME_SOURCE}" >> README
 echo "    wget ${GENOME_FASTA_DOWNLOAD_LINK}" >> README
-wget ${GENOME_FASTA_DOWNLOAD_LINK}
+wget --no-check-certificate ${GENOME_FASTA_DOWNLOAD_LINK}
 # Error Capture
 if [ "$?" = "0" ]
 then
@@ -119,7 +119,7 @@ if [ ${GENOME_FASTA_MD5_DOWNLOAD_LINK} != "NA" ]
 then
   echo "## Download reference fasta checksum from ${GENOME_SOURCE}" >> README
   echo "    wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}" >> README
-  wget ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
+  wget --no-check-certificate ${GENOME_FASTA_MD5_DOWNLOAD_LINK}
   # Error Capture
   if [ "$?" = "0" ]
   then
