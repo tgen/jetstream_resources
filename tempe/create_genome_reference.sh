@@ -25,6 +25,7 @@ fi
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   module load SAMtools/1.10-GCC-8.2.0-2.31.1
+  module load BEDTools/2.29.0-GCC-8.2.0-2.31.1
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
   echo
@@ -165,18 +166,27 @@ fc -ln -1 >> README
 echo >> README
 
 ### Concatenate the fasta files to make final reference genome fasta
-echo "Concatenate the fasta files to make final reference genome fasta to be used by BWA" >> README
+echo "Concatenate the fasta files to make the reference genome fasta to be used by BWA" >> README
 cat GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna bwakit_HLA.fasta > GRCh38tgen_decoy_alts_hla.fa
 fc -ln -1 >> README
 echo >> README
 
+### Filtering problematic sequences of GRCh38
+echo "Mask problematic sequences of the fasta to make the final reference genome fasta to be used by BWA" >> README
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GRCh38_major_release_seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_GRC_exclusions.bed
+fc -ln -1 >> README
+bedtools -fi GRCh38tgen_decoy_alts_hla.fa -bed GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_DNA_GENOME_NAME}
+fc -ln -1 >> README
+echo >> README
+
+
 # Add symbolic link to indicate which FASTA is used by BWA
-ln -s GRCh38tgen_decoy_alts_hla.fa BWA_FASTA
+ln -s ${REFERENCE_DNA_GENOME_NAME} BWA_FASTA
 
 # Create faidx and dict files
 echo "Create BWA faidx index using samtools" >> README
 
-samtools faidx GRCh38tgen_decoy_alts_hla.fa
+samtools faidx ${REFERENCE_DNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
@@ -184,16 +194,17 @@ echo "Create BWA dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
     --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
-    --output GRCh38tgen_decoy_alts_hla.dict \
-    GRCh38tgen_decoy_alts_hla.fa
+    --output ${REFERENCE_DNA_GENOME_NAME%.fa}.dict \ # We know reference name ends with .fa, replacing that with .dict
+    ${REFERENCE_DNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
 # Clean up the directory to store the downloads
-mv bwakit-0.7.15_x64-linux.tar.bz2 downloads
-mv bwa.kit downloads
-mv README_analysis_sets.txt downloads
-mv bwakit_HLA.fasta downloads
+mv bwakit-0.7.15_x64-linux.tar.bz2 downloads/
+mv bwa.kit downloads/
+mv README_analysis_sets.txt downloads/
+mv bwakit_HLA.fasta downloads/
+mv GCA_000001405.15_GRCh38_GRC_exclusions.bed downloads/
 rm GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna
 
 # Add flag to top level to indicate process is complete
@@ -221,18 +232,18 @@ gunzip GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz
 fc -ln -1 >> README
 echo >> README
 
-# Rename fastq file
-echo "Rename the downloaded file to decrease filename length and make consistent with bwa fasta" >> README
-mv GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna GRCh38tgen_decoy.fa
+### Filtering problematic sequences of GRCh38, name is also consistent with BWA above
+echo "Mask problematic sequences of the fasta to make the final reference genome fasta to be used by BWA" >> README
+bedtools -fi GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna -bed downloads/GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_RNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
 # Add symbolic link to indicate which FASTA is used by STAR
-ln -s GRCh38tgen_decoy.fa STAR_FASTA
+ln -s ${REFERENCE_RNA_GENOME_NAME} STAR_FASTA
 
 # Create faidx and dict files
 echo "Create STAR faidx index using samtools" >> README
-samtools faidx GRCh38tgen_decoy.fa
+samtools faidx ${REFERENCE_RNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
@@ -240,14 +251,14 @@ echo "Create STAR dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
     --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
-    --output GRCh38tgen_decoy.dict \
-    GRCh38tgen_decoy.fa
+    --output ${REFERENCE_RNA_GENOME_NAME%.fa}.dict \ # We know reference name ends with .fa
+    ${REFERENCE_RNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
 echo "Create 2bit genome reference for CHIPseq tools" >> README
 echo >> README
-${FATOTWOBIT} GRCh38tgen_decoy.fa GRCh38tgen_decoy.2bit
+${FATOTWOBIT} ${REFERENCE_RNA_GENOME_NAME} ${REFERENCE_RNA_GENOME_NAME%.fa}.2bit # We know reference name ends with .fa
 fc -ln -1 >> README
 echo >> README
 
