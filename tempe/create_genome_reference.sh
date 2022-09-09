@@ -144,7 +144,7 @@ echo >> README
 
 # Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad
 echo "Download bwakit, to get the HLA contigs used by bwakit and the production GRCh38 pipeline used at Broad:" >> README
-wget https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
+wget --no-check-certificate https://sourceforge.net/projects/bio-bwa/files/bwakit/bwakit-0.7.15_x64-linux.tar.bz2
 fc -ln -1 >> README
 # Decompress the bwakit download
 tar xvjf bwakit-0.7.15_x64-linux.tar.bz2
@@ -173,7 +173,7 @@ echo >> README
 
 ### Filtering problematic sequences of GRCh38
 echo "Mask problematic sequences of the fasta to make the final reference genome fasta to be used by BWA" >> README
-wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GRCh38_major_release_seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_GRC_exclusions.bed
+wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GRCh38_major_release_seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_GRC_exclusions.bed
 fc -ln -1 >> README
 bedtools -fi GRCh38tgen_decoy_alts_hla.fa -bed GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_DNA_GENOME_NAME}
 fc -ln -1 >> README
