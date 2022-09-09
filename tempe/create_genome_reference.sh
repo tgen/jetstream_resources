@@ -194,7 +194,7 @@ echo "Create BWA dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
     --uri "downloads/GCA_000001405.15_GRCh38_full_plus_hs38d1_analysis_set.fna.gz" \
-    --output ${REFERENCE_DNA_GENOME_NAME%.fa}.dict \ # We know reference name ends with .fa, replacing that with .dict
+    --output ${REFERENCE_DNA_GENOME_NAME%.fa}.dict \
     ${REFERENCE_DNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
@@ -251,14 +251,14 @@ echo "Create STAR dictionary file using samtools" >> README
 samtools dict --assembly GRCh38 \
     --species "Homo sapiens" \
     --uri "downloads/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz" \
-    --output ${REFERENCE_RNA_GENOME_NAME%.fa}.dict \ # We know reference name ends with .fa
+    --output ${REFERENCE_RNA_GENOME_NAME%.fa}.dict \
     ${REFERENCE_RNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
 echo "Create 2bit genome reference for CHIPseq tools" >> README
 echo >> README
-${FATOTWOBIT} ${REFERENCE_RNA_GENOME_NAME} ${REFERENCE_RNA_GENOME_NAME%.fa}.2bit # We know reference name ends with .fa
+${FATOTWOBIT} ${REFERENCE_RNA_GENOME_NAME} ${REFERENCE_RNA_GENOME_NAME%.fa}.2bit
 fc -ln -1 >> README
 echo >> README
 
