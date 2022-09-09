@@ -175,7 +175,7 @@ echo >> README
 echo "Mask problematic sequences of the fasta to make the final reference genome fasta to be used by BWA" >> README
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.39_GRCh38.p13/GRCh38_major_release_seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_GRC_exclusions.bed
 fc -ln -1 >> README
-bedtools -fi GRCh38tgen_decoy_alts_hla.fa -bed GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_DNA_GENOME_NAME}
+bedtools maskfasta -fi GRCh38tgen_decoy_alts_hla.fa -bed GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_DNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
@@ -234,7 +234,7 @@ echo >> README
 
 ### Filtering problematic sequences of GRCh38, name is also consistent with BWA above
 echo "Mask problematic sequences of the fasta to make the final reference genome fasta to be used by BWA" >> README
-bedtools -fi GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna -bed downloads/GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_RNA_GENOME_NAME}
+bedtools maskfasta -fi GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna -bed downloads/GCA_000001405.15_GRCh38_GRC_exclusions.bed -fo ${REFERENCE_RNA_GENOME_NAME}
 fc -ln -1 >> README
 echo >> README
 
