@@ -2,7 +2,7 @@
 
 # Automated Script to download and build CLINVAR VCF file for usage in Phoenix workflow
 
-# Usage: ./build_clinvar_${CLINVAR_VERSION}.sh
+# Usage: ./build_clinvar.sh
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
@@ -102,7 +102,7 @@ CLINVAR_YEAR=${CLINVAR_VERSION:0:4}
 wget ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/archive_2.0/${CLINVAR_YEAR}/clinvar_${CLINVAR_VERSION}.vcf.g*
 
 # Remove local NIH path from MD5 file
-sed -i 's/\/panfs\/pan1\/clintest\/ftp_test_prod\/vcf\/vcf_GRCh38\///g' clinvar_${CLINVAR_VERSION}.vcf.gz.md5
+sed -i 's/\/.*\///g' clinvar_${CLINVAR_VERSION}.vcf.gz.md5
 
 # Check MD5 checksums
 CHECKSUM_STATUS=`md5sum --check clinvar_${CLINVAR_VERSION}.vcf.gz.md5 | cut -d" " -f2`
