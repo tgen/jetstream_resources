@@ -109,10 +109,10 @@ TOKEN=`echo "${COSMIC_ACCOUNT_EMAIL}:${PASSWORD}" | base64`
 
 ## DOWNLOAD Coding Mutations file
 # Get download link, this generates a custom url and access key for the next step, returned as a JSON, which is parsed into the download key
-RESPONSE=`curl -H "Authorization: Basic ${TOKEN}" https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicCodingMuts.vcf.gz`
-DOWNLOAD_KEY=`echo $RESPONSE | sed 's/"}//g' | sed 's/{"url":"https:\/\/cog.sanger.ac.uk\/cosmic\/GRCh38\/cosmic\/v${COSMIC_VERSION}\/VCF\/CosmicCodingMuts.vcf.gz//g'`
+RESPONSE=$(curl -k -H "Authorization: Basic ${TOKEN}" "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicCodingMuts.vcf.gz")
+DOWNLOAD_KEY=$(echo $RESPONSE | sed 's/"}//g' | sed 's/{.*.vcf.gz//g')
 # Download Cosmic Coding Mutations file (Authentication token expires after 1 hour)
-curl "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicCodingMuts.vcf.gz${DOWNLOAD_KEY}" > CosmicCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
+curl -k "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicCodingMuts.vcf.gz${DOWNLOAD_KEY}" > CosmicCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
 
 # The downloaded file is not bgzip so it needs to be decompressed with gunzip before processing
 gunzip CosmicCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
@@ -169,9 +169,9 @@ rm CosmicCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf
 ############################
 
 # Download Cosmic Non-Coding Mutations file (Authentication token expires after 1 hour)
-RESPONSE=`curl -H "Authorization: Basic ${TOKEN}" https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicNonCodingVariants.vcf.gz`
-DOWNLOAD_KEY=`echo $RESPONSE | sed 's/"}//g' | sed 's/{"url":"https:\/\/cog.sanger.ac.uk\/cosmic\/GRCh38\/cosmic\/v${COSMIC_VERSION}\/VCF\/CosmicNonCodingVariants.vcf.gz//g'`
-curl "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicNonCodingVariants.vcf.gz${DOWNLOAD_KEY}" > CosmicNonCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
+RESPONSE=$(curl -k -H "Authorization: Basic ${TOKEN}" "https://cancer.sanger.ac.uk/cosmic/file_download/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicNonCodingVariants.vcf.gz")
+DOWNLOAD_KEY=$(echo $RESPONSE | sed 's/"}//g' | sed 's/{.*.vcf.gz//g')
+curl -k "https://cog.sanger.ac.uk/cosmic/GRCh38/cosmic/v${COSMIC_VERSION}/VCF/CosmicNonCodingVariants.vcf.gz${DOWNLOAD_KEY}" > CosmicNonCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
 
 # The downloaded file is not bgzip so it needs to be decompressed with gunzip before processing
 gunzip CosmicNonCodingMuts_v${COSMIC_VERSION}_GRCh38.vcf.gz
