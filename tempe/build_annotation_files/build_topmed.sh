@@ -2,7 +2,7 @@
 
 # Automated Script to download and build Topmed BCF annotation file for usage in Tempe workflow
 
-# Usage: ./build_topmed.sh
+# Usage: ./build_topmed.sh pipeline_resouces.ini
 
 ### Setting as an interactive BASH session and forcing history to capture commands to a log/README file
 HISTFILE=~/.bash_history
@@ -78,10 +78,10 @@ fi
 # Make topmed release version folder if not available
 if [ -e ${TOPMED_VERSION} ]
 then
-    echo "clinvar ${TOPMED_VERSION} folder exists, exiting to prevent overwrite"
+    echo "topmed ${TOPMED_VERSION} folder exists, exiting to prevent overwrite"
     exit 1
 else
-    echo "clinvar ${TOPMED_VERSION} folder NOT fount, creating and moving into it now"
+    echo "topmed ${TOPMED_VERSION} folder NOT fount, creating and moving into it now"
     mkdir -p ${TOPMED_VERSION}
     cd ${TOPMED_VERSION}
 fi
