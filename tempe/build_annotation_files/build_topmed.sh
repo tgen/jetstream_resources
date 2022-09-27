@@ -90,11 +90,14 @@ fi
 ## Parameterized Code
 ####################################
 
-# Added user information and timestamp to README
-USER=`whoami`
-DATE=`date`
-echo "Downloaded and Processed by:  ${USER}" > README
-echo ${DATE} >> README
+# Initialize a topmed README
+touch README
+echo >> README
+echo "For details on file creation see the associated github repository:" >> README
+echo "https://github.com/tgen/jetstream_resources/${WORKFLOW_NAME}" >> README
+echo "Created and downloaded by ${CREATOR}" >> README
+date >> README
+echo >> README
 
 # Download the individual VCF files uploaded as part of freeze8
 # STEP 1 - Download freeze 8 VCF files uploaded to dbSNP (https://bravo.sph.umich.edu/freeze8/hg38/downloads) for each chromosome
@@ -164,6 +167,10 @@ bcftools index --threads 4 All.BRAVO_TOPMed_Freeze_8.bcf
 
 # Generate a stats file for comparisons
 
-bcftools stats --threads 4 All.BRAVO_TOPMed_Freeze_8.bcf
+bcftools stats --threads 4 All.BRAVO_TOPMed_Freeze_8.bcf > All.BRAVO_TOPMed_Freeze_8.stats
+
+# Cleanup
+rm *.BRAVO_TOPMed_Freeze_8.vcf.gz
+rm *.BRAVO_TOPMed_Freeze_8.vcf.gz.tbi
 
 echo "Process Complete"
