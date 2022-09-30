@@ -77,6 +77,7 @@ data <- data %>% separate(Elapsed, into = c("hours", "minutes", "seconds"), sep 
 data <- data %>% mutate(Group = case_when(str_detect(Task, "^copy_fastqs") ~ "Copy_Fastq",
                                           str_detect(Task, "^split_fastq") ~ "Split_Fastq",
                                           str_detect(Task, "^chunked_bwa_mem_samtools_fixmate") ~ "BWA_Align",
+                                          str_detect(Task, "^chunked_bwa_mem2_samtools_fixmate") ~ "BWA2_Align",
                                           str_detect(Task, "^chunked_samtools_merge_rg_bams") ~ "Samtools_Merge",
                                           str_detect(Task, "^samtools_markdup") ~ "Samtools_MarkDup",
                                           str_detect(Task, "^bam_to_cram") ~ "Samtools_BamCram",

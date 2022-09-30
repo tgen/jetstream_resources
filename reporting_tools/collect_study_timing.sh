@@ -50,5 +50,5 @@ echo "Summarizing overal study timing results"
 
 Rscript --vanilla \
     /home/tgenjetstream/git_repositories/jetstream_resources/reporting_tools/study_summary_Graphs.R \
-    --study_name ${study}
+    --study_name $2
 
