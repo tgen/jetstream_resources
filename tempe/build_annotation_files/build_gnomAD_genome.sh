@@ -112,7 +112,7 @@ echo
 for chr in chr{1..22} chrX chrY; do
   sbatch -o /dev/null -c 4 --wait -p overflow --wrap="module load BCFtools/1.10.1-foss-2019a singularity/3.7.1-phoenix ;
 singularity exec docker://google/cloud-sdk gsutil cp gs://gcp-public-data--gnomad/release/${GNOMAD_GENOME_VERSION}/vcf/genomes/gnomad.genomes.v${GNOMAD_GENOME_VERSION}.sites.${chr}.vcf.bgz - |
-bcftools view --apply-filters PASS --output-type b --output-file gnomad.genomes.v${GNOMAD_GENOME_VERSION}.sites.${chr}.bcf -" > /dev/null 2>&1 &
+bcftools view --apply-filters PASS --output-type u --output-file gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.${chr}.bcf -" > /dev/null 2>&1 &
 done
 fc -ln -1 >> README
 echo >> README
@@ -130,12 +130,25 @@ wait
 # echo
 #### Expectation is that 1. gsutil is more reliable (rsync-ish) than wget, 2. bcftools would probably complain if something weird happens
 
+## Also using these files for annotation removing the massive amount of data in the INFO column significantly improves runtime
+## For utility with mutect2 make simple version with minimal data for annotation yes/no flags and a germline reference
+for chr in chr{1..22} chrX chrY; do
+  sbatch -o /dev/null -c 8 --wait -p defq,overflow --wrap="module load BCFtools/1.10.1-foss-2019a ;
+bcftools annotate --threads 8 --remove ID,QUAL,^INFO/AC,^INFO/AN,^INFO/AF,^INFO/n_alt_alleles --output-type u --output gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.${chr}.bcf gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.${chr}.bcf" > /dev/null 2>&1 &
+done
+fc -ln -1 >> README
+echo >> README
+
+# Wait for reduced bcfs
+wait
+
 ## Concatentate the bcfs for a monolithic file
 concat_cmd="bcftools concat --output-type b --output gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.bcf"
 for chr in chr{1..22} chrX chrY; do
-  concat_cmd+=" gnomad.genomes.v${GNOMAD_GENOME_VERSION}.sites.${chr}.bcf"
+  concat_cmd+=" gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.${chr}.bcf"
 done
-$concat_cmd
+# We are creating this for users other than us, we use the reduced and annotationReference bcfs in the pipeline
+sbatch -o concat_pass_sites.slurm.out -c 4 --wrap="module load BCFtools/1.10.1-foss-2019a; $concat_cmd"
 fc -ln -1 >> README
 echo >> README
 
@@ -143,27 +156,32 @@ bcftools index --threads 8 gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.b
 fc -ln -1 >> README
 echo >> README
 
-bcftools stats --threads 8 gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.bcf > gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.bcf.stats
+## Concatentate the bcfs for a monolithic file
+concat_cmd="bcftools concat --output-type b --output gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.bcf"
+for chr in chr{1..22} chrX chrY; do
+  concat_cmd+=" gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.${chr}.bcf"
+done
+$concat_cmd
 fc -ln -1 >> README
 echo >> README
 
-plot-vcfstats --no-PDF --title "GnomADr${GNOMAD_GENOME_VERSION} Genomes" -p plots_vcfstats_genomes gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.bcf.stats
+# Create CSI index (This will be file used for bcftools database annotation purposes
+bcftools index --threads 8 gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.bcf
 fc -ln -1 >> README
 echo >> README
 
-## Also using these files for annotation removing the massive amount of data in the INFO column significantly improves runtime
-## For utility with mutect2 make simple version with minimal data for annotation yes/no flags and a germline reference
+# AnnotationReference
 bcftools annotate \
     --threads 8 \
     --remove ID,QUAL,^INFO/AF \
     --output-type b \
     --output gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.AnnotationReference.bcf \
-    gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.bcf
+    gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.bcf
 fc -ln -1 >> README
 echo >> README
 
 # Create CSI index (This will be file used for bcftools database annotation purposes
-bcftools index --threads 4 gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.AnnotationReference.bcf
+bcftools index --threads 8 gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.AnnotationReference.bcf
 fc -ln -1 >> README
 echo >> README
 
@@ -177,7 +195,7 @@ fc -ln -1 >> README
 echo >> README
 
 # Create the needed TBI index (hope two indexes will not cause and issue)
-bcftools index --threads 4 --tbi gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.AnnotationReference.vcf.gz
+bcftools index --threads 8 --tbi gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.AnnotationReference.vcf.gz
 fc -ln -1 >> README
 echo >> README
 
@@ -198,5 +216,14 @@ echo >> README
 bcftools index --threads 4 --tbi gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.ForMutectContamination.vcf.gz
 fc -ln -1 >> README
 echo >> README
+
+# Wait for pending slurm jobs (Should only be the one for creating the monolithic pass bcf)
+wait
+
+# Clean up temp chr bcfs
+for chr in chr{1..22} chrX chrY; do
+  rm gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.${chr}.bcf
+  rm gnomad.genomes.r${GNOMAD_GENOME_VERSION}.sites.pass.reduced.${chr}.bcf
+done
 
 ## BROAD VERSION OF THE SAME PROCESSES (https://github.com/broadinstitute/gatk/blob/master/scripts/mutect2_wdl/mutect_resources.wdl)
