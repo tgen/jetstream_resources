@@ -10,23 +10,24 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 
 ## Script Usage Order
 
-* tempe/create_genome_reference.sh tempe/tempe_resources.ini
-  * tempe/create_bwa_genome_index.sh tempe_resources.ini
-  * shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh tempe/tempe_resources.ini
-  * tempe/create_samtools_stats_non_N_region_file.sh tempe/tempe_resources.ini
-  * tempe/create_gene_model.sh tempe/tempe_resources.ini
-    * tempe/create_disease_specific_resources.sh tempe/tempe_resources.ini
-    * shared_resource_creation_scripts/create_salmon_index.sh tempe/tempe_resources.ini
-    * shared_resource_creation_scripts/create_star_genome_index.sh tempe/tempe_resources.ini tempe/star_index_lengths.csv
-    * tempe/create_star-fusion_resource.sh tempe/tempe_resources.ini
-    * shared_resource_creation_scripts/create_snpEff_db.sh tempe/tempe_resources.ini
+* sbatch tempe/create_genome_reference.sh tempe/tempe_resources.ini
+  * bash shared_resource_creation_scripts/create_bwa_genome_index.sh tempe/tempe_resources.ini
+  * bash shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh tempe/tempe_resources.ini
+  * bash tempe/create_samtools_stats_non_N_region_file.sh tempe/tempe_resources.ini
+  * bash tempe/create_gene_model.sh tempe/tempe_resources.ini
+    * sbatch tempe/create_disease_specific_resources.sh tempe/tempe_resources.ini
+    * bash shared_resource_creation_scripts/create_salmon_index.sh tempe/tempe_resources.ini
+    * bash shared_resource_creation_scripts/create_star_genome_index.sh tempe/tempe_resources.ini ~/git_repositories/jetstream_resources/tempe/star_index_lengths.csv
+    * bash tempe/create_star-fusion_resources.sh tempe/tempe_resources.ini
+    * bash shared_resource_creation_scripts/create_snpEff_db.sh tempe/tempe_resources.ini
       * **NOTE**: make sure you update the snpEff.config in the utility_files directory BEFORE RUNNING
-    * tempe/create_vep_database.sh tempe/tempe_resources.ini
-    * shared_resource_creation_scripts/create_exome_capture_resources.sh tempe/tempe_resources.ini tempe/capture_kits.csv
+    * bash tempe/create_vep_database.sh tempe/tempe_resources.ini
+    * bash shared_resource_creation_scripts/create_exome_capture_resources.sh tempe/tempe_resources.ini ~/git_repositories/jetstream_resources/tempe/capture_kits.csv
       * NOTE: This is dependent on existing bed files, some of which are not freely available and must be downloaded in advance.
-* shared_resource_creation_scripts/create_deepvariant_models.sh tempe/tempe_resources.ini
-* shared_resource_creation_scripts/create_snpSniffer_references.sh tempe/tempe_resources.ini
+* bash shared_resource_creation_scripts/create_deepvariant_models.sh tempe/tempe_resources.ini
+* bash shared_resource_creation_scripts/create_snpSniffer_references.sh tempe/tempe_resources.ini
   * tempe/create_genderCheck_SNP_list.sh tempe/tempe_resources.ini
+* bash shared_resource_creation_scripts/create_padded_cds_beds.sh tempe/tempe_resources.ini
 
 ## Required Software
 
