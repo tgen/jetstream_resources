@@ -4,6 +4,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task 2
+#SBATCH --mem 16G
 #SBATCH --partition defq
 
 ## Script to create bwa index files
