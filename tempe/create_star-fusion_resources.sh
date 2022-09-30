@@ -172,13 +172,23 @@ ln -s ${REFERENCE_RNA_GENOME_FASTA} ${REFERENCE_RNA_GENOME_NAME}
 
 # Copy in required files from the downloaded source file
 cp ../${BUNDLE_FOLDER}/fusion_lib.*.dat.gz .
-cp ../${BUNDLE_FOLDER}/gencode.v32.annotation.gtf .
-cp ../${BUNDLE_FOLDER}/AnnotFilterRule.pm .
+cp ../${BUNDLE_FOLDER}/gencode.v37.annotation.gtf .
+
+# AnnotFilterRule.pm is no longer provided in the bundle
+# Instead the README guidelines state:
+# "To enable annotation-level filtering (ie. removing 'red herrings' like GTEx fusions), please 
+# replace the AnnotFilterRule.pm in your chosen ctat genome lib here with the file provided here."
+# 
+# Pulling down the recommended AnnotFilterRule.pm
+echo "Download STAR-Fusion AnnotFilerRule.pm" >> README
+wget ${STAR_FUSION_ANNOT_FILT_RULE}
+fc -ln -1 >> README
+echo >> README
 
 # We will use the GTF provided in the bundle, see below
 #
-# Comparing the gtf downloaded in the "GRCh38_gencode_v32_CTAT_lib_Dec062019.source/gencode.v32.annotation.gtf" to the public gencode GTF
-# name (gencode.v32.annotation.gtf), number of lines, and diff matches the file downloaded via (ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_32/gencode.v32.annotation.gtf.gz)
+# Comparing the gtf downloaded in the "GRCh38_gencode_v37_CTAT_lib_Dec062019.source/gencode.v37.annotation.gtf" to the public gencode GTF
+# name (gencode.v37.annotation.gtf), number of lines, and diff matches the file downloaded via (ftp://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_32/gencode.v37.annotation.gtf.gz)
 # This file content is one of 3:
 # Content = Comprehensive Gene Annotation
 # Description = It contains the comprehensive gene annotations on the reference chromsomes only, This is the "Main Annotation File" for most users
@@ -192,9 +202,9 @@ cp ../${BUNDLE_FOLDER}/AnnotFilterRule.pm .
 #  - KN format --> chrUn_KN707606v1_decoy
 #  - JTFH format --> chrUn_JTFH01000001v1_decoy
 #
-# gencode.v32.annotation.gtf
+# gencode.v37.annotation.gtf
 #  - chr1-22, X, Y, M
-# gencode.v32.primary_assembly.annotation.gtf
+# gencode.v37.primary_assembly.annotation.gtf
 #  - chr1-22, X, Y, M, GL000009.2, KI270442.1
 #
 # Therefore, we can use the same file as Star-fusion recommends and provides in the source download with our geneome as all contigs match
@@ -216,17 +226,15 @@ export PATH=$PATH:$CURRENT_DIR
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Load required modules
-  module load STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2
-  module load blast/2.7.1
-  module load hmmer/3.2.1
+  module load singularity/3.7.1-phoenix squashfs-tools/4.5
 
   # Use provided starFusion build script
   sbatch -c 20 -t 7-00:00:00 -J starFusion_build --wrap="
-  /packages/easybuild/software/STAR-Fusion/1.8.1-GCC-8.2.0-2.31.1-Perl-5.28.1-Python-3.7.2/ctat-genome-lib-builder/prep_genome_lib.pl \
+  singularity exec docker://trinityctat/starfusion:1.11.0 /usr/local/src/STAR-Fusion/ctat-genome-lib-builder/prep_genome_lib.pl \
   --CPU 20 \
   --max_readlength 150 \
-  --genome_fa GRCh38tgen_decoy.fa \
-  --gtf gencode.v32.annotation.gtf \
+  --genome_fa ${REFERENCE_RNA_GENOME_NAME} \
+  --gtf gencode.v37.annotation.gtf \
   --fusion_annot_lib fusion_lib.*.dat.gz \
   --annot_filter_rule AnnotFilterRule.pm \
   --pfam_db current \
@@ -241,8 +249,8 @@ then
   prep_genome_lib.pl \
   --CPU 20 \
   --max_readlength 150 \
-  --genome_fa GRCh38tgen_decoy.fa \
-  --gtf gencode.v32.annotation.gtf \
+  --genome_fa ${REFERENCE_RNA_GENOME_NAME} \
+  --gtf gencode.v37.annotation.gtf \
   --fusion_annot_lib fusion_lib.*.dat.gz \
   --annot_filter_rule AnnotFilterRule.pm \
   --pfam_db current \
