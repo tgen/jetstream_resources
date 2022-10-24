@@ -26,23 +26,23 @@ if (is.null(opt$study_name)){
 tasks <- read_tsv("study_task_summary.txt")
 projects <- read_tsv("study_project_summary.txt")
 
-ggplot(tasks, aes(x=Group, y=Total_CPU_Hours)) + 
-  geom_jitter() + 
+ggplot(tasks, aes(x=Tags, y=Total_CPU_Hours)) + 
+  geom_jitter(size=0.5) + 
   coord_flip()
 ggsave(file=paste(opt$study_name, "_TotalCPUhours_by_Group_per_Project.png", sep=""), dpi=150)
 
-ggplot(tasks, aes(x=Group, y=Total_Elapsed_Hours)) + 
-  geom_jitter() + 
+ggplot(tasks, aes(x=Tags, y=Total_Elapsed_Hours)) + 
+  geom_jitter(size=0.5) + 
   coord_flip()
 ggsave(file=paste(opt$study_name, "_TotalElapsedHours_by_Group_per_Project.png", sep=""), dpi=150)
 
-ggplot(tasks, aes(x=Group, y=Max_Task_Elapsed_Hours)) + 
-  geom_jitter() + 
+ggplot(tasks, aes(x=Tags, y=Max_Task_Elapsed_Hours)) + 
+  geom_jitter(size=0.5) + 
   coord_flip()
 ggsave(file=paste(opt$study_name, "_MaxTaskElapsedHours_by_Group_per_Project.png", sep=""), dpi=150)
 
-ggplot(tasks, aes(x=Group, y=Max_Task_CPU_Hours)) + 
-  geom_jitter() + 
+ggplot(tasks, aes(x=Tags, y=Max_Task_CPU_Hours)) + 
+  geom_jitter(size=0.5) + 
   coord_flip()
 ggsave(file=paste(opt$study_name, "_MaxTaskCPUhours_by_Group_per_Project.png", sep=""), dpi=150)
 
