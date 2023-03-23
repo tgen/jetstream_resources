@@ -11,8 +11,8 @@ while the reference used for RNA does not have ALT-contigs as STAR is not ALT-aw
 ## Script Usage Order
 
 * sbatch tempe/create_genome_reference.sh tempe/tempe_resources.ini
-  * bash tempe/create_bwa_genome_index.sh tempe/tempe_resources.ini
-  * bash tempe/create_bwa_mem2_genome_index.sh tempe/tempe_resources.ini
+  * bash tempe/create_bwa_genome_index.sh tempe/tempe_resources.ini # this uses a slightly more custom script to make sure we have an alt aware index
+  * bash tempe/create_bwa_mem2_genome_index.sh tempe/tempe_resources.ini # this uses a slightly more custom script to make sure we have an alt aware index
   * bash shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh tempe/tempe_resources.ini
   * bash tempe/create_samtools_stats_non_N_region_file.sh tempe/tempe_resources.ini
   * bash tempe/create_gene_model.sh tempe/tempe_resources.ini
