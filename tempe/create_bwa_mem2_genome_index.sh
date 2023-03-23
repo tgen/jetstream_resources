@@ -55,14 +55,14 @@ else
 fi
 
 # Create directory for BWA version
-if [ -e "bwa_${BWA_VERSION}" ]
+if [ -e "bwa_${BWA_MEM2_VERSION}" ]
 then
     echo "The BWA directory exists, exiting to prevent overwriting existing index"
     exit 2
 else
     echo "The BWA directory was NOT found, creating and moving into it now"
-    mkdir bwa_${BWA_VERSION}
-    cd bwa_${BWA_VERSION}
+    mkdir bwa_${BWA_MEM2_VERSION}
+    cd bwa_${BWA_MEM2_VERSION}
 fi
 
 ####################################
@@ -85,13 +85,20 @@ FASTA=$REFERENCE_DNA_GENOME_NAME
 
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/${FASTA} ${FASTA}
+ln -s ../../genome_reference/${FASTA}.fai ${FASTA}.fai
+
+# Copy in the .alt file from bwa.kit
+echo "Copy in the .alt file from bwa.kit" >> README
+cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt ${FASTA}.alt
+fc -ln -1 >> README
+echo >> README
 
 # Create bwa index files
 # shellcheck disable=SC1020
 if [ ${ENVIRONMENT} == "TGen" ]
 then
   # Submit index generation job to the slurm scheduler
-  sbatch --export ALL,FASTA="${FASTA}",BWA_VERSION="${BWA_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_index.sh
+  sbatch --export ALL,FASTA="${FASTA}",BWA_MEM2_VERSION="${BWA_MEM2_VERSION}" ${PATH_TO_REPO}/utility_scripts/bwa_mem2_index.sh
   fc -ln -1 >> README
 elif [ ${ENVIRONMENT} == "LOCAL" ]
 then
@@ -99,7 +106,7 @@ then
   echo "BWA Index will be created on the local compute"
 
   # Generate BWA Index Files
-  bwa index ${FASTA}
+  bwa-mem2 index ${FASTA}
 
   # Error Capture
   if [ "$?" = "0" ]
