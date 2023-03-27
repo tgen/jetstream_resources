@@ -54,6 +54,7 @@ else
     cd tool_resources
 fi
 
+# Create directory for BWA version
 if [ -e "bwa_${BWA_VERSION}" ]
 then
     echo "The BWA directory exists, exiting to prevent overwriting existing index"

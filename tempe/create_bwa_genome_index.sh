@@ -80,17 +80,17 @@ echo >> README
 echo "BWA Index creation details:" >> README
 echo >> README
 
-# Copy in the .alt file from bwa.kit
-echo "Copy in the .alt file from bwa.kit" >> README
-cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt GRCh38tgen_decoy_alts_hla.fa.alt
-fc -ln -1 >> README
-echo >> README
+# Determine the expected FASTA sequence filename based on the download link
+FASTA=$REFERENCE_DNA_GENOME_NAME
 
 # Create a symbolic link to the reference genome
-ln -s ../../genome_reference/GRCh38tgen_decoy_alts_hla.fa GRCh38tgen_decoy_alts_hla.fa
+ln -s ../../genome_reference/${FASTA} ${FASTA}
 
-# Set variable for genome fasta
-FASTA=GRCh38tgen_decoy_alts_hla.fa
+# Copy in the .alt file from bwa.kit
+echo "Copy in the .alt file from bwa.kit" >> README
+cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt ${FASTA}.alt
+fc -ln -1 >> README
+echo >> README
 
 # Create bwa index files
 # shellcheck disable=SC1020

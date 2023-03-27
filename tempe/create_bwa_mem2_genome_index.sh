@@ -54,6 +54,7 @@ else
     cd tool_resources
 fi
 
+# Create directory for BWA version
 if [ -e "bwa_${BWA_MEM2_VERSION}" ]
 then
     echo "The BWA directory exists, exiting to prevent overwriting existing index"
@@ -85,6 +86,12 @@ FASTA=$REFERENCE_DNA_GENOME_NAME
 # Create a symbolic link to the reference genome
 ln -s ../../genome_reference/${FASTA} ${FASTA}
 ln -s ../../genome_reference/${FASTA}.fai ${FASTA}.fai
+
+# Copy in the .alt file from bwa.kit
+echo "Copy in the .alt file from bwa.kit" >> README
+cp ../../genome_reference/downloads/bwa.kit/resource-GRCh38/hs38DH.fa.alt ${FASTA}.alt
+fc -ln -1 >> README
+echo >> README
 
 # Create bwa index files
 # shellcheck disable=SC1020
