@@ -292,14 +292,7 @@ fc -ln -1 >> README
 echo >> README
 
 
-######
-### This needs to be updated to pull a version with 18S and 28S data
-######
-echo WARNING: UPDATED NEEDED
-exit 1
-
-
-# Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics
+# Extract the ribosomal RNA locations and create file for usage with Picard RNAseqMetrics (THIS WILL LIKELY NOT BE USED IN PRODUCTION)
 echo "Creating ribosomal RNA locations file for Picar rnaSeqMetrics"
 echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
 #echo "grep -w "rRNA" ${GTF_FILE} | cut -f1,4,5,7,9 | sed 's/gene_id "//g' | sed 's/"; transcript_id "/\'$'\t''/g' | cut -f1-5 > temp_RibosomalLocations.txt" >> README
@@ -386,3 +379,85 @@ rm temp_*
 
 # Indicate completed
 echo "All Processes Completed"
+
+
+########################################################
+## Create separate folder with liftoff data for ribosomal tracking
+########################################################
+
+cd ..
+mkdir ${RIBOSOME_COMPLETE_GENE_MODEL_Name}
+cd ${RIBOSOME_COMPLETE_GENE_MODEL_Name}
+
+# Download the JHU RefSeqv110 + Liftoff v5.1 GFF3 file which has these locations
+echo "Download the liftoff gff3"
+echo "Download the liftoff gff3" >> README
+echo "    aws s3 --no-sign-request cp ${RIBOSOME_COMPLETE_GENE_MODEL} ." >> README
+singularity exec -B ${REF_DIR} ${AWS_CLI_SIF} aws s3 --no-sign-request cp ${RIBOSOME_COMPLETE_GENE_MODEL} .
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: download liftoff gff3"
+else
+    touch FAILED_DOWNLOAD_LIFTOFF_GFF3
+    echo "FAILED: download liftoff gff3" >> README
+    exit 1
+fi
+echo >> README
+
+# Determine liftoff gff3 filename
+echo "Capture the downloaded liftoff gff3 filename"
+echo "Capture the downloaded liftoff gff3 filename" >> README
+echo "LIFTOFF_GFF3_FILE_GZ=`basename ${RIBOSOME_COMPLETE_GENE_MODEL}`" >> README
+LIFTOFF_GFF3_FILE_GZ=`basename ${RIBOSOME_COMPLETE_GENE_MODEL}`
+
+# Determine expected decompressed liftoff gff3 filename
+echo "Capture the expected decompressed liftoff gff3 filename"
+echo "Capture the expected decompressed liftoff gff3 filename" >> README
+echo "GFF3_FILE=`basename ${LIFTOFF_GFF3_FILE_GZ} ".gz"`" >> README
+GFF3_FILE=`basename ${LIFTOFF_GFF3_FILE_GZ} ".gz"`
+
+# Decompress the liftoff file
+echo "Decompressing liftoff gff3"
+echo "Decompressing liftoff gff3" >> README
+echo "gunzip -c ${LIFTOFF_GFF3_FILE_GZ} > ${GFF3_FILE}" >> README
+gunzip -c ${LIFTOFF_GFF3_FILE_GZ} > ${GFF3_FILE}
+# Error Capture
+if [ "$?" = "0" ]
+then
+    echo "Completed: gunzip liftoff gff3"
+else
+    touch FAILED_GUNZIP_LIFTOFF_GFF3
+    echo "FAILED: gunzip liftoff gff3" >> README
+    exit 1
+fi
+echo >> README
+
+
+## Prepare the ribosomal position file
+
+grep "transcript_biotype=rRNA" chm13v2.0_RefSeq_Liftoff_v5.1.gff3 | cut -f1,4,5,7,9 > temp
+
+## OLD Processing
+echo "Creating ribosomal RNA locations file for Picard rnaSeqMetrics"
+echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
+grep -w "rRNA" ${GTF_FILE} \
+    | \
+    cut -f1,4,5,7,9 \
+    | \
+    sed 's/gene_id "//g' \
+    | \
+    sed 's/"; transcript_id "/\'$'\t''/g' \
+    | \
+    cut -f1-5 > temp_RibosomalLocations.txt
+fc -ln -1 >> README
+echo >> README
+
+#Finalize output
+echo "Created final ribosome interval list file" >> README
+echo "cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dict temp > chm13v2.0_RefSeq_Liftoff_v5.1.ribo.interval_list" >> README
+cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dict temp > chm13v2.0_RefSeq_Liftoff_v5.1.ribo.interval_list
+echo >> README
+
+
+
