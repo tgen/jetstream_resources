@@ -254,12 +254,6 @@ do
   fi
 done
 
-
-
-
-
-
-
 ####################################
 ## Create required files produced from the GTF
 ####################################
@@ -377,10 +371,6 @@ touch GENE_MODEL_GTF_GENERATION_COMPLETE
 # Clean-up directory
 rm temp_*
 
-# Indicate completed
-echo "All Processes Completed"
-
-
 ########################################################
 ## Create separate folder with liftoff data for ribosomal tracking
 ########################################################
@@ -435,23 +425,7 @@ echo >> README
 
 
 ## Prepare the ribosomal position file
-
 grep "transcript_biotype=rRNA" chm13v2.0_RefSeq_Liftoff_v5.1.gff3 | cut -f1,4,5,7,9 > temp
-
-## OLD Processing
-echo "Creating ribosomal RNA locations file for Picard rnaSeqMetrics"
-echo "Create ribosomal interval file from GTF for picard rnaSeqMetrics" >> README
-grep -w "rRNA" ${GTF_FILE} \
-    | \
-    cut -f1,4,5,7,9 \
-    | \
-    sed 's/gene_id "//g' \
-    | \
-    sed 's/"; transcript_id "/\'$'\t''/g' \
-    | \
-    cut -f1-5 > temp_RibosomalLocations.txt
-fc -ln -1 >> README
-echo >> README
 
 #Finalize output
 echo "Created final ribosome interval list file" >> README
@@ -459,5 +433,7 @@ echo "cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dic
 cat ${TOPLEVEL_DIR}/genome_reference/${REFERENCE_GENOME_DICT_BASENAME}.dict temp > chm13v2.0_RefSeq_Liftoff_v5.1.ribo.interval_list
 echo >> README
 
+rm temp
 
-
+# Indicate completed
+echo "All Processes Completed"
