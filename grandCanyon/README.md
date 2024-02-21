@@ -1,28 +1,19 @@
-# GrandCanyon Analysis Pipeline (T2T Consortium - CHM13 v1.1 Human Reference)
+# GrandCanyon Analysis Pipeline (T2T Consortium - CHM13 v2.0 Human Reference)
 
-A JetStream workflow to support the T2T human reference genome (WARNING: No chrY today)
+A JetStream workflow to support the T2T human reference genome
+
+## Output location
+`/home/tgenref/homo_sapiens/t2t_chm13/chm13_v2.0`
 
 ### Script Usage Order
-* shared_resource_creation_scripts/create_genome_reference.sh grandCanyon/grandcanyon_resources.ini 
-  * shared_resource_creation_scripts/create_bwa_genome_index.sh grandCanyon/grandcanyon_resources.ini
-  * shared_resource_creation_scripts/create_bwa_mem2_genome_index.sh grandCanyon/grandcanyon_resources.ini
-  * shared_resource_creation_scripts/create_bowtie2_genome_index.sh grandCanyon/grandcanyon_resources.ini
-  * shared_resource_creation_scripts/create_snpSniffer_references.sh grandCanyon/grandcanyon_resources.ini
-  * grandCanyon/create_gene_model.sh grandCanyon/grandcanyon_resources.ini
-  
+* create_genome_reference.sh grandcanyon_resources.ini 
+  * create_bwa_mem2_genome_index.sh grandcanyon_resources.ini
+  * create_gene_model.sh grandcanyon_resources.ini
+    * create_star_genome_index.sh grandcanyon_resources.ini star_index_lengths.csv
+      * Calls sbatch for individual index creation using singularity container
+    * create_vep_database.sh
 
-    * shared_resource_creation_scripts/create_star_genome_index.sh suncity/suncity_resources.ini suncity/star_index_lengths.csv
-    * shared_resource_creation_scripts/create_salmon_index.sh suncity/suncity_resources.ini
-    * shared_resource_creation_scripts/create_snpEff_db.sh suncity/suncity_resources.ini
-    * shared_resource_creation_scripts/create_vep_database.sh suncity/suncity_resources.ini
-    * shared_resource_creation_scripts/create_sexCheck_SNP_list.sh suncity/suncity_resources.ini
-   
-    * shared_resource_creation_scripts/create_exome_capture_resources.sh suncity/suncity_resources.ini suncity/capture_kits.csv
-    * suncity/create_star-fusion_resource.sh suncity/suncity_resources.ini
-    * suncity/create_samtools_stats_non_N_region_file.sh suncity/suncity_resources.ini
-    * shared_resource_creation_scripts/create_gatk_cnv_interval_list.sh suncity/suncity_resources.ini
-    * shared_resource_creation_scripts/create_deepvariant_models.sh suncity/suncity_resources.ini
-
-    * suncity/build_annotation_files/build_dbSNP_b138_broadBundle.sh suncity/suncity_resources.ini
-    * suncity/build_annotation_files/build_delly_annotations_e87.sh suncity/suncity_resources.ini
-    * suncity/build_annotation_files/build_gnomAD_r2.1.1.sh suncity/suncity_resources.ini
+#### NOTE: 
+We don't create minimap2 indexes as a number of different configurations are used and if a script pulls the wrong 
+pre-made index then the setting used in the index supersedes the one provided in th command. This ensures execution is 
+performed as outlined in the command.  It does was some CPU cycles recreating the index each time
